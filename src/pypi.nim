@@ -1,5 +1,3 @@
-## MultiSync API Client for PyPI.
-## XML-RPC not supported: XML-RPC API is deprecated. Use is not recommended.
 import asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, ospaths
 
 const
