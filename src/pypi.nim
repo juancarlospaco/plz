@@ -29,21 +29,21 @@ template clientify(this: PyPI | AsyncPyPI): untyped =
                                    "content-type": "application/json"})
 
 proc newPackages*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
-  ## Return an RSS XML with the Newest Packages uploaded to PyPI.
+  ## Return an RSS XML XmlNode type with the Newest Packages uploaded to PyPI.
   clientify(this)
   result =
     when this is AsyncPyPI: parseXml(await client.getContent(pypiPackagesXml))
     else: parseXml(client.getContent(pypiPackagesXml))
 
 proc lastUpdates*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
-  ## Return an RSS XML with the Latest Updates uploaded to PyPI.
+  ## Return an RSS XML XmlNode type with the Latest Updates uploaded to PyPI.
   clientify(this)
   result =
     when this is AsyncPyPI: parseXml(await client.getContent(pypiUpdatesXml))
     else: parseXml(client.getContent(pypiUpdatesXml))
 
 proc project*(this: PyPI | AsyncPyPI, project_name): Future[JsonNode] {.multisync.} =
-  ## Return all JSON data for project_name from PyPI.
+  ## Return all JSON JsonNode type data for project_name from PyPI.
   clientify(this)
   let url = pypiApiUrl & "pypi/" & project_name & "/json"
   result =
