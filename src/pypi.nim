@@ -1,6 +1,6 @@
 import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
-  ospaths
+  ospaths, base64
 
 const
   pypiApiUrl* = "https://pypi.org/"                      ## PyPI Base API URL.
@@ -82,7 +82,8 @@ proc stats*(this: PyPI | AsyncPyPI): Future[JsonNode] {.multisync.} =
 proc upload*(this: PyPI | AsyncPyPI,
              name, version, license, summary, description, author: string,
              downloadurl, authoremail, maintainer, maintaineremail: string,
-             homepage, filename, md5_digest: string, keywords: seq[string],
+             homepage, filename, md5_digest, username, password: string,
+             keywords: seq[string],
              requirespython=">=3", filetype="sdist", pyversion="source",
              description_content_type="text/markdown; charset=UTF-8; variant=GFM",
              ): Future[string] {.multisync.} =
@@ -115,12 +116,16 @@ proc upload*(this: PyPI | AsyncPyPI,
 
   doAssert filename.existsFile, "filename must be 1 existent valid readable file"
   let fext = filename.splitFile.ext
-  doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
+  # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
   let mime = newMimetypes().getMimetype(fext)
   multipart_data["content"] = (filename, mime, filename.readFile)
   when not defined(release): echo multipart_data.repr
 
+  let auth = {"Authorization": "Basic " & encode(username & ":" & password)}
+  when not defined(release): echo auth
+
   clientify(this)
+  client.headers = newHttpHeaders(auth)
   # result =  # TODO: Finish this and test against the test dev pypi server.
   #   when this is AsyncPyPI: await client.postContent(pypiUploadUrl, multipart=multipart_data)
   #   else: client.postContent(pypiUploadUrl, multipart=multipart_data)
@@ -138,6 +143,8 @@ when isMainModule and not defined(release):
   echo cliente.release(project_name="microraptor", project_version="2.0.0")
 
   echo cliente.upload(
+    username        = "user",
+    password        = "s3cr3t",
     name            = "TestPackage",
     version         = "0.0.1",
     license         = "MIT",
