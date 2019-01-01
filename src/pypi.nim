@@ -115,7 +115,7 @@ proc upload*(this: PyPI | AsyncPyPI,
   multipart_data["maintainer"] = if maintainer == "": author else: maintainer
 
   doAssert filename.existsFile, "filename must be 1 existent valid readable file"
-  let fext = filename.splitFile.ext
+  let fext = filename.splitFile.ext.toLowerAscii
   # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
   let mime = newMimetypes().getMimetype(fext)
   multipart_data["content"] = (filename, mime, filename.readFile)
