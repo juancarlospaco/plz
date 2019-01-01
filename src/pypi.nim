@@ -1,4 +1,6 @@
-import asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, ospaths
+import
+  asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes,
+  ospaths
 
 const
   pypiApiUrl* = "https://pypi.org/"                      ## PyPI Base API URL.
@@ -12,6 +14,8 @@ type
     proxy*: Proxy  ## Network IPv4 / IPv6 Proxy support, Proxy type.
   PyPI* = PyPIBase[HttpClient]           ##  Sync PyPI API Client.
   AsyncPyPI* = PyPIBase[AsyncHttpClient] ## Async PyPI API Client.
+
+using project_name, project_version: string
 
 template clientify(this: PyPI | AsyncPyPI): untyped =
   ## Build & inject basic HTTP Client with Proxy and Timeout.
@@ -38,7 +42,7 @@ proc lastUpdates*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
     when this is AsyncPyPI: parseXml(await client.getContent(pypiUpdatesXml))
     else: parseXml(client.getContent(pypiUpdatesXml))
 
-proc project*(this: PyPI | AsyncPyPI, project_name: string): Future[JsonNode] {.multisync.} =
+proc project*(this: PyPI | AsyncPyPI, project_name): Future[JsonNode] {.multisync.} =
   ## Return all JSON data for project_name from PyPI.
   clientify(this)
   let url = pypiApiUrl & "pypi/" & project_name & "/json"
@@ -46,7 +50,7 @@ proc project*(this: PyPI | AsyncPyPI, project_name: string): Future[JsonNode] {.
     when this is AsyncPyPI: parseJson(await client.getContent(url=url))
     else: parseJson(client.getContent(url=url))
 
-proc release*(this: PyPI | AsyncPyPI, project_name, project_version: string): Future[JsonNode] {.multisync.} =
+proc release*(this: PyPI | AsyncPyPI, project_name, project_version): Future[JsonNode] {.multisync.} =
   ## Return all JSON data for project_name of an specific version from PyPI.
   clientify(this)
   let url = pypiApiUrl & "pypi/" & project_name & "/" & project_version & "/json"
@@ -61,7 +65,7 @@ proc htmlAllPackages*(this: PyPI | AsyncPyPI): Future[string] {.multisync.} =
     when this is AsyncPyPI: await client.getContent(url=pypiApiUrl & "simple")
     else: client.getContent(url=pypiApiUrl & "simple")
 
-proc htmlPackage*(this: PyPI | AsyncPyPI, project_name: string): Future[string] {.multisync.} =
+proc htmlPackage*(this: PyPI | AsyncPyPI, project_name): Future[string] {.multisync.} =
   ## Return a project registered on PyPI as HTML string, Legacy Endpoint.
   clientify(this)
   result =
