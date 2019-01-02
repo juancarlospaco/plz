@@ -4,6 +4,7 @@ import
 
 const
   pypiApiUrl* = "https://pypi.org/"                     ## PyPI Base API URL.
+  pypiXmlUrl = pypiApiUrl & "pypi"                      ## PyPI XML RPC API URL.
   pypiPackagesXml = "https://pypi.org/rss/packages.xml" ## PyPI XML API URL.
   pypiUpdatesXml = "https://pypi.org/rss/updates.xml"   ## PyPI XML API URL.
   pypiUploadUrl = "https://test.pypi.org/legacy/"       ## PyPI Upload POST URL
@@ -100,24 +101,24 @@ proc listPackages*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   clientify(this)
   client.headers = headerXml
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiApiUrl & "pypi", body=list_packagesXml))
-    else: parseXml(client.postContent(pypiApiUrl & "pypi", body=list_packagesXml))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=list_packagesXml))
+    else: parseXml(client.postContent(pypiXmlUrl, body=list_packagesXml))
 
 proc changelogLastSerial*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return 1 XML XmlNode with the Last Serial number integer.
   clientify(this)
   client.headers = headerXml
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiApiUrl & "pypi", body=changelog_last_serialXml))
-    else: parseXml(client.postContent(pypiApiUrl & "pypi", body=changelog_last_serialXml))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=changelog_last_serialXml))
+    else: parseXml(client.postContent(pypiXmlUrl, body=changelog_last_serialXml))
 
 proc listPackagesWithSerial*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with Serial number integer. Server-side Slow.
   clientify(this)
   client.headers = headerXml
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiApiUrl & "pypi", body=list_packages_with_serialXml))
-    else: parseXml(client.postContent(pypiApiUrl & "pypi", body=list_packages_with_serialXml))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=list_packages_with_serialXml))
+    else: parseXml(client.postContent(pypiXmlUrl, body=list_packages_with_serialXml))
 
 proc packageLatestRelease*(this: PyPI | AsyncPyPI, package_name): Future[XmlNode] {.multisync.} =
   ## Return the latest release registered for the given package_name.
@@ -125,8 +126,8 @@ proc packageLatestRelease*(this: PyPI | AsyncPyPI, package_name): Future[XmlNode
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_releases", xmlRpcParam.format(package_name))
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiApiUrl & "pypi", body=bodi))
-    else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
+    else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
 proc packageRoles*(this: PyPI | AsyncPyPI, package_name): Future[XmlNode] {.multisync.} =
   ## Retrieve a list of role, user for a given package_name. Role is Maintainer or Owner.
@@ -134,8 +135,8 @@ proc packageRoles*(this: PyPI | AsyncPyPI, package_name): Future[XmlNode] {.mult
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(package_name))
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiApiUrl & "pypi", body=bodi))
-    else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
+    else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
 proc userPackages*(this: PyPI | AsyncPyPI, user): Future[XmlNode] {.multisync.} =
   ## Retrieve a list of role, package_name for a given user. Role is Maintainer or Owner.
@@ -143,8 +144,8 @@ proc userPackages*(this: PyPI | AsyncPyPI, user): Future[XmlNode] {.multisync.} 
   client.headers = headerXml
   let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiApiUrl & "pypi", body=bodi))
-    else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
+    else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
 proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future[XmlNode] {.multisync.} =
   ## Retrieve a list of download URLs for the given release_version. Returns a list of dicts.
@@ -153,8 +154,8 @@ proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future
   let bodi = xmlRpcBody.format("release_urls",
     xmlRpcParam.format(package_name) & xmlRpcParam.format(release_version))
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiApiUrl & "pypi", body=bodi))
-    else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
+    else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
 proc releaseData*(this: PyPI | AsyncPyPI, package_name, release_version): Future[XmlNode] {.multisync.} =
   ## Retrieve metadata describing a specific release_version. Returns a dict.
@@ -163,8 +164,8 @@ proc releaseData*(this: PyPI | AsyncPyPI, package_name, release_version): Future
   let bodi = xmlRpcBody.format("release_data",
     xmlRpcParam.format(package_name) & xmlRpcParam.format(release_version))
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiApiUrl & "pypi", body=bodi))
-    else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
+    else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
 proc search*(this: PyPI | AsyncPyPI, query: Table[string, seq[string]], operator="and"): Future[XmlNode] {.multisync.} =
   ## Search package database using indicated search spec. Returns 100 results max.
@@ -173,8 +174,8 @@ proc search*(this: PyPI | AsyncPyPI, query: Table[string, seq[string]], operator
   client.headers = headerXml
   let bodi = xmlRpcBody.format("search", xmlRpcParam.format(query) & xmlRpcParam.format(operator))
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiApiUrl & "pypi", body=bodi))
-    else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
+    else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
 proc browse*(this: PyPI | AsyncPyPI, classifiers): Future[XmlNode] {.multisync.} =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
@@ -187,8 +188,8 @@ proc browse*(this: PyPI | AsyncPyPI, classifiers): Future[XmlNode] {.multisync.}
     clasifiers &= xmlRpcParam.format(item)
   let bodi = xmlRpcBody.format("browse", clasifiers)
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiApiUrl & "pypi", body=bodi))
-    else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
+    else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
 proc upload*(this: PyPI | AsyncPyPI,
              name, version, license, summary, description, author: string,
