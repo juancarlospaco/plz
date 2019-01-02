@@ -220,6 +220,11 @@ proc upload*(this: PyPI | AsyncPyPI,
   # https://warehouse.readthedocs.io/api-reference/legacy/#upload-api
   # github.com/python/cpython/blob/master/Lib/distutils/command/upload.py#L131-L135
   doAssert filename.existsFile, "filename must be 1 existent valid readable file"
+  let
+    fext = filename.splitFile.ext.toLowerAscii
+    mime = newMimetypes().getMimetype(fext)
+    auth = {"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"}
+  # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
   var multipart_data = newMultipartData()
   multipart_data["protocol_version"] = "1"
   multipart_data[":action"] = "file_upload"
@@ -241,16 +246,8 @@ proc upload*(this: PyPI | AsyncPyPI,
   multipart_data["maintainer_email"] = maintaineremail.toLowerAscii
   multipart_data["description_content_type"] = description_content_type.strip
   multipart_data["maintainer"] = if maintainer == "": author else: maintainer
-
-  let fext = filename.splitFile.ext.toLowerAscii
-  # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
-  let mime = newMimetypes().getMimetype(fext)
   multipart_data["content"] = (filename, mime, filename.readFile)
-  when not defined(release): echo multipart_data.repr
-
-  let auth = {"Authorization": "Basic " & encode(username & ":" & password)}
-  when not defined(release): echo auth
-
+  when not defined(release): echo multipart_data.repr, "\n", auth
   clientify(this)
   client.headers = newHttpHeaders(auth)
   # result =  # TODO: Finish this and test against the test dev pypi server.
