@@ -81,14 +81,14 @@ proc htmlAllPackages*(this: PyPI | AsyncPyPI): Future[string] {.multisync.} =
     else: client.getContent(url=pypiApiUrl & "simple")
 
 proc htmlPackage*(this: PyPI | AsyncPyPI, project_name): Future[string] {.multisync.} =
-  ## Return a project registered on PyPI as HTML string, Legacy Endpoint.
+  ## Return a project registered on PyPI as HTML string, Legacy Endpoint, Slow.
   clientify(this)
   result =
     when this is AsyncPyPI: await client.getContent(url=pypiApiUrl & "simple/" & project_name)
     else: client.getContent(url=pypiApiUrl & "simple/" & project_name)
 
 proc stats*(this: PyPI | AsyncPyPI): Future[JsonNode] {.multisync.} =
-  ## Return all JSON data for project_name of an specific version from PyPI.
+  ## Return all JSON stats data for project_name of an specific version from PyPI.
   clientify(this)
   client.headers = headerJson
   result =
@@ -112,7 +112,7 @@ proc changelogLastSerial*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.}
     else: parseXml(client.postContent(pypiApiUrl & "pypi", body=changelog_last_serialXml))
 
 proc listPackagesWithSerial*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
-  ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with its Serial number integer. Server-side Slow.
+  ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with Serial number integer. Server-side Slow.
   clientify(this)
   client.headers = headerXml
   result =
@@ -120,7 +120,7 @@ proc listPackagesWithSerial*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisyn
     else: parseXml(client.postContent(pypiApiUrl & "pypi", body=list_packages_with_serialXml))
 
 proc packageLatestRelease*(this: PyPI | AsyncPyPI, package_name): Future[XmlNode] {.multisync.} =
-  ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with its Serial number integer. Server-side Slow.
+  ## Return the latest release registered for the given package_name.
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_releases", xmlRpcParam.format(package_name))
@@ -129,7 +129,7 @@ proc packageLatestRelease*(this: PyPI | AsyncPyPI, package_name): Future[XmlNode
     else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
 
 proc packageRoles*(this: PyPI | AsyncPyPI, package_name): Future[XmlNode] {.multisync.} =
-  ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with its Serial number integer. Server-side Slow.
+  ## Retrieve a list of role, user for a given package_name. Role is Maintainer or Owner.
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(package_name))
@@ -138,7 +138,7 @@ proc packageRoles*(this: PyPI | AsyncPyPI, package_name): Future[XmlNode] {.mult
     else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
 
 proc userPackages*(this: PyPI | AsyncPyPI, user): Future[XmlNode] {.multisync.} =
-  ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with its Serial number integer. Server-side Slow.
+  ## Retrieve a list of role, package_name for a given user. Role is Maintainer or Owner.
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
@@ -147,7 +147,7 @@ proc userPackages*(this: PyPI | AsyncPyPI, user): Future[XmlNode] {.multisync.} 
     else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
 
 proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future[XmlNode] {.multisync.} =
-  ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with its Serial number integer. Server-side Slow.
+  ## Retrieve a list of download URLs for the given release_version. Returns a list of dicts.
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("release_urls",
@@ -157,7 +157,7 @@ proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future
     else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
 
 proc releaseData*(this: PyPI | AsyncPyPI, package_name, release_version): Future[XmlNode] {.multisync.} =
-  ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with its Serial number integer. Server-side Slow.
+  ## Retrieve metadata describing a specific release_version. Returns a dict.
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("release_data",
@@ -167,7 +167,7 @@ proc releaseData*(this: PyPI | AsyncPyPI, package_name, release_version): Future
     else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
 
 proc search*(this: PyPI | AsyncPyPI, query: Table[string, seq[string]], operator="and"): Future[XmlNode] {.multisync.} =
-  ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with its Serial number integer. Server-side Slow.
+  ## Search package database using indicated search spec. Returns 100 results max.
   doAssert operator in ["or", "and"], "operator must be 1 of 'and', 'or'."
   clientify(this)
   client.headers = headerXml
@@ -177,7 +177,8 @@ proc search*(this: PyPI | AsyncPyPI, query: Table[string, seq[string]], operator
     else: parseXml(client.postContent(pypiApiUrl & "pypi", body=bodi))
 
 proc browse*(this: PyPI | AsyncPyPI, classifiers): Future[XmlNode] {.multisync.} =
-  ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with its Serial number integer. Server-side Slow.
+  ## Retrieve a list of name, version of all releases classified with all of given classifiers.
+  ## Classifiers must be a list of standard Trove classifier strings. Returns 100 results max.
   doAssert classifiers.len > 1, "classifiers must be at least 2 strings lenght."
   clientify(this)
   client.headers = headerXml
@@ -202,6 +203,7 @@ proc upload*(this: PyPI | AsyncPyPI,
   ## For some unknown reason intentionally undocumented (security by obscurity?)
   # https://warehouse.readthedocs.io/api-reference/legacy/#upload-api
   # github.com/python/cpython/blob/master/Lib/distutils/command/upload.py#L131-L135
+  doAssert filename.existsFile, "filename must be 1 existent valid readable file"
   var multipart_data = newMultipartData()
   multipart_data["protocol_version"] = "1"
   multipart_data[":action"] = "file_upload"
@@ -224,7 +226,6 @@ proc upload*(this: PyPI | AsyncPyPI,
   multipart_data["description_content_type"] = description_content_type.strip
   multipart_data["maintainer"] = if maintainer == "": author else: maintainer
 
-  doAssert filename.existsFile, "filename must be 1 existent valid readable file"
   let fext = filename.splitFile.ext.toLowerAscii
   # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
   let mime = newMimetypes().getMimetype(fext)
