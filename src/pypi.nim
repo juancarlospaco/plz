@@ -3,10 +3,10 @@ import
   ospaths, base64, tables
 
 const
-  pypiApiUrl* = "https://pypi.org/"                      ## PyPI Base API URL.
-  pypiPackagesXml* = "https://pypi.org/rss/packages.xml" ## PyPI XML API URL.
-  pypiUpdatesXml* = "https://pypi.org/rss/updates.xml"   ## PyPI XML API URL.
-  pypiUploadUrl* = "https://test.pypi.org/legacy/"       ## PyPI Upload POST URL
+  pypiApiUrl* = "https://pypi.org/"                     ## PyPI Base API URL.
+  pypiPackagesXml = "https://pypi.org/rss/packages.xml" ## PyPI XML API URL.
+  pypiUpdatesXml = "https://pypi.org/rss/updates.xml"   ## PyPI XML API URL.
+  pypiUploadUrl = "https://test.pypi.org/legacy/"       ## PyPI Upload POST URL
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml  = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
   list_packagesXml = "<methodName>list_packages</methodName>"                         ## XML RPC Command.
