@@ -9,10 +9,10 @@ const
   pypiUploadUrl* = "https://test.pypi.org/legacy/"       ## PyPI Upload POST URL
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml  = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
-  list_packagesXml = "<methodName>list_packages</methodName>"
-  changelog_last_serialXml = "<methodName>changelog_last_serial</methodName>"
-  list_packages_with_serialXml = "<methodName>list_packages_with_serial</methodName>"
-  xmlRpcParam = "<param><value><string>$1</string></value></param>"
+  list_packagesXml = "<methodName>list_packages</methodName>"                         ## XML RPC Command.
+  changelog_last_serialXml = "<methodName>changelog_last_serial</methodName>"         ## XML RPC Command.
+  list_packages_with_serialXml = "<methodName>list_packages_with_serial</methodName>" ## XML RPC Command.
+  xmlRpcParam = "<param><value><string>$1</string></value></param>"                   ## XML RPC Command.
   xmlRpcBody = "<?xml version='1.0'?><methodCall><methodName>$1</methodName><params>$2</params></methodCall>"
 
 let
