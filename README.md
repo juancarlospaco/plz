@@ -1,7 +1,10 @@
 # Nim-PyPI
 
-- [Pythons PyPI](https://pypi.org) Async API Client on [Nim.](https://nim-lang.org)
+- [Pythons PyPI / PIP](https://pypi.org) Async API Client on [Nim](https://nim-lang.org).
 
 *(WIP, No Upload Endpoint yet)*
 
-XML-RPC not supported: XML-RPC API is Deprecated.
+
+From XML-RPC API Server-side this endpoints wont work anymore:
+
+- `release_downloads`, `top_packages`, `updated_releases`, `changed_packages`.
