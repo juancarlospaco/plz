@@ -96,66 +96,81 @@ proc stats*(this: PyPI | AsyncPyPI): Future[JsonNode] {.multisync.} =
     when this is AsyncPyPI: parseJson(await client.getContent(url=pypiApiUrl & "stats"))
     else: parseJson(client.getContent(url=pypiApiUrl & "stats"))
 
-proc listPackages*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
+proc listPackages*(this: PyPI | AsyncPyPI): Future[seq[string]] {.multisync.} =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI. Server-side Slow.
   clientify(this)
   client.headers = headerXml
-  result =
+  let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=lppXml))
     else: parseXml(client.postContent(pypiXmlUrl, body=lppXml))
+  for tagy in response.findAll("string"):
+    result.add tagy.innerText
 
-proc changelogLastSerial*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
+proc changelogLastSerial*(this: PyPI | AsyncPyPI): Future[int] {.multisync.} =
   ## Return 1 XML XmlNode with the Last Serial number integer.
   clientify(this)
   client.headers = headerXml
-  result =
+  let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=clsXml))
     else: parseXml(client.postContent(pypiXmlUrl, body=clsXml))
+  for tagy in response.findAll("int"):
+    result = tagy.innerText.parseInt
 
-proc listPackagesWithSerial*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
+proc listPackagesWithSerial*(this: PyPI | AsyncPyPI): Future[seq[array[2, string]]] {.multisync.} =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with Serial number integer. Server-side Slow.
   clientify(this)
   client.headers = headerXml
-  result =
+  let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=lpsXml))
     else: parseXml(client.postContent(pypiXmlUrl, body=lpsXml))
+  for tagy in response.findAll("member"):
+    result.add [tagy.child"name".innerText, tagy.child"value".child"int".innerText]
 
-proc packageLatestRelease*(this: PyPI | AsyncPyPI, package_name): Future[XmlNode] {.multisync.} =
+proc packageLatestRelease*(this: PyPI | AsyncPyPI, package_name): Future[string] {.multisync.} =
   ## Return the latest release registered for the given package_name.
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_releases", xmlRpcParam.format(package_name))
-  result =
+  let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
+  for tagy in response.findAll("string"):
+    result = tagy.innerText
 
-proc packageRoles*(this: PyPI | AsyncPyPI, package_name): Future[XmlNode] {.multisync.} =
+proc packageRoles*(this: PyPI | AsyncPyPI, package_name): Future[seq[XmlNode]] {.multisync.} =
   ## Retrieve a list of role, user for a given package_name. Role is Maintainer or Owner.
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(package_name))
-  result =
+  let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
+  for tagy in response.findAll("data"):
+    result.add tagy
 
-proc userPackages*(this: PyPI | AsyncPyPI, user): Future[XmlNode] {.multisync.} =
+proc userPackages*(this: PyPI | AsyncPyPI, user): Future[seq[XmlNode]] {.multisync.} =
   ## Retrieve a list of role, package_name for a given user. Role is Maintainer or Owner.
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
-  result =
+  let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
+  for tagy in response.findAll("data"):
+    result.add tagy
 
-proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future[XmlNode] {.multisync.} =
+proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future[seq[string]] {.multisync.} =
   ## Retrieve a list of download URLs for the given release_version. Returns a list of dicts.
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("release_urls",
     xmlRpcParam.format(package_name) & xmlRpcParam.format(release_version))
-  result =
+  let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
+  for tagy in response.findAll("string"):
+    if tagy.innerText.normalize.startsWith("http"):
+      result.add tagy.innerText
 
 proc releaseData*(this: PyPI | AsyncPyPI, package_name, release_version): Future[XmlNode] {.multisync.} =
   ## Retrieve metadata describing a specific release_version. Returns a dict.
@@ -261,8 +276,8 @@ when isMainModule and not defined(release):
   echo cliente.userPackages(user="juancarlospaco")
   echo cliente.releaseUrls(package_name="pip", release_version="18.1")
   echo cliente.releaseData(package_name="pip", release_version="18.1")
-  echo cliente.search({"name": @["requests"]}.toTable)
-  echo cliente.browse(@["Topic :: Utilities", "Topic :: System"])
+  #echo cliente.search({"name": @["requests"]}.toTable)
+  #echo cliente.browse(@["Topic :: Utilities", "Topic :: System"])
 
   echo cliente.upload(
     username        = "user",
