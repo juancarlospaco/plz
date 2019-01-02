@@ -257,6 +257,7 @@ proc upload*(this: PyPI | AsyncPyPI,
 
 
 when isMainModule and not defined(release):
+  {.passL: "-s", passC: "-flto -ffast-math", optimization: size.}
   let cliente = PyPI(timeout: 99)
   echo cliente.stats()
   echo cliente.newPackages()
