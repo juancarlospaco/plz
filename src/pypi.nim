@@ -3,18 +3,18 @@ import
   ospaths, base64, tables
 
 const
-  pypiApiUrl* = "https://pypi.org/"                     ## PyPI Base API URL.
-  pypiXmlUrl = pypiApiUrl & "pypi"                      ## PyPI XML RPC API URL.
-  pypiPackagesXml = "https://pypi.org/rss/packages.xml" ## PyPI XML API URL.
-  pypiUpdatesXml = "https://pypi.org/rss/updates.xml"   ## PyPI XML API URL.
-  pypiUploadUrl = "https://test.pypi.org/legacy/"       ## PyPI Upload POST URL
+  pypiApiUrl* = "https://pypi.org/"                             ## PyPI Base API URL.
+  pypiXmlUrl = pypiApiUrl & "pypi"                              ## PyPI XML RPC API URL.
+  pypiPackagesXml = "https://pypi.org/rss/packages.xml"         ## PyPI XML API URL.
+  pypiUpdatesXml = "https://pypi.org/rss/updates.xml"           ## PyPI XML API URL.
+  pypiUploadUrl = "https://test.pypi.org/legacy/"               ## PyPI Upload POST URL
+  lppXml = "<methodName>list_packages</methodName>"             ## XML RPC Command.
+  clsXml = "<methodName>changelog_last_serial</methodName>"     ## XML RPC Command.
+  lpsXml = "<methodName>list_packages_with_serial</methodName>" ## XML RPC Command.
+  xmlRpcParam = "<param><value><string>$1</string></value></param>"
+  xmlRpcBody = "<?xml version='1.0'?><methodCall><methodName>$1</methodName><params>$2</params></methodCall>"
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml  = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
-  list_packagesXml = "<methodName>list_packages</methodName>"                         ## XML RPC Command.
-  changelog_last_serialXml = "<methodName>changelog_last_serial</methodName>"         ## XML RPC Command.
-  list_packages_with_serialXml = "<methodName>list_packages_with_serial</methodName>" ## XML RPC Command.
-  xmlRpcParam = "<param><value><string>$1</string></value></param>"                   ## XML RPC Command.
-  xmlRpcBody = "<?xml version='1.0'?><methodCall><methodName>$1</methodName><params>$2</params></methodCall>"
 
 let
   headerJson = newHttpHeaders(hdrJson)
@@ -101,24 +101,24 @@ proc listPackages*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   clientify(this)
   client.headers = headerXml
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=list_packagesXml))
-    else: parseXml(client.postContent(pypiXmlUrl, body=list_packagesXml))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=lppXml))
+    else: parseXml(client.postContent(pypiXmlUrl, body=lppXml))
 
 proc changelogLastSerial*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return 1 XML XmlNode with the Last Serial number integer.
   clientify(this)
   client.headers = headerXml
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=changelog_last_serialXml))
-    else: parseXml(client.postContent(pypiXmlUrl, body=changelog_last_serialXml))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=clsXml))
+    else: parseXml(client.postContent(pypiXmlUrl, body=clsXml))
 
 proc listPackagesWithSerial*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with Serial number integer. Server-side Slow.
   clientify(this)
   client.headers = headerXml
   result =
-    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=list_packages_with_serialXml))
-    else: parseXml(client.postContent(pypiXmlUrl, body=list_packages_with_serialXml))
+    when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=lpsXml))
+    else: parseXml(client.postContent(pypiXmlUrl, body=lpsXml))
 
 proc packageLatestRelease*(this: PyPI | AsyncPyPI, package_name): Future[XmlNode] {.multisync.} =
   ## Return the latest release registered for the given package_name.
