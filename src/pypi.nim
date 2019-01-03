@@ -1,6 +1,6 @@
 import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
-  ospaths, base64, tables
+  ospaths, base64, tables, parseopt, terminal, random, times
 
 const
   pypiApiUrl* = "https://pypi.org/"                             ## PyPI Base API URL.
@@ -187,7 +187,7 @@ proc search*(this: PyPI | AsyncPyPI, query: Table[string, seq[string]], operator
   doAssert operator in ["or", "and"], "operator must be 1 of 'and', 'or'."
   clientify(this)
   client.headers = headerXml
-  let bodi = xmlRpcBody.format("search", xmlRpcParam.format(query) & xmlRpcParam.format(operator))
+  let bodi = xmlRpcBody.format("search", xmlRpcParam.format(replace($query, "@", "")) & xmlRpcParam.format(operator))
   result =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
@@ -257,7 +257,6 @@ proc upload*(this: PyPI | AsyncPyPI,
 
 
 when isMainModule and not defined(release):
-  {.passL: "-s", passC: "-flto -ffast-math", optimization: size.}
   let cliente = PyPI(timeout: 99)
   echo cliente.stats()
   echo cliente.newPackages()
@@ -276,22 +275,42 @@ when isMainModule and not defined(release):
   echo cliente.release(project_name="microraptor", project_version="2.0.0")
   #echo cliente.search({"name": @["requests"]}.toTable)
   #echo cliente.browse(@["Topic :: Utilities", "Topic :: System"])
-
-  echo cliente.upload(
-    username        = "user",
-    password        = "s3cr3t",
-    name            = "TestPackage",
-    version         = "0.0.1",
-    license         = "MIT",
-    summary         = "A test package for testing purposes",
-    description     = "A test package for testing purposes",
-    author          = "Juan Carlos",
-    downloadurl     = "https://www.example.com/download",
-    authoremail     = "author@example.com",
-    maintainer      = "Juan Carlos",
-    maintaineremail = "maintainer@example.com",
-    homepage        = "https://www.example.com",
-    filename        = "pypi.nim",
-    md5_digest      = "4266642",
-    keywords        = @["test", "testing"],
-  )
+  # echo cliente.upload(
+  #   username        = "user",
+  #   password        = "s3cr3t",
+  #   name            = "TestPackage",
+  #   version         = "0.0.1",
+  #   license         = "MIT",
+  #   summary         = "A test package for testing purposes",
+  #   description     = "A test package for testing purposes",
+  #   author          = "Juan Carlos",
+  #   downloadurl     = "https://www.example.com/download",
+  #   authoremail     = "author@example.com",
+  #   maintainer      = "Juan Carlos",
+  #   maintaineremail = "maintainer@example.com",
+  #   homepage        = "https://www.example.com",
+  #   filename        = "pypi.nim",
+  #   md5_digest      = "4266642",
+  #   keywords        = @["test", "testing"],
+  # )
+else:
+  {.passL: "-s", passC: "-flto -ffast-math", optimization: size.}
+  const
+    helpy = "PIP/PyPI-Client Alternative,x20 Faster,x20 Smaller,Lib 99% Complete,App 1% Complete,WIP."
+  for tipoDeClave, clave, valor in getopt():
+    case tipoDeClave
+    of cmdShortOption, cmdLongOption:
+      case clave
+      of "version":              quit("0.1.0", 0)
+      of "license", "licencia":  quit("MIT", 0)
+      of "help", "ayuda":        quit(helpy, 0)
+      of "timeout":              taimaout = valor.parseInt.byte
+      of "user", "usuario":      user = valor.string.normalize
+      of "debug", "desbichar":   debug = true
+      of "color":
+        randomize()
+        setBackgroundColor(bgBlack)
+        setForegroundColor([fgRed, fgGreen, fgYellow, fgBlue, fgMagenta, fgCyan, fgWhite].rand)
+    of cmdArgument:
+      comando = clave.string.normalize
+    of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
