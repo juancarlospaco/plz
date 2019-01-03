@@ -296,7 +296,7 @@ when isMainModule and not defined(release):
 else:
   {.passL: "-s", passC: "-flto -ffast-math", optimization: size.}
   const
-    helpy = "PIP/PyPI-Client Alternative,x20 Faster,x20 Smaller,Lib 99% Complete,App 1% Complete,WIP."
+    helpy = "PIP/PyPI-Client Alternative,x20 Faster,x20 Smaller,Lib 99% Complete,App 0% Complete,WIP."
   for tipoDeClave, clave, valor in getopt():
     case tipoDeClave
     of cmdShortOption, cmdLongOption:
