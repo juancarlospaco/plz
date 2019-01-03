@@ -1,6 +1,6 @@
 # Nim-PyPI
 
-- [Pythons PyPI / PIP](https://pypi.org) Async API Client on [Nim](https://nim-lang.org).
+- [Pythons PyPI / PIP](https://pypi.org) Faster Async API Client.
 - PIP/PyPI-Client Alternative, x20 Faster, x50 Smaller, Lib 99% Complete, App 0% Complete, WIP.
 
 *(WIP, No Upload Endpoint yet, everything is subject to change on future, join the development!)*
