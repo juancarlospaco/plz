@@ -297,6 +297,10 @@ else:
   {.passL: "-s", passC: "-flto -ffast-math", optimization: size.}
   const
     helpy = "PIP/PyPI-Client Alternative,x20 Faster,x20 Smaller,Lib 99% Complete,App 0% Complete,WIP."
+  var
+    taimaout = 99.byte
+    user: string
+    debug: bool
   for tipoDeClave, clave, valor in getopt():
     case tipoDeClave
     of cmdShortOption, cmdLongOption:
