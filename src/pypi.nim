@@ -296,7 +296,7 @@ when isMainModule and not defined(release):
 else:
   {.passL: "-s", passC: "-flto -ffast-math", optimization: size.}
   const
-    helpy = "PIP/PyPI-Client Alternative,x20 Faster,x20 Smaller,Lib 99% Complete,App 0% Complete,WIP."
+    helpy = "PIP/PyPI-Client Alternative,x20 Faster,x50 Smaller,Lib 99% Complete,App 0% Complete,WIP."
   var
     taimaout = 99.byte
     user: string
