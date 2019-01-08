@@ -8,6 +8,7 @@ const
   pypiPackagesXml = "https://pypi.org/rss/packages.xml"         ## PyPI XML API URL.
   pypiUpdatesXml = "https://pypi.org/rss/updates.xml"           ## PyPI XML API URL.
   pypiUploadUrl = "https://test.pypi.org/legacy/"               ## PyPI Upload POST URL
+  pypiJobUrl = "https://www.python.org/jobs/feed/rss/"          ## Python Jobs URL
   lppXml = "<methodName>list_packages</methodName>"             ## XML RPC Command.
   clsXml = "<methodName>changelog_last_serial</methodName>"     ## XML RPC Command.
   lpsXml = "<methodName>list_packages_with_serial</methodName>" ## XML RPC Command.
