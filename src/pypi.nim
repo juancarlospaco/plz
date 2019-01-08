@@ -58,7 +58,7 @@ proc lastUpdates*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
     else: parseXml(client.getContent(pypiUpdatesXml))
 
 proc lastJobs*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
-  ## Return an RSS XML XmlNode type with the Latest Updates uploaded to PyPI.
+  ## Return an RSS XML XmlNode type with the Latest Jobs posted to PyPI.
   clientify(this)
   client.headers = headerXml
   result =
