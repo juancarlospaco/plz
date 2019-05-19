@@ -2,6 +2,7 @@ import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
   ospaths, base64, tables, parseopt, terminal, random, times
 
+
 const
   pypiApiUrl* = "https://pypi.org/"                             ## PyPI Base API URL.
   pypiXmlUrl = pypiApiUrl & "pypi"                              ## PyPI XML RPC API URL.
@@ -17,9 +18,11 @@ const
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml  = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
 
+
 let
   headerJson = newHttpHeaders(hdrJson)
   headerXml =  newHttpHeaders(hdrXml)
+
 
 type
   PyPIBase*[HttpType] = object ## Base object.
@@ -28,9 +31,11 @@ type
   PyPI* = PyPIBase[HttpClient]           ##  Sync PyPI API Client.
   AsyncPyPI* = PyPIBase[AsyncHttpClient] ## Async PyPI API Client.
 
+
 using
   classifiers: seq[string]
   project_name, project_version, package_name, user, release_version: string
+
 
 template clientify(this: PyPI | AsyncPyPI): untyped =
   ## Build & inject basic HTTP Client with Proxy and Timeout.
@@ -41,6 +46,7 @@ template clientify(this: PyPI | AsyncPyPI): untyped =
       timeout = when declared(this.timeout): this.timeout.int * 1_000 else: -1,
       proxy = when declared(this.proxy): this.proxy else: nil, userAgent="")
 
+
 proc newPackages*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return an RSS XML XmlNode type with the Newest Packages uploaded to PyPI.
   clientify(this)
@@ -48,6 +54,7 @@ proc newPackages*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   result =
     when this is AsyncPyPI: parseXml(await client.getContent(pypiPackagesXml))
     else: parseXml(client.getContent(pypiPackagesXml))
+
 
 proc lastUpdates*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return an RSS XML XmlNode type with the Latest Updates uploaded to PyPI.
@@ -57,6 +64,7 @@ proc lastUpdates*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
     when this is AsyncPyPI: parseXml(await client.getContent(pypiUpdatesXml))
     else: parseXml(client.getContent(pypiUpdatesXml))
 
+
 proc lastJobs*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return an RSS XML XmlNode type with the Latest Jobs posted to PyPI.
   clientify(this)
@@ -64,6 +72,7 @@ proc lastJobs*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   result =
     when this is AsyncPyPI: parseXml(await client.getContent(pypiJobUrl))
     else: parseXml(client.getContent(pypiJobUrl))
+
 
 proc project*(this: PyPI | AsyncPyPI, project_name): Future[JsonNode] {.multisync.} =
   ## Return all JSON JsonNode type data for project_name from PyPI.
@@ -74,6 +83,7 @@ proc project*(this: PyPI | AsyncPyPI, project_name): Future[JsonNode] {.multisyn
     when this is AsyncPyPI: parseJson(await client.getContent(url=url))
     else: parseJson(client.getContent(url=url))
 
+
 proc release*(this: PyPI | AsyncPyPI, project_name, project_version): Future[JsonNode] {.multisync.} =
   ## Return all JSON data for project_name of an specific version from PyPI.
   clientify(this)
@@ -83,12 +93,14 @@ proc release*(this: PyPI | AsyncPyPI, project_name, project_version): Future[Jso
     when this is AsyncPyPI: parseJson(await client.getContent(url=url))
     else: parseJson(client.getContent(url=url))
 
+
 proc htmlAllPackages*(this: PyPI | AsyncPyPI): Future[string] {.multisync.} =
   ## Return all projects registered on PyPI as HTML string,Legacy Endpoint,Slow.
   clientify(this)
   result =
     when this is AsyncPyPI: await client.getContent(url=pypiApiUrl & "simple")
     else: client.getContent(url=pypiApiUrl & "simple")
+
 
 proc htmlPackage*(this: PyPI | AsyncPyPI, project_name): Future[string] {.multisync.} =
   ## Return a project registered on PyPI as HTML string, Legacy Endpoint, Slow.
@@ -97,6 +109,7 @@ proc htmlPackage*(this: PyPI | AsyncPyPI, project_name): Future[string] {.multis
     when this is AsyncPyPI: await client.getContent(url=pypiApiUrl & "simple/" & project_name)
     else: client.getContent(url=pypiApiUrl & "simple/" & project_name)
 
+
 proc stats*(this: PyPI | AsyncPyPI): Future[JsonNode] {.multisync.} =
   ## Return all JSON stats data for project_name of an specific version from PyPI.
   clientify(this)
@@ -104,6 +117,7 @@ proc stats*(this: PyPI | AsyncPyPI): Future[JsonNode] {.multisync.} =
   result =
     when this is AsyncPyPI: parseJson(await client.getContent(url=pypiApiUrl & "stats"))
     else: parseJson(client.getContent(url=pypiApiUrl & "stats"))
+
 
 proc listPackages*(this: PyPI | AsyncPyPI): Future[seq[string]] {.multisync.} =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI. Server-side Slow.
@@ -115,6 +129,7 @@ proc listPackages*(this: PyPI | AsyncPyPI): Future[seq[string]] {.multisync.} =
   for tagy in response.findAll("string"):
     result.add tagy.innerText
 
+
 proc changelogLastSerial*(this: PyPI | AsyncPyPI): Future[int] {.multisync.} =
   ## Return 1 XML XmlNode with the Last Serial number integer.
   clientify(this)
@@ -125,6 +140,7 @@ proc changelogLastSerial*(this: PyPI | AsyncPyPI): Future[int] {.multisync.} =
   for tagy in response.findAll("int"):
     result = tagy.innerText.parseInt
 
+
 proc listPackagesWithSerial*(this: PyPI | AsyncPyPI): Future[seq[array[2, string]]] {.multisync.} =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with Serial number integer. Server-side Slow.
   clientify(this)
@@ -134,6 +150,7 @@ proc listPackagesWithSerial*(this: PyPI | AsyncPyPI): Future[seq[array[2, string
     else: parseXml(client.postContent(pypiXmlUrl, body=lpsXml))
   for tagy in response.findAll("member"):
     result.add [tagy.child"name".innerText, tagy.child"value".child"int".innerText]
+
 
 proc packageLatestRelease*(this: PyPI | AsyncPyPI, package_name): Future[string] {.multisync.} =
   ## Return the latest release registered for the given package_name.
@@ -146,6 +163,7 @@ proc packageLatestRelease*(this: PyPI | AsyncPyPI, package_name): Future[string]
   for tagy in response.findAll("string"):
     result = tagy.innerText
 
+
 proc packageRoles*(this: PyPI | AsyncPyPI, package_name): Future[seq[XmlNode]] {.multisync.} =
   ## Retrieve a list of role, user for a given package_name. Role is Maintainer or Owner.
   clientify(this)
@@ -157,6 +175,7 @@ proc packageRoles*(this: PyPI | AsyncPyPI, package_name): Future[seq[XmlNode]] {
   for tagy in response.findAll("data"):
     result.add tagy
 
+
 proc userPackages*(this: PyPI | AsyncPyPI, user): Future[seq[XmlNode]] {.multisync.} =
   ## Retrieve a list of role, package_name for a given user. Role is Maintainer or Owner.
   clientify(this)
@@ -167,6 +186,7 @@ proc userPackages*(this: PyPI | AsyncPyPI, user): Future[seq[XmlNode]] {.multisy
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
   for tagy in response.findAll("data"):
     result.add tagy
+
 
 proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future[seq[string]] {.multisync.} =
   ## Retrieve a list of download URLs for the given release_version. Returns a list of dicts.
@@ -181,6 +201,7 @@ proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future
     if tagy.innerText.normalize.startsWith("http"):
       result.add tagy.innerText
 
+
 proc releaseData*(this: PyPI | AsyncPyPI, package_name, release_version): Future[XmlNode] {.multisync.} =
   ## Retrieve metadata describing a specific release_version. Returns a dict.
   clientify(this)
@@ -191,6 +212,7 @@ proc releaseData*(this: PyPI | AsyncPyPI, package_name, release_version): Future
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
+
 proc search*(this: PyPI | AsyncPyPI, query: Table[string, seq[string]], operator="and"): Future[XmlNode] {.multisync.} =
   ## Search package database using indicated search spec. Returns 100 results max.
   doAssert operator in ["or", "and"], "operator must be 1 of 'and', 'or'."
@@ -200,6 +222,7 @@ proc search*(this: PyPI | AsyncPyPI, query: Table[string, seq[string]], operator
   result =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
+
 
 proc browse*(this: PyPI | AsyncPyPI, classifiers): Future[XmlNode] {.multisync.} =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
@@ -214,6 +237,7 @@ proc browse*(this: PyPI | AsyncPyPI, classifiers): Future[XmlNode] {.multisync.}
   result =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
+
 
 proc upload*(this: PyPI | AsyncPyPI,
              name, version, license, summary, description, author: string,
@@ -303,7 +327,7 @@ when isMainModule and not defined(release):
   #   keywords        = @["test", "testing"],
   # )
 else:
-  {.passL: "-s", passC: "-flto -ffast-math", optimization: size.}
+  {. passL: "-s", passC: "-flto -ffast-math -march=native", optimization: size .}
   const
     helpy = "PIP/PyPI-Client Alternative,x20 Faster,x50 Smaller,Lib 99% Complete,App 0% Complete,WIP."
   var
