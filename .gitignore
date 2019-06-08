@@ -1,3 +1,4 @@
 *.c
 *.h
 *.o
+src/pypi
