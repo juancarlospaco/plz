@@ -18,12 +18,38 @@ const
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml  = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
 
+const helpy = """
+PIP/PyPI-Client Alternative,x20 Faster,x50 Smaller,Lib 99% Complete,App 0% Complete,WIP.
+
+--help                 Show Help and quit.
+--version              Show Version and quit.
+--license              Show License and quit.
+--timeout              Set Timeout.
+
+--putenv:key=value     Set an environment variable, can be repeated.
+--nopyc                Recursively remove all *.pyc, Disable *.pyc
+--nopycache            Recursively remove all __pycache__ folders.
+
+Other environment variables (literally copied from python3 executable itself):
+--pythonstartup:foo.py Python file executed at startup (not directly executed).
+--pythonpath:FOO       ADD ':'-separated list of directories to the PYTHONPATH
+--pythonhome:FOO       Alternate Python directory.
+--ioencodingutf8       Set Encoding to UTF-8 to stdin/stdout/stderr.
+--hashseed:42          Random Seed, integer in the range [0, 4294967295].
+--malloc               Set Python memory allocators to Debug.
+--localewarn           Set the locale coerce to Warning.
+--debugger:FOO         Set the Python debugger. You can use ipdb, ptpdb, etc.
+"""
+
 
 let
   py2 = findExe"python2"
   py3 = findExe"python3"
   headerJson = newHttpHeaders(hdrJson)
   headerXml =  newHttpHeaders(hdrXml)
+  httpProxy = getEnv("HTTP_PROXY", getEnv"http_proxy")
+  httpsProxy = getEnv("HTTPS_PROXY", getEnv"https_proxy")
+  user = getEnv"USER"
 
 
 type
@@ -37,6 +63,14 @@ type
 using
   classifiers: seq[string]
   project_name, project_version, package_name, user, release_version: string
+
+
+proc handler() {.noconv.} =
+  ## Catch CTRL+C from user.
+  styledEcho(fgYellow, bgBlack, "\n👑 CTRL+C Pressed, shutting down, Bye...\n")
+  quit()
+
+setControlCHook(handler)
 
 
 template clientify(this: PyPI | AsyncPyPI): untyped =
@@ -334,15 +368,12 @@ runnableExamples:
 
 
 when isMainModule:
-  {. passL: "-s", passC: "-flto -ffast-math -march=native", optimization: size .}
+  {. passL: "-s", passC: "-flto -ffast-math -march=native", optimization: speed .}
   echo py2
   echo py3
   echo NimVersion
-  const
-    helpy = "PIP/PyPI-Client Alternative,x20 Faster,x50 Smaller,Lib 99% Complete,App 0% Complete,WIP."
   var
     taimaout = 99.byte
-    user: string
     debug: bool
   for tipoDeClave, clave, valor in getopt():
     case tipoDeClave
@@ -351,15 +382,49 @@ when isMainModule:
       of "version":              quit("0.1.0", 0)
       of "license", "licencia":  quit("MIT", 0)
       of "timeout":              taimaout = valor.parseInt.byte
-      of "user", "usuario":      user = valor.string.normalize
       of "debug", "desbichar":   debug = true
-      of "help", "ayuda":
+      of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit(helpy, 0)
       of "putenv":
         let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)
         putEnv(envy[0], envy[1])
+      of "debugger":
+        styledEcho(fgYellow, bgBlack, "Python Debugger set to: " & valor)
+        putEnv("PYTHONBREAKPOINT", valor.strip)
+      of "localewarn":
+        styledEcho(fgRed, bgBlack, "Locale coercion set to warning")
+        putEnv("PYTHONCOERCECLOCALE", "warn")
+      of "malloc":
+        styledEcho(fgRed, bgBlack, "Python memory allocators set to Debug")
+        putEnv("PYTHONMALLOC", "debug")
+      of "hashseed":
+        let seeds = valor.parseInt
+        assert seeds in 0..4294967295, "Seed must be between 0 and 4294967295"
+        styledEcho(fgRed, bgBlack, "Python Random Seed set to: " & $seeds)
+        putEnv("PYTHONHASHSEED", $seeds)
+      of "ioencodingutf8":
+        styledEcho(fgRed, bgBlack, "Python I/O Encoding set to UTF-8 Unicode")
+        putEnv("PYTHONIOENCODING", "utf-8")
+      of "pythonhome":
+        styledEcho(fgRed, bgBlack, "Python Home set to: " & valor)
+        putEnv("PYTHONHOME", valor)
+      of "pythonpath":
+        let pypath = getEnv"PYTHONPATH" & ":" & valor
+        styledEcho(fgRed, bgBlack, "Python Home set to: " & pypath)
+        putEnv("PYTHONPATH", pypath)
+      of "pythonstartup":
+        styledEcho(fgRed, bgBlack, "Python startup file set to: " & valor)
+        putEnv("PYTHONSTARTUP", valor)
+      of "nopyc":
+        for pyc in walkFiles("./*.pyc"):
+          echo pyc
+          # discard tryRemoveFile(pyc)
+      of "nopycache":
+        for pycache in walkDirs("__pycache__"):
+          echo pycache
+          # discard tryRemoveFile(pycache)
       of "color":
         randomize()
         setBackgroundColor(bgBlack)
