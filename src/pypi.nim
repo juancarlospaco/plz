@@ -21,11 +21,27 @@ const
 const helpy = """
 PIP/PyPI-Client Alternative,x20 Faster,x50 Smaller,Lib 99% Complete,App 0% Complete,WIP.
 
+Commands:
+  install                     Install packages.
+  download                    Download packages.
+  uninstall                   Uninstall packages.
+  freeze                      Output installed packages in requirements format.
+  list                        List installed packages.
+  show                        Show information about installed packages.
+  check                       Verify installed packages have compatible dependencies.
+  config                      Manage local and global configuration.
+  search                      Search PyPI for packages.
+  wheel                       Build wheels from your requirements.
+  hash                        Compute hashes of package archives.
+  completion                  A helper command used for command completion.
+  help                        Show help for commands.
+
 --help                 Show Help and quit.
 --version              Show Version and quit.
 --license              Show License and quit.
 --timeout              Set Timeout.
-
+--log:file.log         Path to the Log.
+--isolated             Run in an isolated mode, Self-Firejailing mode.
 --putenv:key=value     Set an environment variable, can be repeated.
 --nopyc                Recursively remove all *.pyc, Disable *.pyc
 --nopycache            Recursively remove all __pycache__ folders.
@@ -375,7 +391,7 @@ when isMainModule:
   echo NimVersion
   var
     taimaout = 99.byte
-    debug: bool
+    debug, firejail: bool
   for tipoDeClave, clave, valor in getopt():
     case tipoDeClave
     of cmdShortOption, cmdLongOption:
@@ -384,6 +400,8 @@ when isMainModule:
       of "license", "licencia":  quit("MIT", 0)
       of "timeout":              taimaout = valor.parseInt.byte
       of "debug", "desbichar":   debug = true
+      of "isolated", "firejail": firejail = true
+      # of "log:   logFile = "tbd"
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit(helpy, 0)

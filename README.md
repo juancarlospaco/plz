@@ -1,3 +1,5 @@
+<!--
+
 # PyPI
 
 - [Pythons PyPI / PIP](https://pypi.org) Faster Async API Client.
@@ -10,9 +12,10 @@ From XML-RPC API Server-side this endpoints wont work anymore:
 
 - `release_downloads`, `top_packages`, `updated_releases`, `changed_packages`.
 
-<!--
+
   https://chriswarrick.com/blog/2018/07/17/pipenv-promises-a-lot-delivers-very-little/
   https://github.com/ofek/hatch
   https://github.com/sdispater/poetry
   https://github.com/pypa/pip/tree/master/src/pip/_internal/commands
+
 -->
