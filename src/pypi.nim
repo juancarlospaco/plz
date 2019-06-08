@@ -1,6 +1,6 @@
 import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
-  ospaths, base64, tables, parseopt, terminal, random, times
+  base64, tables, parseopt, terminal, random, times
 
 
 const
@@ -20,6 +20,8 @@ const
 
 
 let
+  py2 = findExe"python2"
+  py3 = findExe"python3"
   headerJson = newHttpHeaders(hdrJson)
   headerXml =  newHttpHeaders(hdrXml)
 
@@ -289,7 +291,7 @@ proc upload*(this: PyPI | AsyncPyPI,
   result = "result"
 
 
-when isMainModule and not defined(release):
+runnableExamples:
   let cliente = PyPI(timeout: 99)
   echo cliente.stats()
   echo cliente.newPackages()
@@ -326,8 +328,16 @@ when isMainModule and not defined(release):
   #   md5_digest      = "4266642",
   #   keywords        = @["test", "testing"],
   # )
-else:
+
+
+###############################################################################
+
+
+when isMainModule:
   {. passL: "-s", passC: "-flto -ffast-math -march=native", optimization: size .}
+  echo py2
+  echo py3
+  echo NimVersion
   const
     helpy = "PIP/PyPI-Client Alternative,x20 Faster,x50 Smaller,Lib 99% Complete,App 0% Complete,WIP."
   var
@@ -347,13 +357,13 @@ else:
         styledEcho(fgGreen, bgBlack, helpy)
         quit(helpy, 0)
       of "putenv":
-        let envy = values.split"="
+        let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)
         putEnv(envy[0], envy[1])
       of "color":
         randomize()
         setBackgroundColor(bgBlack)
-        setForegroundColor([fgRed, fgGreen, fgYellow, fgBlue, fgMagenta, fgCyan, fgWhite].rand)
+        setForegroundColor([fgRed, fgGreen, fgYellow, fgBlue, fgMagenta, fgCyan, fgWhite].sample)
     of cmdArgument:
-      comando = clave.string.normalize
+      let comando = clave.string.normalize
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
