@@ -29,6 +29,7 @@ PIP/PyPI-Client Alternative,x20 Faster,x50 Smaller,Lib 99% Complete,App 0% Compl
 --putenv:key=value     Set an environment variable, can be repeated.
 --nopyc                Recursively remove all *.pyc, Disable *.pyc
 --nopycache            Recursively remove all __pycache__ folders.
+--cleantemp            Remove all files and folders from Temporary folder.
 
 Other environment variables (literally copied from python3 executable itself):
 --pythonstartup:foo.py Python file executed at startup (not directly executed).
@@ -425,6 +426,10 @@ when isMainModule:
         for pycache in walkDirs("__pycache__"):
           echo pycache
           # discard tryRemoveFile(pycache)
+      of "cleantemp":
+        for something in walkPattern(getTempDir()):
+          echo something
+          # discard tryRemoveFile(something)
       of "color":
         randomize()
         setBackgroundColor(bgBlack)
