@@ -340,10 +340,16 @@ else:
       case clave
       of "version":              quit("0.1.0", 0)
       of "license", "licencia":  quit("MIT", 0)
-      of "help", "ayuda":        quit(helpy, 0)
       of "timeout":              taimaout = valor.parseInt.byte
       of "user", "usuario":      user = valor.string.normalize
       of "debug", "desbichar":   debug = true
+      of "help", "ayuda":
+        styledEcho(fgGreen, bgBlack, helpy)
+        quit(helpy, 0)
+      of "putenv":
+        let envy = values.split"="
+        styledEcho(fgMagenta, bgBlack, $envy)
+        putEnv(envy[0], envy[1])
       of "color":
         randomize()
         setBackgroundColor(bgBlack)
