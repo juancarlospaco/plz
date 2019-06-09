@@ -17,24 +17,29 @@ const
   xmlRpcBody = "<?xml version='1.0'?><methodCall><methodName>$1</methodName><params>$2</params></methodCall>"
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml  = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
+  commitHash = staticExec"git rev-parse HEAD"
+
+# https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
+
 
 const helpy = """
 PIP/PyPI-Client Alternative,x20 Faster,x50 Smaller,Lib 99% Complete,App 0% Complete,WIP.
 
 Commands:
-  install                     Install packages.
-  download                    Download packages.
-  uninstall                   Uninstall packages.
-  freeze                      Output installed packages in requirements format.
-  list                        List installed packages.
-  show                        Show information about installed packages.
-  check                       Verify installed packages have compatible dependencies.
-  config                      Manage local and global configuration.
-  search                      Search PyPI for packages.
-  wheel                       Build wheels from your requirements.
-  hash                        Compute hashes of package archives.
-  completion                  A helper command used for command completion.
-  help                        Show help for commands.
+  install              Install packages.
+  download             Download packages.
+  uninstall            Uninstall packages.
+  freeze               Output installed packages in requirements format.
+  list                 List installed packages.
+  show                 Show information about installed packages.
+  check                Verify installed packages have compatible dependencies.
+  config               Manage local and global configuration.
+  search               Search PyPI for packages.
+  wheel                Build wheels from your requirements.
+  hash                 Compute hashes of package archives.
+  completion           A helper command used for command completion.
+  help                 Show Help and quit.
+  init                 Project Template cookiecutter.
 
 --help                 Show Help and quit.
 --version              Show Version and quit.
@@ -46,6 +51,10 @@ Commands:
 --nopyc                Recursively remove all *.pyc, Disable *.pyc
 --nopycache            Recursively remove all __pycache__ folders.
 --cleantemp            Remove all files and folders from Temporary folder.
+--cleanextras          Remove /var/lib/apt/lists/*,/var/tmp/*,/var/log/journal/* (For Docker)
+--0exit                Force 0 exit code.
+--suicide              Delete itself permanently at exit and quit.
+--benchmark            Performance benchmark speed and quit. (if any implemented).
 
 Other environment variables (literally copied from python3 executable itself):
 --pythonstartup:foo.py Python file executed at startup (not directly executed).
@@ -56,6 +65,10 @@ Other environment variables (literally copied from python3 executable itself):
 --malloc               Set Python memory allocators to Debug.
 --localewarn           Set the locale coerce to Warning.
 --debugger:FOO         Set the Python debugger. You can use ipdb, ptpdb, etc.
+
+Web https://github.com/juancarlospaco
+Donate
+Social
 """
 
 
@@ -396,7 +409,7 @@ when isMainModule:
     case tipoDeClave
     of cmdShortOption, cmdLongOption:
       case clave
-      of "version":              quit("0.1.0", 0)
+      of "version":              quit("0.1.0\n" & commitHash, 0)
       of "license", "licencia":  quit("MIT", 0)
       of "timeout":              taimaout = valor.parseInt.byte
       of "debug", "desbichar":   debug = true
@@ -448,6 +461,15 @@ when isMainModule:
         for something in walkPattern(getTempDir()):
           echo something
           # discard tryRemoveFile(something)
+      of "cleanextras":
+        when defined(linux):
+          removeDir("/var/log/journal/")
+          discard existsOrCreateDir("/var/log/journal/")
+          removeDir("/var/tmp/")
+          discard existsOrCreateDir("/var/tmp/")
+          removeDir("/var/lib/apt/lists/")
+          discard existsOrCreateDir("/var/lib/apt/lists/")
+        else: echo "--cleanextras is Linux only."
       of "color":
         randomize()
         setBackgroundColor(bgBlack)
