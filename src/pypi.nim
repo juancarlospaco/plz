@@ -74,6 +74,8 @@ Social
 let
   py2 = findExe"python2"
   py3 = findExe"python3"
+  cython = findExe"cython"
+  nuitka = findExe"nuitka"
   headerJson = newHttpHeaders(hdrJson)
   headerXml =  newHttpHeaders(hdrXml)
   httpProxy = getEnv("HTTP_PROXY", getEnv"http_proxy")
@@ -459,15 +461,6 @@ when isMainModule:
         for something in walkPattern(getTempDir()):
           echo something
           # discard tryRemoveFile(something)
-      of "cleanextras":
-        when defined(linux):
-          removeDir("/var/log/journal/")
-          discard existsOrCreateDir("/var/log/journal/")
-          removeDir("/var/tmp/")
-          discard existsOrCreateDir("/var/tmp/")
-          removeDir("/var/lib/apt/lists/")
-          discard existsOrCreateDir("/var/lib/apt/lists/")
-        else: echo "--cleanextras is Linux only."
       of "color":
         randomize()
         setBackgroundColor(bgBlack)
