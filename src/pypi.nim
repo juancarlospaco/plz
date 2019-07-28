@@ -1,7 +1,8 @@
 import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
-  base64, tables, parseopt, terminal, random, times
+  base64, tables, parseopt, terminal, random, times, contra
 
+hardenedBuild()
 
 const
   pypiApiUrl* = "https://pypi.org/"                             ## PyPI Base API URL.
@@ -17,7 +18,7 @@ const
   xmlRpcBody = "<?xml version='1.0'?><methodCall><methodName>$1</methodName><params>$2</params></methodCall>"
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml  = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
-  commitHash = staticExec"git rev-parse HEAD"
+  commitHash = staticExec"git rev-parse --short HEAD"
 
 # https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
 
@@ -398,7 +399,6 @@ runnableExamples:
 
 
 when isMainModule:
-  {. passL: "-s", passC: "-flto -ffast-math -march=native", optimization: speed .}
   echo py2
   echo py3
   echo NimVersion
@@ -410,7 +410,7 @@ when isMainModule:
     of cmdShortOption, cmdLongOption:
       case clave
       of "version":              quit("0.1.0\n" & commitHash, 0)
-      of "license", "licencia":  quit("MIT", 0)
+      of "license", "licencia":  quit("PPL", 0)
       of "timeout":              taimaout = valor.parseInt.byte
       of "debug", "desbichar":   debug = true
       of "isolated", "firejail": firejail = true
