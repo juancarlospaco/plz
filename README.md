@@ -18,4 +18,5 @@ From XML-RPC API Server-side this endpoints wont work anymore:
   https://github.com/sdispater/poetry
   https://github.com/pypa/pip/tree/master/src/pip/_internal/commands
 
+   Check: pipsi, pipx
 -->
