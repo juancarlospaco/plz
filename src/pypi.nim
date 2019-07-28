@@ -52,7 +52,6 @@ Commands:
 --nopyc                Recursively remove all *.pyc
 --nopycache            Recursively remove all __pycache__
 --cleantemp            Remove all files and folders from Temporary folder.
---0exit                Force 0 exit code.
 --suicide              Delete itself permanently at exit and quit.
 
 Other environment variables (literally copied from python3 executable itself):
@@ -65,9 +64,12 @@ Other environment variables (literally copied from python3 executable itself):
 --localewarn           Set the locale coerce to Warning.
 --debugger:FOO         Set the Python debugger. You can use ipdb, ptpdb, etc.
 
-Web https://github.com/juancarlospaco
-Donate
-Social
+Compile options quick tip (Release builds are automatically stripped/optimized):
+ Fastest       -d:release -d:danger --gc:markAndSweep
+ Balanced      -d:release
+ Safest        -d:release -d:contracts -d:hardened --styleCheck:hint
+
+Learn more http://nim-lang.org/learn.html http://nim-lang.org/documentation.html
 """
 
 
@@ -465,6 +467,8 @@ when isMainModule:
         randomize()
         setBackgroundColor(bgBlack)
         setForegroundColor([fgRed, fgGreen, fgYellow, fgBlue, fgMagenta, fgCyan, fgWhite].sample)
+      of "suicide":
+        discard tryRemoveFile(currentSourcePath().replace(".nim", ""))
     of cmdArgument:
       let comando = clave.string.normalize
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
