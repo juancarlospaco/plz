@@ -49,13 +49,11 @@ Commands:
 --log:file.log         Path to the Log.
 --isolated             Run in an isolated mode, Self-Firejailing mode.
 --putenv:key=value     Set an environment variable, can be repeated.
---nopyc                Recursively remove all *.pyc, Disable *.pyc
---nopycache            Recursively remove all __pycache__ folders.
+--nopyc                Recursively remove all *.pyc
+--nopycache            Recursively remove all __pycache__
 --cleantemp            Remove all files and folders from Temporary folder.
---cleanextras          Remove /var/lib/apt/lists/*,/var/tmp/*,/var/log/journal/* (For Docker)
 --0exit                Force 0 exit code.
 --suicide              Delete itself permanently at exit and quit.
---benchmark            Performance benchmark speed and quit. (if any implemented).
 
 Other environment variables (literally copied from python3 executable itself):
 --pythonstartup:foo.py Python file executed at startup (not directly executed).
