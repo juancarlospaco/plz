@@ -44,7 +44,7 @@ Commands:
   search             Search PyPI for packages.
   wheel              Build wheels from your requirements.
   hash               Compute hashes of package archives (SHA512 Checksum file)
-  init               New Python project template (Interactive)
+  init               New Python project template (Interactive, asks Y/N to user)
 
 Options:
   --help             Show Help and quit.
@@ -58,6 +58,7 @@ Options:
   --nopycache        Recursively remove all __pycache__
   --cleantemp        Remove all files and folders from Temporary folder.
   --nice20           Runs with nice=20 (CPU Priority, smooth priority).
+  --completion:bash  Show Auto-Completion for Bash/ZSH/Fish terminal and quit.
   --suicide          Delete itself permanently and exit (single file binary).
 
 Other environment variables (literally copied from python3 executable itself):
@@ -212,6 +213,27 @@ ENV PYTHON_VERSION 3.7
 ENV PYTHON_PIP_VERSION 3.7
 ENV PATH /usr/local/bin:$PATH
 # Do your magic here. Download and Compile Python... """
+
+const completionBash = """_pip_completion() {
+  COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD PIP_AUTO_COMPLETE=1 $1 ) )
+}
+complete -o default -F _pip_completion pip """
+
+const completionZsh = """function _pip_completion {
+  local words cword
+  read -Ac words
+  read -cn cword
+  reply=( $( COMP_WORDS="$words[*]" COMP_CWORD=$(( cword-1 )) PIP_AUTO_COMPLETE=1 $words[1] ) )
+}
+compctl -K _pip_completion pip """
+
+const completionFish = """function __fish_complete_pip
+  set -lx COMP_WORDS (commandline -o) ""
+  set -lx COMP_CWORD ( math (contains -i -- (commandline -t) $COMP_WORDS)-1 )
+  set -lx PIP_AUTO_COMPLETE 1
+  string split \  -- (eval $COMP_WORDS[1])
+end
+complete -fa "(__fish_complete_pip)" -c pip """
 
 let
   py2 = findExe"python2"
@@ -542,6 +564,7 @@ proc pluginSkeleton() =
     writeFile(pluginName / "CODE_OF_CONDUCT.md", "")
     writeFile(pluginName / "CONTRIBUTING.md", "")
     writeFile(pluginName / "README.md", "")
+    writeFile(pluginName / "requirements.txt", "")
     writeFile(pluginName / "setup.cfg", setupCfg)
     writeFile(pluginName / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
     writeFile(pluginName / "CHANGELOG.md", "# 0.0.1\n\n- First initial version created at " & $now())
@@ -602,8 +625,12 @@ when isMainModule:
     case tipoDeClave
     of cmdShortOption, cmdLongOption:
       case clave.normalize
-      of "version":              quit("0.1.0\n" & commitHash, 0)
-      of "license", "licencia":  quit("PPL", 0)
+      of "version":             quit("0.1.0\n" & commitHash, 0)
+      of "license", "licencia": quit("PPL", 0)
+      of "completion":
+        if valor == "zsh":      quit(completionZsh, 0)
+        elif valor == "fish":   quit(completionFish, 0)
+        else:                   quit(completionBash, 0)
       of "timeout":              taimaout = valor.parseInt.byte
       of "isolated", "firejail": firejail = true
       of "help", "ayuda", "fullhelp":
