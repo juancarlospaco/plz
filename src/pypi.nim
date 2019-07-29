@@ -21,7 +21,7 @@ const
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml  = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
   commitHash = staticExec"git rev-parse --short HEAD"
-  sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])""" ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
+  sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])" """ ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
   pipCacheDir =
     when defined(linux):   r"~/.cache/pip"
     elif defined(macos):   r"~/Library/Caches/pip"
@@ -50,13 +50,14 @@ Options:
   --help             Show Help and quit.
   --version          Show Version and quit.
   --license          Show License and quit.
-  --debug            Show Debug info and quit.
+  --debug            Show Debug info and quit (for Developers).
   --timeout=42       Set Timeout.
   --isolated         Run in an isolated mode, Self-Firejailing mode.
   --putenv:key=value Set an environment variable, can be repeated.
   --nopyc            Recursively remove all *.pyc
   --nopycache        Recursively remove all __pycache__
-  --cleantemp        Remove all files and folders from Temporary folder.
+  --cleantemp        Remove all files and folders from OS Temporary folder.
+  --cleanpipcache    Remove all files and folders from PIP Cache folder.
   --nice20           Runs with nice=20 (CPU Priority, smooth priority).
   --completion:bash  Show Auto-Completion for Bash/ZSH/Fish terminal and quit.
   --suicide          Delete itself permanently and exit (single file binary).
@@ -637,10 +638,16 @@ when isMainModule:
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
       of "debug", "desbichar":
-        echo py2
-        echo py3
-        echo NimVersion
-        quit()
+        quit(pretty(%*{"CompileDate": CompileDate, "CompileTime": CompileTime,
+        "NimVersion": NimVersion, "hostCPU": hostCPU, "hostOS": hostOS,
+        "cpuEndian": cpuEndian, "tempDir": getTempDir(), "python2": py2,
+        "currentDir": getCurrentDir(), "python3": py3, "ssl": defined(ssl),
+        "release": defined(release), "contracts": defined(release),
+        "hardened": defined(hardened), "sitePackages": sitePackages,
+        "pipCacheDir": pipCacheDir, "cython": cython, "nuitka": nuitka,
+        "currentCompilerExe": getCurrentCompilerExe(), "int.high": int.high,
+        "processorsCount": countProcessors(), "danger": defined(danger),
+        "currentProcessId": getCurrentProcessId()}), 0)
       of "putenv":
         let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)
@@ -684,6 +691,7 @@ when isMainModule:
         for something in walkPattern(getTempDir()):
           echo something
           discard tryRemoveFile(something)
+      of "cleanpipcache":
         discard tryRemoveFile("/tmp/pip-build-root")  # PIP can be dumb.
         discard tryRemoveFile("/tmp/pip_build_root")  # Found in the wild.
         discard tryRemoveFile("/tmp/pip-build-" & getEnv"USER")
