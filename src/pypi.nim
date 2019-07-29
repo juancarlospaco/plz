@@ -632,6 +632,7 @@ when isMainModule:
         if valor == "zsh":      quit(completionZsh, 0)
         elif valor == "fish":   quit(completionFish, 0)
         else:                   quit(completionBash, 0)
+      of "nice20":              discard nice(20.cint)
       of "timeout":              taimaout = valor.parseInt.byte
       of "isolated", "firejail": firejail = true
       of "help", "ayuda", "fullhelp":
@@ -647,7 +648,7 @@ when isMainModule:
         "pipCacheDir": pipCacheDir, "cython": cython, "nuitka": nuitka,
         "currentCompilerExe": getCurrentCompilerExe(), "int.high": int.high,
         "processorsCount": countProcessors(), "danger": defined(danger),
-        "currentProcessId": getCurrentProcessId()}), 0)
+        "currentProcessId": getCurrentProcessId(), "linux": defined(linux)}), 0)
       of "putenv":
         let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)
@@ -703,8 +704,6 @@ when isMainModule:
         setForegroundColor([fgRed, fgGreen, fgYellow, fgBlue, fgMagenta, fgCyan, fgWhite].sample)
       of "suicide":
         discard tryRemoveFile(currentSourcePath()[0..^5])
-      of "nice20":
-        discard nice(20.cint)
     of cmdArgument:
       args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
@@ -719,9 +718,9 @@ when isMainModule:
     pluginSkeleton()
   of "hash":
     if findExe"sha512sum".len > 0:
-      let sha = execCmdEx(cmdChecksum & args[1]).output.strip
-      echo sha
-      echo "--hash=sha512:" & sha.split(" ")[^1]
+      let sha512sum = execCmdEx(cmdChecksum & args[1]).output.strip
+      echo sha512sum
+      echo "--hash=sha512:" & sha512sum.split(" ")[^1]
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
   #echo "🌎 PyPI"
