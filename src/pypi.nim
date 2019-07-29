@@ -51,7 +51,7 @@ Options:
   --version          Show Version and quit.
   --license          Show License and quit.
   --debug            Show Debug info and quit.
-  --timeout          Set Timeout.
+  --timeout=42       Set Timeout.
   --isolated         Run in an isolated mode, Self-Firejailing mode.
   --putenv:key=value Set an environment variable, can be repeated.
   --nopyc            Recursively remove all *.pyc
