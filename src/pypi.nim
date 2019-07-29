@@ -124,7 +124,7 @@ classifiers =  # https://pypi.python.org/pypi?%3Aaction=list_classifiers
 zip_safe = True
 include_package_data = True
 python_requires  = >=3.7
-tests_require    = prospector ; pre-commit
+tests_require    = prospector ; pre-commit ; twine
 install_requires = pip
 setup_requires   = pip
 packages         = find:
@@ -526,6 +526,8 @@ proc pluginSkeleton() =
   if readLineFromStdin("\nGenerate optional DevOps on ./devops (y/N): ").string.strip.toLowerAscii == "y":
     discard existsOrCreateDir(pluginName / "devops")
     writeFile(pluginName / "devops/Dockerfile", dockerfileTemplate)
+    writeFile(pluginName / "devops/build_package.sh", "python3 setup.py sdist --formats=zip\n")
+    writeFile(pluginName / "devops/upload_package.sh", "twine upload .\n")
   if readLineFromStdin("\nGenerate optional GitHub files on .github (y/N): ").string.strip.toLowerAscii == "y":
     discard existsOrCreateDir(pluginName / ".github")
     discard existsOrCreateDir(pluginName / ".github/ISSUE_TEMPLATE")
@@ -671,7 +673,7 @@ when isMainModule:
     of cmdArgument:
       args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
-  
+
   let cliente = PyPI(timeout: taimaout)
   case args[0].normalize
   of "search":
