@@ -31,7 +31,7 @@ const
   pipInstallCmd = "pip3 install --upgrade --no-index --user" & pipCommons
   cmdChecksum = "sha512sum --tag "
 
-const helpy = """👑PIP/PyPI Fast Async Single-File Compiled Alternative App👑
+const helpy = """👑PIP/PyPI Fast Async Single-File Hardened Alternative App👑
 Commands:
   install            Install packages.
   download           Download packages.
