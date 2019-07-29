@@ -31,9 +31,7 @@ const
   pipInstallCmd = "pip3 install --upgrade --no-index --user" & pipCommons
   cmdChecksum = "sha512sum --tag "
 
-const helpy = """
-PIP/PyPI-Client Alternative,x20 Faster,x50 Smaller,Lib 99% Complete,App 0% Complete,WIP.
-
+const helpy = """PIP / PyPI Fast Async Single-File Compiled Alternative App.
 Commands:
   install            Install packages.
   download           Download packages.
@@ -521,10 +519,8 @@ when isMainModule:
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
   
   let cliente = PyPI(timeout: taimaout)
-  let firstArg = args[0]
-  case firstArg.normalize
+  case args[0].normalize
   of "search": 
-    echo "busquedita"
     echo args[1]
     # echo cliente.search({"name": @[args[1]]}.toTable)
     echo cliente.search({"name": @["requests"]}.toTable)
@@ -536,9 +532,7 @@ when isMainModule:
       echo sha
       echo "--hash=sha512:" & sha.split(" ")[^1]
 
-  else: discard
+  else: quit("Wrong Parameters, please see Help with: --help", 1)
   #echo "🌎 PyPI"
-  
   # discard cliente.installPackage(package_name="faster-than-walk", release_version="0.5")
-
   resetAttributes()  # Reset terminal colors.
