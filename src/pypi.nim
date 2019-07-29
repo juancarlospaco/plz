@@ -65,18 +65,21 @@ Other environment variables (literally copied from python3 executable itself):
   --pythonstartup:f.py Python file executed at startup (not directly executed).
   --pythonpath:FOO     ADD ':'-separated list of directories to the PYTHONPATH
   --pythonhome:FOO     Alternate Python directory.
-  --ioencodingutf8     Set Encoding to UTF-8 to stdin/stdout/stderr.
+  --ioencodingutf8     Set Encoding to UTF-8 to Python stdin/stdout/stderr.
   --hashseed:42        Random Seed, integer in the range [0, 4294967295].
   --malloc             Set Python memory allocators to Debug.
   --localewarn         Set the locale coerce to Warning.
   --debugger:FOO       Set the Python debugger. You can use ipdb, ptpdb, etc.
 
-Compile options quick tip (Release builds are automatically stripped/optimized):
-  Fastest                -d:release -d:danger --gc:markAndSweep
-  Balanced (Recommended) -d:release
-  Safest                 -d:release -d:contracts -d:hardened --styleCheck:hint
+Compile options (Optimize/Enable/Disable features when compiling source code):
+  -d:hardened          Security Hardened mode is enabled. Runs Hardened.
+  -d:contracts         Force Design by Contract enabled. Runs assertive.
 
-Learn more: http://nim-lang.org/learn.html http://github.com/juancarlospaco """
+Compile options quick tip (Release builds are automatically stripped/optimized):
+  Fastest              -d:release -d:danger --gc:markAndSweep
+  Safest               -d:release -d:contracts -d:hardened --styleCheck:hint
+
+ 👑 http://nim-lang.org/learn.html 🐍 http://github.com/juancarlospaco ⚡ """
 
 
 let
@@ -437,7 +440,7 @@ when isMainModule:
       of "isolated", "firejail": firejail = true
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
-        quit(helpy, 0)
+        quit()
       of "putenv":
         let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)
@@ -502,3 +505,5 @@ when isMainModule:
   echo "🌎 PyPI"
   let cliente = PyPI(timeout: 99)
   discard cliente.installPackage(package_name="faster-than-walk", release_version="0.5")
+
+  resetAttributes()  # Reset terminal colors.
