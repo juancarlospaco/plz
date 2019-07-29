@@ -1,6 +1,6 @@
 import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
-  base64, tables, parseopt, terminal, random, times, contra
+  base64, tables, parseopt, terminal, random, times, contra, posix
 
 hardenedBuild()
 
@@ -52,6 +52,7 @@ Commands:
 --nopyc              Recursively remove all *.pyc
 --nopycache          Recursively remove all __pycache__
 --cleantemp          Remove all files and folders from Temporary folder.
+--nice20             Runs with nice=20 (CPU Priority)
 --suicide            Delete itself permanently and exit (single file binary).
 
 Other environment variables (literally copied from python3 executable itself):
@@ -469,6 +470,8 @@ when isMainModule:
         setForegroundColor([fgRed, fgGreen, fgYellow, fgBlue, fgMagenta, fgCyan, fgWhite].sample)
       of "suicide":
         discard tryRemoveFile(currentSourcePath().replace(".nim", ""))
+      of "nice20":
+        discard nice(20.cint)
     of cmdArgument:
       let comando = clave.string.normalize
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
