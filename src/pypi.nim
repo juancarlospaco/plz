@@ -34,7 +34,7 @@ const
   cmdSign = "gpg --armor --detach-sign --yes --digest-algo sha512 "
   cmdTar = "tar cafv "
 
-const helpy = """👑PIP/PyPI Fast Async Single-File Hardened Alternative App👑
+const helpy = """👑PIP Fast Async Single-File Hardened Compiled Alternative👑
 Commands:
   install            Install packages.
   download           Download packages.
