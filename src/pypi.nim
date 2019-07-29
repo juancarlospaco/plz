@@ -13,6 +13,7 @@ const
   pypiUpdatesXml = "https://pypi.org/rss/updates.xml"           ## PyPI XML API URL.
   pypiUploadUrl = "https://test.pypi.org/legacy/"               ## PyPI Upload POST URL
   pypiJobUrl = "https://www.python.org/jobs/feed/rss/"          ## Python Jobs URL
+  pypiStatus = "https://status.python.org/history.rss"          ## PyPI Status XML API URL.
   lppXml = "<methodName>list_packages</methodName>"             ## XML RPC Command.
   clsXml = "<methodName>changelog_last_serial</methodName>"     ## XML RPC Command.
   lpsXml = "<methodName>list_packages_with_serial</methodName>" ## XML RPC Command.
@@ -36,13 +37,17 @@ const
 
 const helpy = """👑PIP Fast Async Single-File Hardened Compiled Alternative👑
 Commands:
-  install            Install packages.
+  install            Install packages (Download, Decompress, Install packages).
   download           Download packages.
-  uninstall          Uninstall packages.
-  search             Search PyPI for packages.
-  hash               Compute hashes of package archives (SHA512 Checksum file)
-  init               New Python project template (Interactive, asks Y/N to user)
-  backup             Compressed signed backup of a file and quit (GPG, SHA512)
+  uninstall          Uninstall packages (Interactive, asks Y/N to user before).
+  search             Search PyPI for packages (PyPI API is Buggy,is still WIP).
+  hash               Compute hashes of package archives (SHA512 Checksum file).
+  init               New Python project template (Interactive,asks Y/N to user).
+  backup             Compressed signed backup of a file and quit (GPG, SHA512).
+  newpackages        List all the new Packages uploaded to PyPI recently (RSS).
+  lastupdates        List all existing Packages updated on PyPI recently (RSS).
+  stats              PyPI service status report from official statuspage (RSS).
+  userpackages       List all existing Packages uploaded to PyPI by the User.
 
 Options:
   --help             Show Help and quit.
@@ -332,13 +337,13 @@ proc htmlPackage*(this: PyPI | AsyncPyPI, project_name): Future[string] {.multis
     else: client.getContent(url=pypiApiUrl & "simple/" & project_name)
 
 
-proc stats*(this: PyPI | AsyncPyPI): Future[JsonNode] {.multisync.} =
+proc stats*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return all JSON stats data for project_name of an specific version from PyPI.
   clientify(this)
-  client.headers = headerJson
+  client.headers = headerXml
   result =
-    when this is AsyncPyPI: parseJson(await client.getContent(url=pypiApiUrl & "stats"))
-    else: parseJson(client.getContent(url=pypiApiUrl & "stats"))
+    when this is AsyncPyPI: parseXml(await client.getContent(url=pypiStatus))
+    else: parseXml(client.getContent(url=pypiStatus))
 
 
 proc listPackages*(this: PyPI | AsyncPyPI): Future[seq[string]] {.multisync.} =
@@ -726,10 +731,18 @@ when isMainModule:
 
   let cliente = PyPI(timeout: taimaout)
   case args[0].normalize
+  of "stats":
+    quit($cliente.stats(), 0)
+  of "newpackages":
+    quit($cliente.newPackages(), 0)
+  of "lastupdates":
+    quit($cliente.lastUpdates(), 0)
+  of "userpackages":
+    quit($cliente.userPackages(readLineFromStdin("PyPI Username?: ").normalize), 0)
   of "search":
-    echo args[1]
+    quit("Not implemented yet (PyPI API is Buggy)")
+    # echo args[1]
     # echo cliente.search({"name": @[args[1]]}.toTable)
-    echo cliente.search({"name": @["requests"]}.toTable)
   of "init":
     pluginSkeleton()
   of "hash":
@@ -742,12 +755,13 @@ when isMainModule:
   of "uninstall":
     var files2delete: seq[string]
     for pythonfile in walkFiles(sitePackages / args[1] / "*.*"):
-      echo pythonfile
       files2delete.add pythonfile
+      echo pythonfile
     if readLineFromStdin("\nDelete Python files? (y/N): ").normalize == "y":
       for pythonfile in files2delete:
         echo pythonfile
-        # discard tryRemoveFile(pythonfile)
+        discard tryRemoveFile(pythonfile)
+
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
   #echo "🌎 PyPI"
