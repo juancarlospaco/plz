@@ -401,7 +401,7 @@ proc packageRoles*(this: PyPI | AsyncPyPI, package_name): Future[seq[XmlNode]] {
     result.add tagy
 
 
-proc userPackages*(this: PyPI | AsyncPyPI, user): Future[seq[XmlNode]] {.multisync.} =
+proc userPackages*(this: PyPI | AsyncPyPI, user = user): Future[seq[XmlNode]] {.multisync.} =
   ## Retrieve a list of role, package_name for a given user. Role is Maintainer or Owner.
   clientify(this)
   client.headers = headerXml
@@ -695,8 +695,8 @@ when isMainModule:
       of "cleanpipcache":
         discard tryRemoveFile("/tmp/pip-build-root")  # PIP can be dumb.
         discard tryRemoveFile("/tmp/pip_build_root")  # Found in the wild.
-        discard tryRemoveFile("/tmp/pip-build-" & getEnv"USER")
-        discard tryRemoveFile("/tmp/pip_build_" & getEnv"USER")
+        discard tryRemoveFile("/tmp/pip-build-" & user)
+        discard tryRemoveFile("/tmp/pip_build_" & user)
         discard tryRemoveFile(pipCacheDir)
       of "color":
         randomize()
