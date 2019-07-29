@@ -1,6 +1,6 @@
 import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
-  base64, tables, parseopt, terminal, random, times, posix, logging, osproc
+  base64, tables, parseopt, terminal, random, times, posix, logging, osproc, rdstdin
 
 import contra
 
@@ -29,6 +29,7 @@ const
     else:                  getEnv("PIP_DOWNLOAD_CACHE")
   pipCommons = " --isolated --disable-pip-version-check --no-color --no-cache-dir --quiet --exists-action=w -y "
   pipInstallCmd = "pip3 install --upgrade --no-index --user" & pipCommons
+  cmdChecksum = "sha512sum --tag "
 
 const helpy = """
 PIP/PyPI-Client Alternative,x20 Faster,x50 Smaller,Lib 99% Complete,App 0% Complete,WIP.
@@ -44,9 +45,8 @@ Commands:
   config             Manage local and global configuration.
   search             Search PyPI for packages.
   wheel              Build wheels from your requirements.
-  hash               Compute hashes of package archives.
-  completion         A helper command used for command completion.
-  init               Project Template cookiecutter.
+  hash               Compute hashes of package archives (SHA512 Checksum file)
+  init               New Python project template (Interactive)
 
 Options:
   --help             Show Help and quit.
@@ -377,6 +377,24 @@ proc upload*(this: PyPI | AsyncPyPI,
   result = "result"
 
 
+proc pluginSkeleton() =
+  ## Creates the skeleton (folders and files) for a plugin
+  let pluginName = normalize(readLineFromStdin("New Python project name?: "))
+  assert pluginName.len > 1, "Name must not be empty string: " & pluginName
+  discard existsOrCreateDir(pluginName)
+  writeFile(pluginName / pluginName & ".py", "#")
+  if readLineFromStdin("\nInclude optional files (y/N): ").string.strip.toLowerAscii == "y":
+    writeFile(pluginName / ".gitattributes", "*.py linguist-language=Python\n")
+    writeFile(pluginName / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.sql\n*.sha512\n*.asc")
+    writeFile(pluginName / "changelog.md",
+      "# 0.0.1\n\n- First initial version created at " & $now())
+    writeFile(pluginName / "setup.cfg",
+      "# https://nim-lang.org/docs/parsecfg.html\n")
+    writeFile(pluginName / "setup.py",
+      "# https://nim-lang.org/docs/parsecfg.html\n")
+  quit("\n\nCreated a new Python project skeleton, happy hacking, bye.\n\n", 0)
+
+
 runnableExamples:
   let cliente = PyPI(timeout: 99)
   echo cliente.stats()
@@ -429,10 +447,11 @@ when isMainModule:
   var
     taimaout = 99.byte
     debug, firejail: bool
+    args: seq[string]
   for tipoDeClave, clave, valor in getopt():
     case tipoDeClave
     of cmdShortOption, cmdLongOption:
-      case clave
+      case clave.normalize
       of "version":              quit("0.1.0\n" & commitHash, 0)
       of "license", "licencia":  quit("PPL", 0)
       of "timeout":              taimaout = valor.parseInt.byte
@@ -498,12 +517,28 @@ when isMainModule:
       of "nice20":
         discard nice(20.cint)
     of cmdArgument:
-      let comando = clave.string.normalize
+      args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
+  
+  let cliente = PyPI(timeout: taimaout)
+  let firstArg = args[0]
+  case firstArg.normalize
+  of "search": 
+    echo "busquedita"
+    echo args[1]
+    # echo cliente.search({"name": @[args[1]]}.toTable)
+    echo cliente.search({"name": @["requests"]}.toTable)
+  of "init":
+    pluginSkeleton()
+  of "hash":
+    if findExe"sha512sum".len > 0:
+      let sha = execCmdEx(cmdChecksum & args[1]).output.strip
+      echo sha
+      echo "--hash=sha512:" & sha.split(" ")[^1]
 
-
-  echo "🌎 PyPI"
-  let cliente = PyPI(timeout: 99)
-  discard cliente.installPackage(package_name="faster-than-walk", release_version="0.5")
+  else: discard
+  #echo "🌎 PyPI"
+  
+  # discard cliente.installPackage(package_name="faster-than-walk", release_version="0.5")
 
   resetAttributes()  # Reset terminal colors.
