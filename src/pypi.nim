@@ -80,6 +80,138 @@ Compile options quick tip (Release builds are automatically stripped/optimized):
 
  👑 http://nim-lang.org/learn.html 🐍 http://github.com/juancarlospaco ⚡ """
 
+const setupCfg = """# See: https://setuptools.readthedocs.io/en/latest/setuptools.html#metadata
+[metadata]
+name             = example
+provides         = example
+description      = example package
+url              = https://github.com/example/example
+download_url     = https://github.com/example/example
+author           = Deborah Melltrozzo
+author_email     = example@example.com
+maintainer       = Deborah Melltrozzo
+maintainer_email = example@example.com
+keywords         = python, exampletag, sometag
+license          = MIT
+platforms        = Linux, Darwin, Windows
+version          = attr: somepythonmodule.__version__
+project_urls     =
+    Docs = https://github.com/example/example/README.md
+    Bugs = https://github.com/example/example/issues
+    C.I. = https://travis-ci.org/example/example
+
+license_file = LICENSE
+long_description = file: README.md
+long_description_content_type = text/markdown
+classifiers =  # https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    Development Status :: 5 - Production/Stable
+    Environment :: Console
+    Environment :: Other Environment
+    Intended Audience :: Developers
+    Intended Audience :: Other Audience
+    Natural Language :: English
+    Operating System :: OS Independent
+    Operating System :: POSIX :: Linux
+    Operating System :: Microsoft :: Windows
+    Operating System :: MacOS :: MacOS X
+    Programming Language :: Python
+    Programming Language :: Python :: 3
+    Programming Language :: Python :: 3 :: Only
+    Programming Language :: Python :: Implementation :: CPython
+    Topic :: Software Development
+
+[options]
+zip_safe = True
+include_package_data = True
+python_requires  = >=3.7
+tests_require    = prospector ; pre-commit
+install_requires = pip
+setup_requires   = pip
+packages         = find:
+
+[bdist_wheel]
+universal = 1
+
+[bdist_egg]
+exclude-source-files = true
+
+# [options.package_data]
+# * = *.pxd, *.pyx, *.json, *.txt
+
+# [options.exclude_package_data]
+# ;* = *.c, *.so, *.js
+
+# [options.entry_points]
+# console_scripts =
+#     foo = my_package.some_module:main_func
+#     bar = other_module:some_func
+# gui_scripts =
+#     baz = my_package_gui:start_func
+
+# [options.packages.find]
+# where   = .
+# include = *.py, *.pyw
+# exclude = *.c, *.so, *.js, *.tests, *.tests.*, tests.*, tests """
+
+const testTemplate = """# -*- coding: utf-8 -*-
+'''Unittest.'''
+
+import unittest
+from random import randint
+# Random order for tests runs. (Original is: -1 if x<y, 0 if x==y, 1 if x>y).
+unittest.TestLoader.sortTestMethodsUsing = lambda _, x, y: randint(-1, 1)
+
+def setUpModule():
+    pass
+
+def tearDownModule():
+    pass
+
+class TestName(unittest.TestCase):
+    maxDiff, __slots__ = None, ()
+
+    def setUp(self):
+        pass  # Method to prepare the test fixture. Run BEFORE the test methods
+
+    def tearDown(self):
+        pass  # Method to tear down the test fixture. Run AFTER the test methods
+
+    def addCleanup(self, function, *args, **kwargs):
+        pass  # Function called AFTER tearDown() to clean resources used on test
+
+    @classmethod
+    def setUpClass(cls):
+        pass  # Probably you may not use this one. See setUp().
+
+    @classmethod
+    def tearDownClass(cls):
+        pass  # Probably you may not use this one. See tearDown().
+
+    @unittest.skip("Demonstrating skipping")  # Skips this test only
+    @unittest.skipIf("boolean_condition", "Reason to Skip Test here.")  # Skips 
+    @unittest.expectedFailure  # This test MUST fail. If test fails, then is Ok
+    def test_dummy(self):
+        self.skipTest("Just examples, use as template!.")  # Skips this test
+        self.assertEqual(a, b)  # a == b
+        self.assertTrue(x)  # bool(x) is True
+        self.assertIs(a, b)  # a is b
+        self.assertIsNotNone(x)  # x is not None
+        self.assertIn(a, b)  # a in b
+        self.assertIsInstance(a, b)  # isinstance(a, b)
+        self.assertRaises(SomeException, callable, *args, **kwds)  # Must raise
+        with self.assertRaises(SomeException) as cm:
+            do_something_that_raises() # This line  Must raise SomeException
+
+if __name__ in "__main__":
+    unittest.main() """
+
+const dockerfileTemplate = """FROM alpine:latest
+RUN apk add --no-cache ca-certificates gnupg tar xz bzip2 coreutils dpkg findutils gcc libc-dev linux-headers make openssl readline sqlite zlib tk tcl ncurses gdbm
+ENV LANG C.UTF-8
+ENV PYTHON_VERSION 3.7
+ENV PYTHON_PIP_VERSION 3.7
+ENV PATH /usr/local/bin:$PATH
+# Do your magic here. Download and Compile Python... """
 
 let
   py2 = findExe"python2"
@@ -377,21 +509,41 @@ proc upload*(this: PyPI | AsyncPyPI,
 
 
 proc pluginSkeleton() =
-  ## Creates the skeleton (folders and files) for a plugin
+  ## Creates the skeleton (folders and files) for a New Python project.
   let pluginName = normalize(readLineFromStdin("New Python project name?: "))
   assert pluginName.len > 1, "Name must not be empty string: " & pluginName
   discard existsOrCreateDir(pluginName)
-  writeFile(pluginName / pluginName & ".py", "#")
-  if readLineFromStdin("\nInclude optional files (y/N): ").string.strip.toLowerAscii == "y":
+  writeFile(pluginName / pluginName & ".py", r"print((lambda r:'\n'.join('.'.join('█' if(y<r and((x-r)**2+(y-r)**2<=r**2or(x-3*r)**2+(y-r)**2<=r**2))or(y>=r and x+r>=y and x-r<=4*r-y)else '░' for x in range(4*r))for y in range(1,3*r,2)))(5))")
+  if readLineFromStdin("\nGenerate optional Unitests on ./tests (y/N): ").string.strip.toLowerAscii == "y":
+    discard existsOrCreateDir(pluginName / "tests")
+    writeFile(pluginName / "tests/tests.py", testTemplate)
+  if readLineFromStdin("\nGenerate optional Documentation on ./docs (y/N): ").string.strip.toLowerAscii == "y":
+    discard existsOrCreateDir(pluginName / "docs")
+    writeFile(pluginName / "docs/documentation.md", "# " & pluginName & "\n\n")
+  if readLineFromStdin("\nGenerate optional Examples on ./examples (y/N): ").string.strip.toLowerAscii == "y":
+    discard existsOrCreateDir(pluginName / "examples")
+    writeFile(pluginName / "examples/example.py", "# -*- coding: utf-8 -*-\n\nprint('Example')\n")
+  if readLineFromStdin("\nGenerate optional DevOps on ./devops (y/N): ").string.strip.toLowerAscii == "y":
+    discard existsOrCreateDir(pluginName / "devops")
+    writeFile(pluginName / "devops/Dockerfile", dockerfileTemplate)
+  if readLineFromStdin("\nGenerate optional GitHub files on .github (y/N): ").string.strip.toLowerAscii == "y":
+    discard existsOrCreateDir(pluginName / ".github")
+    discard existsOrCreateDir(pluginName / ".github/ISSUE_TEMPLATE")
+    discard existsOrCreateDir(pluginName / ".github/PULL_REQUEST_TEMPLATE")
+    writeFile(pluginName / ".github/ISSUE_TEMPLATE/ISSUE_TEMPLATE.md", "")
+    writeFile(pluginName / ".github/PULL_REQUEST_TEMPLATE/PULL_REQUEST_TEMPLATE.md", "")
+  if readLineFromStdin("\nGenerate optional files (y/N): ").string.strip.toLowerAscii == "y":
     writeFile(pluginName / ".gitattributes", "*.py linguist-language=Python\n")
-    writeFile(pluginName / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.sql\n*.sha512\n*.asc")
-    writeFile(pluginName / "changelog.md",
-      "# 0.0.1\n\n- First initial version created at " & $now())
-    writeFile(pluginName / "setup.cfg",
-      "# https://nim-lang.org/docs/parsecfg.html\n")
-    writeFile(pluginName / "setup.py",
-      "# https://nim-lang.org/docs/parsecfg.html\n")
-  quit("\n\nCreated a new Python project skeleton, happy hacking, bye.\n\n", 0)
+    writeFile(pluginName / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.egg-info\n*.egg\n*.log\n__pycache__\n")
+    writeFile(pluginName / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
+    writeFile(pluginName / "LICENSE.txt", "# https://tldrlegal.com/licenses/browse\n")
+    writeFile(pluginName / "CODE_OF_CONDUCT.md", "")
+    writeFile(pluginName / "CONTRIBUTING.md", "")
+    writeFile(pluginName / "README.md", "")
+    writeFile(pluginName / "setup.cfg", setupCfg)
+    writeFile(pluginName / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
+    writeFile(pluginName / "CHANGELOG.md", "# 0.0.1\n\n- First initial version created at " & $now())
+  quit("\n\nCreated a new Python project skeleton, happy hacking, bye...\n", 0)
 
 
 runnableExamples:
