@@ -1,6 +1,6 @@
 import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
-  base64, tables, parseopt, terminal, random, times, contra, posix
+  base64, tables, parseopt, terminal, random, times, contra, posix, logging
 
 hardenedBuild()
 
@@ -42,17 +42,17 @@ Commands:
   init               Project Template cookiecutter.
 
 Options:
-  --help               Show Help and quit.
-  --version            Show Version and quit.
-  --license            Show License and quit.
-  --timeout            Set Timeout.
-  --isolated           Run in an isolated mode, Self-Firejailing mode.
-  --putenv:key=value   Set an environment variable, can be repeated.
-  --nopyc              Recursively remove all *.pyc
-  --nopycache          Recursively remove all __pycache__
-  --cleantemp          Remove all files and folders from Temporary folder.
-  --nice20             Runs with nice=20 (CPU Priority, smooth priority).
-  --suicide            Delete itself permanently and exit (single file binary).
+  --help             Show Help and quit.
+  --version          Show Version and quit.
+  --license          Show License and quit.
+  --timeout          Set Timeout.
+  --isolated         Run in an isolated mode, Self-Firejailing mode.
+  --putenv:key=value Set an environment variable, can be repeated.
+  --nopyc            Recursively remove all *.pyc
+  --nopycache        Recursively remove all __pycache__
+  --cleantemp        Remove all files and folders from Temporary folder.
+  --nice20           Runs with nice=20 (CPU Priority, smooth priority).
+  --suicide          Delete itself permanently and exit (single file binary).
 
 Other environment variables (literally copied from python3 executable itself):
   --pythonstartup:f.py Python file executed at startup (not directly executed).
@@ -96,14 +96,7 @@ using
   classifiers: seq[string]
   project_name, project_version, package_name, user, release_version: string
 
-
-proc handler() {.noconv.} =
-  ## Catch CTRL+C from user.
-  styledEcho(fgYellow, bgBlack, "\n👑 CTRL+C Pressed, shutting down, Bye...\n")
-  quit()
-
-setControlCHook(handler)
-
+setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
 
 template clientify(this: PyPI | AsyncPyPI): untyped =
   ## Build & inject basic HTTP Client with Proxy and Timeout.
@@ -468,7 +461,7 @@ when isMainModule:
         setBackgroundColor(bgBlack)
         setForegroundColor([fgRed, fgGreen, fgYellow, fgBlue, fgMagenta, fgCyan, fgWhite].sample)
       of "suicide":
-        discard tryRemoveFile(currentSourcePath().replace(".nim", ""))
+        discard tryRemoveFile(currentSourcePath()[0..^5])
       of "nice20":
         discard nice(20.cint)
     of cmdArgument:
