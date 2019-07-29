@@ -21,6 +21,7 @@ const
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml  = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
   commitHash = staticExec"git rev-parse --short HEAD"
+  version = "0.1.0\n" & commitHash
   sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])" """ ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
   pipCacheDir =
     when defined(linux):   r"~/.cache/pip"
@@ -30,21 +31,18 @@ const
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet --exists-action=w -y "
   pipInstallCmd = "pip3 install --upgrade --no-index --user " & pipCommons
   cmdChecksum = "sha512sum --tag "
+  cmdSign = "gpg --armor --detach-sign --yes --digest-algo sha512 "
+  cmdTar = "tar cafv "
 
 const helpy = """👑PIP/PyPI Fast Async Single-File Hardened Alternative App👑
 Commands:
   install            Install packages.
   download           Download packages.
   uninstall          Uninstall packages.
-  freeze             Output installed packages in requirements format.
-  list               List installed packages.
-  show               Show information about installed packages.
-  check              Verify installed packages have compatible dependencies.
-  config             Manage local and global configuration.
   search             Search PyPI for packages.
-  wheel              Build wheels from your requirements.
   hash               Compute hashes of package archives (SHA512 Checksum file)
   init               New Python project template (Interactive, asks Y/N to user)
+  backup             Compressed signed backup of a file and quit (GPG, SHA512)
 
 Options:
   --help             Show Help and quit.
@@ -52,7 +50,6 @@ Options:
   --license          Show License and quit.
   --debug            Show Debug info and quit (for Developers).
   --timeout=42       Set Timeout.
-  --isolated         Run in an isolated mode, Self-Firejailing mode.
   --putenv:key=value Set an environment variable, can be repeated.
   --nopyc            Recursively remove all *.pyc
   --nopycache        Recursively remove all __pycache__
@@ -571,6 +568,25 @@ proc pluginSkeleton() =
     writeFile(pluginName / "CHANGELOG.md", "# 0.0.1\n\n- First initial version created at " & $now())
   quit("\n\nCreated a new Python project skeleton, happy hacking, bye...\n", 0)
 
+proc backup*(filename: string): tuple[output: TaintedString, exitCode: int] =
+  var cmd: string
+  if findExe"sha512sum".len > 0:
+    cmd = cmdChecksum & filename & " > " & filename & ".sha512"
+    when not defined(release): echo cmd
+    result = execCmdEx(cmd)
+    if result.exitCode == 0 and findExe"gpg".len > 0:
+      cmd = cmdSign & filename
+      when not defined(release): echo cmd
+      result = execCmdEx(cmd)
+      if result.exitCode == 0 and findExe"tar".len > 0:
+        cmd = cmdTar & filename & ".tar.gz " & filename & " " & filename & ".sha512 " & filename & ".asc"
+        when not defined(release): echo cmd
+        result = execCmdEx(cmd)
+        if result.exitCode == 0:
+          removeFile(filename)
+          removeFile(filename & ".sha512")
+          removeFile(filename & ".asc")
+
 
 runnableExamples:
   let cliente = PyPI(timeout: 99)
@@ -626,7 +642,7 @@ when isMainModule:
     case tipoDeClave
     of cmdShortOption, cmdLongOption:
       case clave.normalize
-      of "version":             quit("0.1.0\n" & commitHash, 0)
+      of "version":             quit(version, 0)
       of "license", "licencia": quit("PPL", 0)
       of "completion":
         if valor == "zsh":      quit(completionZsh, 0)
@@ -648,7 +664,7 @@ when isMainModule:
         "pipCacheDir": pipCacheDir, "cython": cython, "nuitka": nuitka,
         "currentCompilerExe": getCurrentCompilerExe(), "int.high": int.high,
         "processorsCount": countProcessors(), "danger": defined(danger),
-        "currentProcessId": getCurrentProcessId(), "linux": defined(linux)}), 0)
+        "currentProcessId": getCurrentProcessId(), "version": version}), 0)
       of "putenv":
         let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)
@@ -721,6 +737,17 @@ when isMainModule:
       let sha512sum = execCmdEx(cmdChecksum & args[1]).output.strip
       echo sha512sum
       echo "--hash=sha512:" & sha512sum.split(" ")[^1]
+  of "backup":
+    quit(backup(args[1]).output, 0)
+  of "uninstall":
+    var files2delete: seq[string]
+    for pythonfile in walkFiles(sitePackages / args[1] / "*.*"):
+      echo pythonfile
+      files2delete.add pythonfile
+    if readLineFromStdin("\nDelete Python files? (y/N): ").normalize == "y":
+      for pythonfile in files2delete:
+        echo pythonfile
+        # discard tryRemoveFile(pythonfile)
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
   #echo "🌎 PyPI"
