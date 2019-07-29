@@ -55,14 +55,14 @@ Options:
   --license          Show License and quit.
   --debug            Show Debug info and quit (for Developers).
   --timeout=42       Set Timeout.
-  --putenv:key=value Set an environment variable, can be repeated.
+  --putenv:key=value Set an environment variable "KEY=Value", can be repeated.
   --nopyc            Recursively remove all *.pyc
   --nopycache        Recursively remove all __pycache__
-  --cleantemp        Remove all files and folders from OS Temporary folder.
-  --cleanpipcache    Remove all files and folders from PIP Cache folder.
-  --nice20           Runs with nice=20 (CPU Priority, smooth priority).
+  --cleantemp        Remove all files and folders from the OS Temporary folder.
+  --cleanpipcache    Remove all files and folders from the PIP Cache folder.
+  --nice20           Runs with "nice = 20" (CPU Priority, smooth priority).
   --completion:bash  Show Auto-Completion for Bash/ZSH/Fish terminal and quit.
-  --suicide          Delete itself permanently and exit (single file binary).
+  --suicide          Deletes itself permanently and exit (single file binary).
 
 Other environment variables (literally copied from python3 executable itself):
   --pythonstartup:f.py Python file executed at startup (not directly executed).
