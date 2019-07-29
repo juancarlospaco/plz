@@ -400,6 +400,8 @@ runnableExamples:
 
 
 when isMainModule:
+  addHandler(newConsoleLogger(fmtStr = verboseFmtStr))
+  addHandler(newRollingFileLogger(fmtStr = "$level, $datetime, $appname, "))
   echo py2
   echo py3
   echo NimVersion
@@ -452,15 +454,15 @@ when isMainModule:
       of "nopyc":
         for pyc in walkFiles("./*.pyc"):
           echo pyc
-          # discard tryRemoveFile(pyc)
+          discard tryRemoveFile(pyc)
       of "nopycache":
         for pycache in walkDirs("__pycache__"):
           echo pycache
-          # discard tryRemoveFile(pycache)
+          discard tryRemoveFile(pycache)
       of "cleantemp":
         for something in walkPattern(getTempDir()):
           echo something
-          # discard tryRemoveFile(something)
+          discard tryRemoveFile(something)
       of "color":
         randomize()
         setBackgroundColor(bgBlack)
