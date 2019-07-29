@@ -1,6 +1,8 @@
 import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
-  base64, tables, parseopt, terminal, random, times, contra, posix, logging
+  base64, tables, parseopt, terminal, random, times, posix, logging, osproc
+
+import contra
 
 hardenedBuild()
 
@@ -19,9 +21,14 @@ const
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml  = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
   commitHash = staticExec"git rev-parse --short HEAD"
-
-# https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
-
+  sitePackages = staticExec"""python -c "print(__import__('site').getsitepackages()[0])""" ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
+  pipCacheDir =
+    when defined(linux):   r"~/.cache/pip"
+    elif defined(macos):   r"~/Library/Caches/pip"
+    elif defined(windows): r"%LocalAppData%\pip\Cache"
+    else:                  getEnv("PIP_DOWNLOAD_CACHE")
+  pipCommons = " --isolated --disable-pip-version-check --no-color --no-cache-dir --quiet --exists-action=w -y "
+  pipInstallCmd = "pip3 install --upgrade --no-index --user" & pipCommons
 
 const helpy = """
 PIP/PyPI-Client Alternative,x20 Faster,x50 Smaller,Lib 99% Complete,App 0% Complete,WIP.
@@ -94,7 +101,7 @@ type
 
 using
   classifiers: seq[string]
-  project_name, project_version, package_name, user, release_version: string
+  project_name, project_version, package_name, user, release_version, destDir: string
 
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
 
@@ -259,9 +266,26 @@ proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
   for tagy in response.findAll("string"):
-    if tagy.innerText.normalize.startsWith("http"):
+    if tagy.innerText.normalize.startsWith("https://"):
       result.add tagy.innerText
 
+proc downloadPackage*(this: PyPI | AsyncPyPI, package_name, release_version, destDir = getTempDir()): Future[string] {.multisync.} =
+  ## Download a URL for the given release_version. Returns a list of dicts.
+  let possibleUrls = await this.releaseUrls(package_name, release_version)
+  let choosenUrl = possibleUrls[0]
+  assert choosenUrl.startsWith("https://"), "PyPI Download URL is not HTTPS SSL"
+  let filename = destDir / choosenUrl.split("/")[^1]
+  clientify(this)
+  echo "⬇️ " & choosenUrl
+  await client.downloadFile(choosenUrl, filename)
+  assert existsFile(filename), "file failed to download"
+  result = filename
+
+proc installPackage*(this: PyPI | AsyncPyPI, package_name, release_version): Future[tuple[output: TaintedString, exitCode: int]] {.multisync.} =
+  ## Install a Pacakge.
+  let cmd = pipInstallCmd & quoteShell(await this.downloadPackage(package_name, release_version))
+  when not defined(release): echo cmd
+  result = execCmdEx(cmd)
 
 proc releaseData*(this: PyPI | AsyncPyPI, package_name, release_version): Future[XmlNode] {.multisync.} =
   ## Retrieve metadata describing a specific release_version. Returns a dict.
@@ -395,6 +419,7 @@ runnableExamples:
 when isMainModule:
   addHandler(newConsoleLogger(fmtStr = verboseFmtStr))
   addHandler(newRollingFileLogger(fmtStr = "$level, $datetime, $appname, "))
+  putEnv("PIP_NO_INPUT", "1")
   echo py2
   echo py3
   echo NimVersion
@@ -456,6 +481,11 @@ when isMainModule:
         for something in walkPattern(getTempDir()):
           echo something
           discard tryRemoveFile(something)
+        discard tryRemoveFile("/tmp/pip-build-root")  # PIP can be dumb.
+        discard tryRemoveFile("/tmp/pip_build_root")  # Found in the wild.
+        discard tryRemoveFile("/tmp/pip-build-" & getEnv"USER")
+        discard tryRemoveFile("/tmp/pip_build_" & getEnv"USER")
+        discard tryRemoveFile(pipCacheDir)
       of "color":
         randomize()
         setBackgroundColor(bgBlack)
@@ -467,3 +497,8 @@ when isMainModule:
     of cmdArgument:
       let comando = clave.string.normalize
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
+
+
+  echo "🌎 PyPI"
+  let cliente = PyPI(timeout: 99)
+  discard cliente.installPackage(package_name="faster-than-walk", release_version="0.5")
