@@ -31,7 +31,7 @@ const
   pipInstallCmd = "pip3 install --upgrade --no-index --user" & pipCommons
   cmdChecksum = "sha512sum --tag "
 
-const helpy = """PIP / PyPI Fast Async Single-File Compiled Alternative App.
+const helpy = """👑PIP/PyPI Fast Async Single-File Compiled Alternative App👑
 Commands:
   install            Install packages.
   download           Download packages.
@@ -50,6 +50,7 @@ Options:
   --help             Show Help and quit.
   --version          Show Version and quit.
   --license          Show License and quit.
+  --debug            Show Debug info and quit.
   --timeout          Set Timeout.
   --isolated         Run in an isolated mode, Self-Firejailing mode.
   --putenv:key=value Set an environment variable, can be repeated.
@@ -439,9 +440,6 @@ when isMainModule:
   addHandler(newConsoleLogger(fmtStr = verboseFmtStr))
   addHandler(newRollingFileLogger(fmtStr = "$level, $datetime, $appname, "))
   putEnv("PIP_NO_INPUT", "1")
-  echo py2
-  echo py3
-  echo NimVersion
   var
     taimaout = 99.byte
     debug, firejail: bool
@@ -453,10 +451,14 @@ when isMainModule:
       of "version":              quit("0.1.0\n" & commitHash, 0)
       of "license", "licencia":  quit("PPL", 0)
       of "timeout":              taimaout = valor.parseInt.byte
-      of "debug", "desbichar":   debug = true
       of "isolated", "firejail": firejail = true
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
+        quit()
+      of "debug", "desbichar":
+        echo py2
+        echo py3
+        echo NimVersion
         quit()
       of "putenv":
         let envy = valor.split"="
@@ -536,3 +538,5 @@ when isMainModule:
   #echo "🌎 PyPI"
   # discard cliente.installPackage(package_name="faster-than-walk", release_version="0.5")
   resetAttributes()  # Reset terminal colors.
+
+# https://pip.readthedocs.io/en/1.1/requirements.html
