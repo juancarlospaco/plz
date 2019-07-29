@@ -39,39 +39,37 @@ Commands:
   wheel              Build wheels from your requirements.
   hash               Compute hashes of package archives.
   completion         A helper command used for command completion.
-  help               Show Help and quit.
   init               Project Template cookiecutter.
 
---help               Show Help and quit.
---version            Show Version and quit.
---license            Show License and quit.
---timeout            Set Timeout.
---log:file.log       Path to the Log.
---isolated           Run in an isolated mode, Self-Firejailing mode.
---putenv:key=value   Set an environment variable, can be repeated.
---nopyc              Recursively remove all *.pyc
---nopycache          Recursively remove all __pycache__
---cleantemp          Remove all files and folders from Temporary folder.
---nice20             Runs with nice=20 (CPU Priority)
---suicide            Delete itself permanently and exit (single file binary).
+Options:
+  --help               Show Help and quit.
+  --version            Show Version and quit.
+  --license            Show License and quit.
+  --timeout            Set Timeout.
+  --isolated           Run in an isolated mode, Self-Firejailing mode.
+  --putenv:key=value   Set an environment variable, can be repeated.
+  --nopyc              Recursively remove all *.pyc
+  --nopycache          Recursively remove all __pycache__
+  --cleantemp          Remove all files and folders from Temporary folder.
+  --nice20             Runs with nice=20 (CPU Priority, smooth priority).
+  --suicide            Delete itself permanently and exit (single file binary).
 
 Other environment variables (literally copied from python3 executable itself):
---pythonstartup:f.py Python file executed at startup (not directly executed).
---pythonpath:FOO     ADD ':'-separated list of directories to the PYTHONPATH
---pythonhome:FOO     Alternate Python directory.
---ioencodingutf8     Set Encoding to UTF-8 to stdin/stdout/stderr.
---hashseed:42        Random Seed, integer in the range [0, 4294967295].
---malloc             Set Python memory allocators to Debug.
---localewarn         Set the locale coerce to Warning.
---debugger:FOO       Set the Python debugger. You can use ipdb, ptpdb, etc.
+  --pythonstartup:f.py Python file executed at startup (not directly executed).
+  --pythonpath:FOO     ADD ':'-separated list of directories to the PYTHONPATH
+  --pythonhome:FOO     Alternate Python directory.
+  --ioencodingutf8     Set Encoding to UTF-8 to stdin/stdout/stderr.
+  --hashseed:42        Random Seed, integer in the range [0, 4294967295].
+  --malloc             Set Python memory allocators to Debug.
+  --localewarn         Set the locale coerce to Warning.
+  --debugger:FOO       Set the Python debugger. You can use ipdb, ptpdb, etc.
 
 Compile options quick tip (Release builds are automatically stripped/optimized):
- Fastest       -d:release -d:danger --gc:markAndSweep
- Balanced      -d:release
- Safest        -d:release -d:contracts -d:hardened --styleCheck:hint
+  Fastest                -d:release -d:danger --gc:markAndSweep
+  Balanced (Recommended) -d:release
+  Safest                 -d:release -d:contracts -d:hardened --styleCheck:hint
 
-Learn more http://nim-lang.org/learn.html http://nim-lang.org/documentation.html
-"""
+Learn more: http://nim-lang.org/learn.html http://github.com/juancarlospaco """
 
 
 let
@@ -417,7 +415,6 @@ when isMainModule:
       of "timeout":              taimaout = valor.parseInt.byte
       of "debug", "desbichar":   debug = true
       of "isolated", "firejail": firejail = true
-      # of "log:   logFile = "tbd"
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit(helpy, 0)
