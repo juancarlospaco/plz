@@ -21,14 +21,14 @@ const
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml  = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
   commitHash = staticExec"git rev-parse --short HEAD"
-  sitePackages = staticExec"""python -c "print(__import__('site').getsitepackages()[0])""" ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
+  sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])""" ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
   pipCacheDir =
     when defined(linux):   r"~/.cache/pip"
     elif defined(macos):   r"~/Library/Caches/pip"
     elif defined(windows): r"%LocalAppData%\pip\Cache"
     else:                  getEnv("PIP_DOWNLOAD_CACHE")
-  pipCommons = " --isolated --disable-pip-version-check --no-color --no-cache-dir --quiet --exists-action=w -y "
-  pipInstallCmd = "pip3 install --upgrade --no-index --user" & pipCommons
+  pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet --exists-action=w -y "
+  pipInstallCmd = "pip3 install --upgrade --no-index --user " & pipCommons
   cmdChecksum = "sha512sum --tag "
 
 const helpy = """👑PIP/PyPI Fast Async Single-File Hardened Alternative App👑
@@ -522,7 +522,7 @@ when isMainModule:
   
   let cliente = PyPI(timeout: taimaout)
   case args[0].normalize
-  of "search": 
+  of "search":
     echo args[1]
     # echo cliente.search({"name": @[args[1]]}.toTable)
     echo cliente.search({"name": @["requests"]}.toTable)
