@@ -43,7 +43,6 @@ const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
 Commands:
   install          Install packages (Download, Decompress, Install packages).
   uninstall        Uninstall packages (Interactive, asks Y/N to user before).
-  reinstall        Uninstall and then Install again (uninstall + install).
   download         Download packages (No installs, no decompress).
   search           Search PyPI for packages (PyPI API is Buggy, is still WIP).
   hash             Compute hashes of package archives (SHA512+Checksum file).
@@ -803,7 +802,7 @@ when isMainModule:
         result
       when defined(linux):
         if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
-          echo "\nsudo rm --verbose --force " & files2delete.join" "
+          echo "\n", findExe"sudo", " ", findExe"rm", " --verbose --force ", files2delete.join" "
       if readLineFromStdin("\nDelete " & $files2delete.len & " Python files? (y/N): ").normalize == "y":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pythonfile in files2delete:
@@ -822,8 +821,6 @@ when isMainModule:
       echo(if failed == 0: "✅\t" else: "❌\t", now(), " ", failed,
         " Failed, ", suces, " Success on ", now() - time0,
         " to download/decompress/install ", args[1..^1].len, " packages")
-
-    # reinstall
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
   resetAttributes()  # Reset terminal colors.
