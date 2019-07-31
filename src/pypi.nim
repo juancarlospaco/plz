@@ -39,38 +39,38 @@ const
   cmdTar = "tar cafv "
   cmdVerify = "gpg --verify "
 
-const helpy = """ 👑PIP Fast Async Single-File Hardened Compiled Alternative👑
+const helpy = """ 👑PIP Fast Single-File Hardened Compiled Alternative👑
 Commands:
-  install            Install packages (Download, Decompress, Install packages).
-  uninstall          Uninstall packages (Interactive, asks Y/N to user before).
-  reinstall          Uninstall and then Install again (uninstall + install).
-  download           Download packages (No installs).
-  search             Search PyPI for packages (PyPI API is Buggy,is still WIP).
-  hash               Compute hashes of package archives (SHA512 Checksum file).
-  init               New Python project template (Interactive,asks Y/N to user).
-  backup             Compressed signed backup of a file and quit (GPG, SHA512).
-  newpackages        List all the new Packages uploaded to PyPI recently (RSS).
-  lastupdates        List all existing Packages updated on PyPI recently (RSS).
-  lastjobs           List all new Job Posts updated on Python recently (RSS).
-  stats              PyPI service status report from official statuspage (RSS).
-  userpackages       List all existing Packages by User (Interactive,asks user).
-  latestversion      Show the Latest Version release of a PYPI Package (SemVer).
+  install          Install packages (Download, Decompress, Install packages).
+  uninstall        Uninstall packages (Interactive, asks Y/N to user before).
+  reinstall        Uninstall and then Install again (uninstall + install).
+  download         Download packages (No installs, no decompress).
+  search           Search PyPI for packages (PyPI API is Buggy, is still WIP).
+  hash             Compute hashes of package archives (SHA512+Checksum file).
+  init             New Python project template (Interactive, asks Y/N to user).
+  backup           Compressed signed backup of a file and quit (GPG+SHA512).
+  newpackages      List all the new Packages uploaded to PyPI recently (RSS).
+  lastupdates      List all existing Packages updated on PyPI recently (RSS).
+  lastjobs         List all new Job Posts updated on Python recently (RSS).
+  stats            PyPI service status report from official statuspage (RSS).
+  userpackages     List all existing Packages by User (Interactive, asks user).
+  latestversion    Show the Latest Version release of a PYPI Package (SemVer).
 
 Options:
-  --help             Show Help and quit.
-  --version          Show Version and quit.
-  --license          Show License and quit.
-  --debug            Show Debug info and quit (for Developers).
-  --timeout=42       Set Timeout.
-  --putenv:key=value Set an environment variable "KEY=Value", can be repeated.
-  --nopyc            Recursively remove all *.pyc
-  --nopycache        Recursively remove all __pycache__
-  --cleantemp        Remove all files and folders from the OS Temporary folder.
-  --cleanpipcache    Remove all files and folders from the PIP Cache folder.
-  --nice20           Runs with "nice = 20" (CPU Priority, smooth priority).
-  --completion:bash  Show Auto-Completion for Bash/ZSH/Fish terminal and quit.
-  --publicip         Show your Public IP Address (Internet connectivity check).
-  --suicide          Deletes itself permanently and exit (single file binary).
+  --help           Show Help and quit.
+  --version        Show Version and quit.
+  --license        Show License and quit.
+  --debug          Show Debug info and quit (for Developers).
+  --timeout=42     Set Timeout.
+  --putenv:key=val Set an environment variable "KEY=Value", can be repeated.
+  --nopyc          Recursively remove all *.pyc
+  --nopycache      Recursively remove all __pycache__
+  --cleantemp      Remove all files and folders from the OS Temporary folder.
+  --cleanpipcache  Remove all files and folders from the PIP Cache folder.
+  --nice20         Runs with "nice = 20" (CPU Priority, smooth priority).
+  --completion:zsh Show Auto-Completion for Bash/ZSH/Fish terminal and quit.
+  --publicip       Show your Public IP Address (Internet connectivity check).
+  --suicide        Deletes itself permanently and exit (single file binary).
 
 Other environment variables (literally copied from python3 executable itself):
   --pythonstartup:f.py Python file executed at startup (not directly executed).
