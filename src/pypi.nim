@@ -48,8 +48,8 @@ Commands:
   search           Search PyPI for packages (PyPI API is Buggy, is still WIP).
   hash             Compute hashes of package archives (SHA256 Checksum file).
   init             New Python project template (Interactive, asks Y/N to user).
-  backup           Compressed signed backup of a file and quit (GPG+SHA512).
-  strip            Optimize a Python native binary module using 'strip'.
+  backup           Compressed signed backup of a file and quit (GPG + SHA512).
+  strip            Optimize Python native binary module using (PIP wont strip).
   newpackages      List all the new Packages uploaded to PyPI recently (RSS).
   lastupdates      List all existing Packages updated on PyPI recently (RSS).
   lastjobs         List all new Job Posts updated on Python recently (RSS).
