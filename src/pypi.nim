@@ -553,6 +553,8 @@ proc upload*(this: PyPI | AsyncPyPI,
   when not defined(release): echo multipart_data.repr, "\n", auth
   clientify(this)
   client.headers = newHttpHeaders(auth)
+  if readLineFromStdin("\nShow literal HTTP Headers? (y/N): ").normalize == "y":
+    echo client.headers
   result =  # TODO: Finish this and test against the test dev pypi server.
     when this is AsyncPyPI: await client.postContent(pypiUploadUrl, multipart=multipart_data)
     else: client.postContent(pypiUploadUrl, multipart=multipart_data)
