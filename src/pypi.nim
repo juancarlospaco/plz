@@ -32,6 +32,10 @@ const
     elif defined(macos):   r"~/Library/Caches/pip"
     elif defined(windows): r"%LocalAppData%\pip\Cache"
     else:                  getEnv("PIP_DOWNLOAD_CACHE")
+  xdgOpen =
+    when defined(macos):   "open "
+    elif defined(windows): "start "
+    else:                  "xdg-open "
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
   pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user --no-dependencies " & pipCommons
   cmdChecksum = "sha256sum --tag "  # I prefer SHA512,but PyPI uses SHA256 only?
@@ -818,7 +822,7 @@ when isMainModule:
       quit($cliente.packageLatestRelease(args[1]), 0)
     of "open":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
-      discard execCmdEx("xdg-open " & args[1])
+      discard execCmdEx(xdgOpen & args[1])
     of "userpackages":
       quit($cliente.userPackages(readLineFromStdin("PyPI Username?: ").normalize), 0)
     of "strip":
