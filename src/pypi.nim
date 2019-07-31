@@ -886,9 +886,6 @@ when isMainModule:
       let (username, password, name, author, version, license, summary, homepage,
         description, downloadurl, maintainer, authoremail, maintaineremail, keywords
       ) = ask2User()
-      echo (username, password, name, author, version, license, summary, homepage,
-        description, downloadurl, maintainer, authoremail, maintaineremail, keywords
-      )
       echo cliente.upload(
         username = username, password = password, name = name,
         version = version, license = license, summary = summary,
