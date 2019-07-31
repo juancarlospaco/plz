@@ -36,6 +36,10 @@ const
     when defined(macos):   "open "
     elif defined(windows): "start "
     else:                  "xdg-open "
+  pyExtPattern =
+    when defined(windows): ".cpython-*.dll"
+    elif defined(macos):   ".cpython-*.dynlib"
+    else:                  ".cpython-*.so"
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
   pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user --no-dependencies " & pipCommons
   cmdChecksum = "sha256sum --tag "  # I prefer SHA512,but PyPI uses SHA256 only?
@@ -571,27 +575,27 @@ proc pluginSkeleton() =
   assert pluginName.len > 1, "Name must not be empty string: " & pluginName
   discard existsOrCreateDir(pluginName)
   writeFile(pluginName / pluginName & ".py", r"print((lambda r:'\n'.join('.'.join('█' if(y<r and((x-r)**2+(y-r)**2<=r**2or(x-3*r)**2+(y-r)**2<=r**2))or(y>=r and x+r>=y and x-r<=4*r-y)else '░' for x in range(4*r))for y in range(1,3*r,2)))(5))")
-  if readLineFromStdin("\nGenerate optional Unitests on ./tests (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional Unitests on ./tests (y/N): ").string.strip.toLowerAscii == "y":
     discard existsOrCreateDir(pluginName / "tests")
     writeFile(pluginName / "tests/tests.py", testTemplate)
-  if readLineFromStdin("\nGenerate optional Documentation on ./docs (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional Documentation on ./docs (y/N): ").string.strip.toLowerAscii == "y":
     discard existsOrCreateDir(pluginName / "docs")
     writeFile(pluginName / "docs/documentation.md", "# " & pluginName & "\n\n")
-  if readLineFromStdin("\nGenerate optional Examples on ./examples (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional Examples on ./examples (y/N): ").string.strip.toLowerAscii == "y":
     discard existsOrCreateDir(pluginName / "examples")
     writeFile(pluginName / "examples/example.py", "# -*- coding: utf-8 -*-\n\nprint('Example')\n")
-  if readLineFromStdin("\nGenerate optional DevOps on ./devops (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional DevOps on ./devops (y/N): ").string.strip.toLowerAscii == "y":
     discard existsOrCreateDir(pluginName / "devops")
     writeFile(pluginName / "devops/Dockerfile", dockerfileTemplate)
     writeFile(pluginName / "devops/build_package.sh", "python3 setup.py sdist --formats=zip\n")
     writeFile(pluginName / "devops/upload_package.sh", "twine upload .\n")
-  if readLineFromStdin("\nGenerate optional GitHub files on .github (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional GitHub files on .github (y/N): ").string.strip.toLowerAscii == "y":
     discard existsOrCreateDir(pluginName / ".github")
     discard existsOrCreateDir(pluginName / ".github/ISSUE_TEMPLATE")
     discard existsOrCreateDir(pluginName / ".github/PULL_REQUEST_TEMPLATE")
     writeFile(pluginName / ".github/ISSUE_TEMPLATE/ISSUE_TEMPLATE.md", "")
     writeFile(pluginName / ".github/PULL_REQUEST_TEMPLATE/PULL_REQUEST_TEMPLATE.md", "")
-  if readLineFromStdin("\nGenerate optional files (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional files (y/N): ").string.strip.toLowerAscii == "y":
     writeFile(pluginName / ".gitattributes", "*.py linguist-language=Python\n")
     writeFile(pluginName / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.egg-info\n*.egg\n*.log\n__pycache__\n")
     writeFile(pluginName / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
@@ -603,7 +607,7 @@ proc pluginSkeleton() =
     writeFile(pluginName / "setup.cfg", setupCfg)
     writeFile(pluginName / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
     writeFile(pluginName / "CHANGELOG.md", "# 0.0.1\n\n- First initial version created at " & $now())
-  quit("\n\nCreated a new Python project skeleton, happy hacking, bye...\n", 0)
+  quit("Created a new Python project skeleton, happy hacking, bye...\n", 0)
 
 proc backup*(filename: string): tuple[output: TaintedString, exitCode: int] =
   var cmd: string
@@ -847,10 +851,6 @@ when isMainModule:
     of "uninstall":
       let files2delete = block:
         var result: seq[string]
-        const extension =
-          when defined(windows): ".cpython-*.dll"
-          elif defined(macos):   ".cpython-*.dynlib"
-          else:                  ".cpython-*.so"
         for argument in args[1..^1]:
           for pythonfile in walkFiles(sitePackages / argument / "*.*"):
             result.add pythonfile
@@ -858,7 +858,7 @@ when isMainModule:
           for pythonfile in walkFiles(sitePackages / argument & "-*.dist-info" / "*"):
             result.add pythonfile  # Metadata folder & files (no file extension)
             styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
-          for pythonfile in walkFiles(sitePackages / argument & extension):
+          for pythonfile in walkFiles(sitePackages / argument & pyExtPattern):
             result.add pythonfile  # *.so are compiled native binary modules
             styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
         result
