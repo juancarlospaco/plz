@@ -631,16 +631,16 @@ proc ask2User(): auto =
     username = readLineFromStdin("\nType Username (PyPI Username): ").strip
   while not(maintainer.len > 2 and maintainer.len < 99):
     maintainer = readLineFromStdin("\nType Package Maintainer (Real Name): ").strip
-  while not(password.len > 6 and password.len < 999 and password == iPwd2):
+  while not(password.len > 4 and password.len < 999 and password == iPwd2):
     password = readLineFromStdin("\nType Password: ").strip  # Type it Twice.
     iPwd2 = readLineFromStdin("\nConfirm Password (Repeat it again): ").strip
-  while not(authoremail.len > 5 and authoremail.len < 255):
+  while not(authoremail.len > 5 and authoremail.len < 255 and "@" in authoremail):
     authoremail = readLineFromStdin("\nType Author Email (Lowercase): ").strip.toLowerAscii
-  while not(maintaineremail.len > 5 and maintaineremail.len < 255):
+  while not(maintaineremail.len > 5 and maintaineremail.len < 255 and "@" in maintaineremail):
     maintaineremail = readLineFromStdin("\nType Maintainer Email (Lowercase): ").strip.toLowerAscii
   while not(name.len > 0 and name.len < 99):
     name = readLineFromStdin("\nType Package Name: ").strip.toLowerAscii
-  while not(version.len > 4 and version.len < 99):
+  while not(version.len > 4 and version.len < 99 and "." in version):
     version = readLineFromStdin("\nType Package Version (SemVer): ").normalize
   while not(license.len > 2 and license.len < 99):
     license = readLineFromStdin("\nType Package License: ").normalize
