@@ -56,6 +56,7 @@ Commands:
   stats            PyPI service status report from official statuspage (RSS).
   userpackages     List all existing Packages by User (Interactive, asks user).
   latestversion    Show the Latest Version release of a PYPI Package (SemVer).
+  open             Open a given module in your default editor (xdg-open).
 
 Options:
   --help           Show Help and quit.
@@ -804,6 +805,9 @@ when isMainModule:
     of "latestversion":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       quit($cliente.packageLatestRelease(args[1]), 0)
+    of "open":
+      if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
+      discard execCmdEx("xdg-open " & args[1])
     of "userpackages":
       quit($cliente.userPackages(readLineFromStdin("PyPI Username?: ").normalize), 0)
     of "strip":
