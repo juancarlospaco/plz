@@ -1,7 +1,7 @@
 import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
   base64, tables, parseopt, terminal, random, times, posix, logging, osproc,
-  rdstdin, sequtils
+  rdstdin, sequtils, md5
 
 import contra
 
@@ -553,10 +553,9 @@ proc upload*(this: PyPI | AsyncPyPI,
   when not defined(release): echo multipart_data.repr, "\n", auth
   clientify(this)
   client.headers = newHttpHeaders(auth)
-  # result =  # TODO: Finish this and test against the test dev pypi server.
-  #   when this is AsyncPyPI: await client.postContent(pypiUploadUrl, multipart=multipart_data)
-  #   else: client.postContent(pypiUploadUrl, multipart=multipart_data)
-  result = "result"
+  result =  # TODO: Finish this and test against the test dev pypi server.
+    when this is AsyncPyPI: await client.postContent(pypiUploadUrl, multipart=multipart_data)
+    else: client.postContent(pypiUploadUrl, multipart=multipart_data)
 
 
 proc pluginSkeleton() =
@@ -619,36 +618,45 @@ proc backup*(filename: string): tuple[output: TaintedString, exitCode: int] =
           removeFile(filename & ".asc")
 
 
-proc ask2User(): tuple[iName, iEmail, iPwd: string] =
-  ## Ask the user for user, mail, password, and return them.
-  postconditions(result.iName.len > 3, result.iEmail.len > 5, result.iPwd.len > 9,
-    result.iName.len < 60, result.iEmail.len < 255, result.iPwd.len < 301)
-  var iName, iEmail, iPwd, iPwd2: string
-  while not(iName.len > 3 and iName.len < 60):  # Max len from DB SQL
-    iName = readLineFromStdin("\nType Username: ").strip
-  while not(iEmail.len > 5 and iEmail.len < 255):
-    iEmail = readLineFromStdin("\nType Email (Lowercase): ").strip.toLowerAscii
-  while not(iPwd.len > 9 and iPwd.len < 301 and iPwd == iPwd2):
-    iPwd = readLineFromStdin("\nType Password: ").strip  # Type it Twice.
+proc ask2User(): auto =
+  var username, password, name, version, license, summary, description: string
+  var author, downloadurl, authoremail, maintainer, maintaineremail: string
+  var homepage, iPwd2: string
+  var keywords: seq[string]
+  while not(author.len > 2 and author.len < 99):
+    author = readLineFromStdin("\nType Author: ").strip
+  while not(username.len > 2 and username.len < 99):
+    username = readLineFromStdin("\nType Username: ").strip
+  while not(maintainer.len > 2 and maintainer.len < 99):
+    maintainer = readLineFromStdin("\nType Package Maintainer: ").strip
+  while not(password.len > 6 and password.len < 999 and password == iPwd2):
+    password = readLineFromStdin("\nType Password: ").strip  # Type it Twice.
     iPwd2 = readLineFromStdin("\nConfirm Password (Repeat it again): ").strip
-  result = (iName: iName, iEmail: iEmail, iPwd: iPwd)
-
-  # username        = "user",
-  #   password        = "s3cr3t",
-  #   name            = "TestPackage",
-  #   version         = "0.0.1",
-  #   license         = "MIT",
-  #   summary         = "A test package for testing purposes",
-  #   description     = "A test package for testing purposes",
-  #   author          = "Juan Carlos",
-  #   downloadurl     = "https://www.example.com/download",
-  #   authoremail     = "author@example.com",
-  #   maintainer      = "Juan Carlos",
-  #   maintaineremail = "maintainer@example.com",
-  #   homepage        = "https://www.example.com",
-  #   filename        = "pypi.nim",
-  #   md5_digest      = "4266642",
-  #   keywords        = @["test", "testing"],
+  while not(authoremail.len > 5 and authoremail.len < 255):
+    authoremail = readLineFromStdin("\nType Author Email (Lowercase): ").strip.toLowerAscii
+  while not(maintaineremail.len > 5 and maintaineremail.len < 255):
+    maintaineremail = readLineFromStdin("\nType Maintainer Email (Lowercase): ").strip.toLowerAscii
+  while not(name.len > 0 and name.len < 99):
+    name = readLineFromStdin("\nType Package Name: ").strip.toLowerAscii
+  while not(version.len > 4 and version.len < 99):
+    version = readLineFromStdin("\nType Package Version (SemVer): ").normalize
+  while not(license.len > 2 and license.len < 99):
+    license = readLineFromStdin("\nType Package License: ").normalize
+  while not(summary.len > 0 and summary.len < 999):
+    summary = readLineFromStdin("\nType Package Summary: ").strip
+  while not(description.len > 0 and description.len < 999):
+    description = readLineFromStdin("\nType Package Description: ").strip
+  while not(homepage.len > 5 and homepage.len < 999 and homepage.startsWith"http"):
+    homepage = readLineFromStdin("\nType Package Web Homepage URL (HTTP/HTTPS): ").strip.toLowerAscii
+  while not(downloadurl.len > 5 and downloadurl.len < 999 and downloadurl.startsWith"http"):
+    downloadurl = readLineFromStdin("\nType Package Web Download URL (HTTP/HTTPS): ").strip.toLowerAscii
+  while not(keywords.len > 1 and keywords.len < 99):
+    keywords = readLineFromStdin("\nType Package Keywords,separated by commas,without spaces,at least 2 (CSV): ").normalize.split(",")
+  result = (username: username, password: password, name: name, author: author,
+    version: version, license: license, summary: summary, homepage: homepage,
+    description: description,  downloadurl: downloadurl, maintainer: maintainer,
+    authoremail: authoremail,  maintaineremail: maintaineremail, keywords: keywords
+  )
 
 
 runnableExamples:
@@ -870,6 +878,23 @@ when isMainModule:
       echo(if failed == 0: "✅\t" else: "❌\t", now(), " ", failed,
         " Failed, ", suces, " Success on ", now() - time0,
         " to download/decompress/install ", args[1..^1].len, " packages")
+    of "upload":
+      if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
+      doAssert existsFile(args[1]), "File not found: " & args[1]
+      let (username, password, name, author, version, license, summary, homepage,
+        description, downloadurl, maintainer, authoremail, maintaineremail, keywords
+      ) = ask2User()
+      echo (username, password, name, author, version, license, summary, homepage,
+        description, downloadurl, maintainer, authoremail, maintaineremail, keywords
+      )
+      echo cliente.upload(
+        username = username, password = password, name = name,
+        version = version, license = license, summary = summary,
+        description = description, author = author, downloadurl = downloadurl,
+        authoremail = authoremail, maintainer = maintainer, keywords = keywords,
+        maintaineremail = maintaineremail, homepage = homepage, filename = args[1],
+        md5_digest = getMD5(readFile(args[1])),
+      )
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
   resetAttributes()  # Reset terminal colors.
