@@ -797,17 +797,17 @@ when isMainModule:
     of "install":
       var failed, suces: byte
       echo("🐍\t", now(), ", PID is ", getCurrentProcessId(), ", ",
-      args[1..^1].len, " packages to download and install ➡️ ", args[1..^1])
-      let t0 = now()
+        args[1..^1].len, " packages to download and install ➡️ ", args[1..^1])
+      let time0 = now()
       for argument in args[1..^1]:
         let semver = $cliente.packageLatestRelease(argument)
         echo "🌎\tPyPI ➡️ " & argument & " " & semver
         let resultados = cliente.installPackage(argument, semver)
         echo if resultados.exitCode == 0: "✅\t" else: "❌\t", resultados
         if resultados.exitCode == 0: inc suces else: inc failed
-      echo(if failed == 0: "✅\t" else: "❌\t", now(), " ", failed, " Failed, ",
-        suces, " Success on ", now() - t0, " to download and install ",
-        args[1..^1].len, " packages")
+      echo(if failed == 0: "✅\t" else: "❌\t", now(), " ", failed,
+        " Failed, ", suces, " Success on ", now() - time0,
+        " to download/decompress/install ", args[1..^1].len, " packages")
 
     # reinstall
 
