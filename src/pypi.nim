@@ -44,7 +44,7 @@ const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
 Commands:
   install          Install packages (Download, Decompress, Install packages).
   uninstall        Uninstall packages (Interactive, asks Y/N to user before).
-  download         Download packages (No installs, no decompress).
+  download         Download packages (No installs, no decompress, no compile).
   search           Search PyPI for packages (PyPI API is Buggy, is still WIP).
   hash             Compute hashes of package archives (SHA256 Checksum file).
   init             New Python project template (Interactive, asks Y/N to user).
