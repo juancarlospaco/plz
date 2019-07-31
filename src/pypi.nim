@@ -1,11 +1,14 @@
 import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
-  base64, tables, parseopt, terminal, random, times, posix, logging, osproc, rdstdin
+  base64, tables, parseopt, terminal, random, times, posix, logging, osproc,
+  rdstdin, sequtils
 
 import contra
 
 hardenedBuild()
 
+# For compile time code executions, we dont care the optimization or how clunky
+# it looks because is done compile time only,worse case scenario it wont compile
 const
   pypiApiUrl* = "https://pypi.org/"                             ## PyPI Base API URL.
   pypiXmlUrl = pypiApiUrl & "pypi"                              ## PyPI XML RPC API URL.
@@ -29,13 +32,14 @@ const
     elif defined(macos):   r"~/Library/Caches/pip"
     elif defined(windows): r"%LocalAppData%\pip\Cache"
     else:                  getEnv("PIP_DOWNLOAD_CACHE")
-  pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet --exists-action=w -y "
-  pipInstallCmd = "pip3 install --upgrade --no-index --user " & pipCommons
-  cmdChecksum = "sha512sum --tag "
+  pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
+  pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user --no-dependencies " & pipCommons
+  cmdChecksum = "sha256sum --tag "  # I prefer SHA512,but PyPI uses SHA256 only?
   cmdSign = "gpg --armor --detach-sign --yes --digest-algo sha512 "
   cmdTar = "tar cafv "
+  cmdVerify = "gpg --verify "
 
-const helpy = """ 👑PIP Fast Async Single-File Hardened Compiled Alternative👑 
+const helpy = """ 👑PIP Fast Async Single-File Hardened Compiled Alternative👑
 Commands:
   install            Install packages (Download, Decompress, Install packages).
   download           Download packages.
@@ -46,8 +50,10 @@ Commands:
   backup             Compressed signed backup of a file and quit (GPG, SHA512).
   newpackages        List all the new Packages uploaded to PyPI recently (RSS).
   lastupdates        List all existing Packages updated on PyPI recently (RSS).
+  lastjobs           List all new Job Posts updated on Python recently (RSS).
   stats              PyPI service status report from official statuspage (RSS).
-  userpackages       List all existing Packages uploaded to PyPI by the User.
+  userpackages       List all existing Packages by User (Interactive,asks user).
+  latestversion      Show the Latest Version release of a PYPI Package (SemVer).
 
 Options:
   --help             Show Help and quit.
@@ -62,6 +68,7 @@ Options:
   --cleanpipcache    Remove all files and folders from the PIP Cache folder.
   --nice20           Runs with "nice = 20" (CPU Priority, smooth priority).
   --completion:bash  Show Auto-Completion for Bash/ZSH/Fish terminal and quit.
+  --publicip         Show your Public IP Address (Internet connectivity check).
   --suicide          Deletes itself permanently and exit (single file binary).
 
 Other environment variables (literally copied from python3 executable itself):
@@ -192,7 +199,7 @@ class TestName(unittest.TestCase):
         pass  # Probably you may not use this one. See tearDown().
 
     @unittest.skip("Demonstrating skipping")  # Skips this test only
-    @unittest.skipIf("boolean_condition", "Reason to Skip Test here.")  # Skips 
+    @unittest.skipIf("boolean_condition", "Reason to Skip Test here.")  # Skips
     @unittest.expectedFailure  # This test MUST fail. If test fails, then is Ok
     def test_dummy(self):
         self.skipTest("Just examples, use as template!.")  # Skips this test
@@ -435,15 +442,26 @@ proc downloadPackage*(this: PyPI | AsyncPyPI, package_name, release_version, des
   assert choosenUrl.startsWith("https://"), "PyPI Download URL is not HTTPS SSL"
   let filename = destDir / choosenUrl.split("/")[^1]
   clientify(this)
-  echo "⬇️ " & choosenUrl
+  echo "⬇️\t" & choosenUrl
   await client.downloadFile(choosenUrl, filename)
   assert existsFile(filename), "file failed to download"
+  echo "🗜\t", getFileSize(filename), " Bytes total (compressed)"
+  if findExe"sha512sum".len > 0:
+    echo "🔐\t" & execCmdEx(cmdChecksum & filename).output.strip
+  try:
+    echo "⬇️\t" & choosenUrl & ".asc"
+    await client.downloadFile(choosenUrl & ".asc", filename & ".asc")
+    if findExe"gpg".len > 0 and existsFile(filename & ".asc"):
+      echo "🔐\t" & execCmdEx(cmdVerify & filename & ".asc").output.strip
+  except:
+    echo "💩\tHTTP-404? ➡️ " & choosenUrl & ".asc"
+
   result = filename
 
 proc installPackage*(this: PyPI | AsyncPyPI, package_name, release_version): Future[tuple[output: TaintedString, exitCode: int]] {.multisync.} =
   ## Install a Pacakge.
   let cmd = pipInstallCmd & quoteShell(await this.downloadPackage(package_name, release_version))
-  when not defined(release): echo cmd
+  # echo "📦\t" & cmd
   result = execCmdEx(cmd)
 
 proc releaseData*(this: PyPI | AsyncPyPI, package_name, release_version): Future[XmlNode] {.multisync.} =
@@ -659,6 +677,9 @@ when isMainModule:
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
+      of "publicip":
+        quit("🌎\tPublic IP ➡️ " &
+          newHttpClient(timeout=9999).getContent("https://api.ipify.org").strip, 0)
       of "debug", "desbichar":
         quit(pretty(%*{"CompileDate": CompileDate, "CompileTime": CompileTime,
         "NimVersion": NimVersion, "hostCPU": hostCPU, "hostOS": hostOS,
@@ -702,23 +723,24 @@ when isMainModule:
         styledEcho(fgRed, bgBlack, "Python startup file set to: " & valor)
         putEnv("PYTHONSTARTUP", valor)
       of "nopyc":
+        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pyc in walkFiles("./*.pyc"):
-          echo pyc
-          discard tryRemoveFile(pyc)
+          echo $tryRemoveFile(pyc) & "\t" & pyc
       of "nopycache":
+        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pycache in walkDirs("__pycache__"):
-          echo pycache
-          discard tryRemoveFile(pycache)
+          echo $tryRemoveFile(pycache) & "\t" & pycache
       of "cleantemp":
+        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for something in walkPattern(getTempDir()):
-          echo something
-          discard tryRemoveFile(something)
+          echo $tryRemoveFile(something) & "\t" & something
       of "cleanpipcache":
-        discard tryRemoveFile("/tmp/pip-build-root")  # PIP can be dumb.
-        discard tryRemoveFile("/tmp/pip_build_root")  # Found in the wild.
-        discard tryRemoveFile("/tmp/pip-build-" & user)
-        discard tryRemoveFile("/tmp/pip_build_" & user)
-        discard tryRemoveFile(pipCacheDir)
+        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile") # Dir Found in the wild
+        echo $tryRemoveFile("/tmp/pip-build-root") & "\t/tmp/pip-build-root"
+        echo $tryRemoveFile("/tmp/pip_build_root") & "\t/tmp/pip_build_root"
+        echo $tryRemoveFile("/tmp/pip-build-" & user) & "\t/tmp/pip-build-" & user
+        echo $tryRemoveFile("/tmp/pip_build_" & user) & "\t/tmp/pip_build_" & user
+        echo $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
       of "color":
         randomize()
         setBackgroundColor(bgBlack)
@@ -728,44 +750,68 @@ when isMainModule:
     of cmdArgument:
       args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
+  let is1argOnly = args.len == 2  # command + arg == 2 ("install foo")
+  if args.len > 0:
+    let cliente = PyPI(timeout: taimaout)
+    case args[0].normalize
+    of "stats":
+      quit($cliente.stats(), 0)
+    of "newpackages":
+      quit($cliente.newPackages(), 0)
+    of "lastupdates":
+      quit($cliente.lastUpdates(), 0)
+    of "lastjobs":
+      quit($cliente.lastJobs(), 0)
+    of "latestversion":
+      if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
+      quit($cliente.packageLatestRelease(args[1]), 0)
+    of "userpackages":
+      quit($cliente.userPackages(readLineFromStdin("PyPI Username?: ").normalize), 0)
+    of "search":
+      quit("Not implemented yet (PyPI API is Buggy)")
+      # echo args[1]
+      # echo cliente.search({"name": @[args[1]]}.toTable)
+    of "init":
+      pluginSkeleton()
+    of "hash":
+      if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
+      if findExe"sha512sum".len > 0:
+        let sha512sum = execCmdEx(cmdChecksum & args[1]).output.strip
+        echo sha512sum
+        echo "--hash=sha512:" & sha512sum.split(" ")[^1]
+    of "backup":
+      if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
+      quit(backup(args[1]).output, 0)
+    of "uninstall":
+      let files2delete = block:
+        var result: seq[string]
+        for argument in args[1..^1]:
+          for pythonfile in walkFiles(sitePackages / argument / "*.*"):
+            result.add pythonfile
+            styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
+        result
+      if readLineFromStdin("\nDelete Python files? (y/N): ").normalize == "y":
+        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
+        for pythonfile in files2delete:
+          echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
+    of "install":
+      var failed, suces: byte
+      echo("🐍\t", now(), ", PID is ", getCurrentProcessId(), ", ",
+      args[1..^1].len, " packages to download and install ➡️ ", args[1..^1])
+      let t0 = now()
+      for argument in args[1..^1]:
+        let semver = $cliente.packageLatestRelease(argument)
+        echo "🌎\tPyPI ➡️ " & argument & " " & semver
+        let resultados = cliente.installPackage(argument, semver)
+        echo if resultados.exitCode == 0: "✅\t" else: "❌\t", resultados
+        if resultados.exitCode == 0: inc suces else: inc failed
+      echo(if failed == 0: "✅\t" else: "❌\t", now(), " ", failed, " Failed, ",
+        suces, " Success on ", now() - t0, " to download and install ",
+        args[1..^1].len, " packages")
 
-  let cliente = PyPI(timeout: taimaout)
-  case args[0].normalize
-  of "stats":
-    quit($cliente.stats(), 0)
-  of "newpackages":
-    quit($cliente.newPackages(), 0)
-  of "lastupdates":
-    quit($cliente.lastUpdates(), 0)
-  of "userpackages":
-    quit($cliente.userPackages(readLineFromStdin("PyPI Username?: ").normalize), 0)
-  of "search":
-    quit("Not implemented yet (PyPI API is Buggy)")
-    # echo args[1]
-    # echo cliente.search({"name": @[args[1]]}.toTable)
-  of "init":
-    pluginSkeleton()
-  of "hash":
-    if findExe"sha512sum".len > 0:
-      let sha512sum = execCmdEx(cmdChecksum & args[1]).output.strip
-      echo sha512sum
-      echo "--hash=sha512:" & sha512sum.split(" ")[^1]
-  of "backup":
-    quit(backup(args[1]).output, 0)
-  of "uninstall":
-    var files2delete: seq[string]
-    for pythonfile in walkFiles(sitePackages / args[1] / "*.*"):
-      files2delete.add pythonfile
-      echo pythonfile
-    if readLineFromStdin("\nDelete Python files? (y/N): ").normalize == "y":
-      for pythonfile in files2delete:
-        echo pythonfile
-        discard tryRemoveFile(pythonfile)
-
+    # reinstall
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
-  #echo "🌎 PyPI"
-  # discard cliente.installPackage(package_name="faster-than-walk", release_version="0.5")
   resetAttributes()  # Reset terminal colors.
 
 # https://pip.readthedocs.io/en/1.1/requirements.html
