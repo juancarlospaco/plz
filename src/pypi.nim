@@ -726,7 +726,7 @@ when isMainModule:
       case clave.normalize
       of "version":             quit(version, 0)
       of "license", "licencia": quit("PPL", 0)
-      of "completion":
+      of "completion":  # I find this dumb,but PIP does it,so we add it.
         if valor == "zsh":      quit(completionZsh, 0)
         elif valor == "fish":   quit(completionFish, 0)
         else:                   quit(completionBash, 0)
