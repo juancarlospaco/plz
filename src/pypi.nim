@@ -256,7 +256,7 @@ let
   httpsProxy = getEnv("HTTPS_PROXY", getEnv"https_proxy")
   user = getEnv"USER"
 
-var script = "\n#!/usr/bin/env bash\n# -*- coding: utf-8 -*-\n"
+var script: string
 
 type
   PyPIBase*[HttpType] = object ## Base object.
@@ -458,10 +458,11 @@ proc downloadPackage*(this: PyPI | AsyncPyPI, package_name, release_version,
     if generateScript: script &= "curl -LO " & choosenUrl & ".asc" & "\n"
     if findExe"gpg".len > 0 and existsFile(filename & ".asc"):
       echo "🔐\t" & execCmdEx(cmdVerify & filename & ".asc").output.strip
+      if generateScript:
+        script &= cmdVerify & filename.replace(destDir, "") & ".asc\n"
   except:
     echo "💩\tHTTP-404? ➡️ " & choosenUrl & ".asc"
   if generateScript:
-    script &= cmdVerify & filename.replace(destDir, "") & ".asc\n"
     script &= pipInstallCmd & filename.replace(destDir, "") & "\n"
   result = filename
 
@@ -859,7 +860,7 @@ when isMainModule:
         result
       when defined(linux):
         if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
-          echo "\n", findExe"sudo", " ", findExe"rm", " --verbose --force ", files2delete.join" "
+          echo "\nsudo rm --verbose --force ", files2delete.join" "
       if readLineFromStdin("\nDelete " & $files2delete.len & " Python files? (y/N): ").normalize == "y":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pythonfile in files2delete:
@@ -876,7 +877,7 @@ when isMainModule:
         let resultados = cliente.installPackage(argument, semver, generateScript)
         echo if resultados.exitCode == 0: "✅\t" else: "❌\t", resultados
         if resultados.exitCode == 0: inc suces else: inc failed
-      if generateScript: echo script & "\n"
+      if generateScript: echo "\n", script
       echo(if failed == 0: "✅\t" else: "❌\t", now(), " ", failed,
         " Failed, ", suces, " Success on ", now() - time0,
         " to download/decompress/install ", args[1..^1].len, " packages")
