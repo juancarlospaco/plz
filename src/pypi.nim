@@ -786,11 +786,24 @@ when isMainModule:
     of "uninstall":
       let files2delete = block:
         var result: seq[string]
+        const extension =
+          when defined(windows): ".cpython-*.dll"
+          elif defined(macos):   ".cpython-*.dynlib"
+          else:                  ".cpython-*.so"
         for argument in args[1..^1]:
           for pythonfile in walkFiles(sitePackages / argument / "*.*"):
             result.add pythonfile
             styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
+          for pythonfile in walkFiles(sitePackages / argument & "-*.dist-info" / "*"):
+            result.add pythonfile  # Metadata folder & files (no file extension)
+            styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
+          for pythonfile in walkFiles(sitePackages / argument & extension):
+            result.add pythonfile  # *.so are compiled native binary modules
+            styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
         result
+      when defined(linux):
+        if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
+          echo "\nrm --verbose --force " & files2delete.join" "
       if readLineFromStdin("\nDelete Python files? (y/N): ").normalize == "y":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pythonfile in files2delete:
@@ -811,6 +824,18 @@ when isMainModule:
         " to download/decompress/install ", args[1..^1].len, " packages")
 
     # reinstall
+    # python3 -c "print(__import__('site').getsitepackages()[0]) try to delete all of them
+    # /usr/lib/python3.7/site-packages/faster_than_requests.cpython-37m-x86_64-linux-gnu.so
+    # faster_than_walk-0.5.dist-info/
+
+    # /usr/lib/python3.7/site-packages/faster_than_requests.cpython-37m-x86_64-linux-gnu.so
+    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/INSTALLER
+    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/LICENSE
+    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/METADATA
+    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/RECORD
+    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/WHEEL
+    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/top_level.txt
+    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/zip-safe
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
   resetAttributes()  # Reset terminal colors.
