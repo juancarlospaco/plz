@@ -824,18 +824,6 @@ when isMainModule:
         " to download/decompress/install ", args[1..^1].len, " packages")
 
     # reinstall
-    # python3 -c "print(__import__('site').getsitepackages()[0]) try to delete all of them
-    # /usr/lib/python3.7/site-packages/faster_than_requests.cpython-37m-x86_64-linux-gnu.so
-    # faster_than_walk-0.5.dist-info/
-
-    # /usr/lib/python3.7/site-packages/faster_than_requests.cpython-37m-x86_64-linux-gnu.so
-    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/INSTALLER
-    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/LICENSE
-    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/METADATA
-    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/RECORD
-    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/WHEEL
-    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/top_level.txt
-    # /usr/lib/python3.7/site-packages/faster_than_requests-0.5.dist-info/zip-safe
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
   resetAttributes()  # Reset terminal colors.
