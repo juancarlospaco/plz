@@ -624,11 +624,11 @@ proc ask2User(): auto =
   var homepage, iPwd2: string
   var keywords: seq[string]
   while not(author.len > 2 and author.len < 99):
-    author = readLineFromStdin("\nType Author: ").strip
+    author = readLineFromStdin("\nType Author (Real Name): ").strip
   while not(username.len > 2 and username.len < 99):
-    username = readLineFromStdin("\nType Username: ").strip
+    username = readLineFromStdin("\nType Username (PyPI Username): ").strip
   while not(maintainer.len > 2 and maintainer.len < 99):
-    maintainer = readLineFromStdin("\nType Package Maintainer: ").strip
+    maintainer = readLineFromStdin("\nType Package Maintainer (Real Name): ").strip
   while not(password.len > 6 and password.len < 999 and password == iPwd2):
     password = readLineFromStdin("\nType Password: ").strip  # Type it Twice.
     iPwd2 = readLineFromStdin("\nConfirm Password (Repeat it again): ").strip
@@ -643,9 +643,9 @@ proc ask2User(): auto =
   while not(license.len > 2 and license.len < 99):
     license = readLineFromStdin("\nType Package License: ").normalize
   while not(summary.len > 0 and summary.len < 999):
-    summary = readLineFromStdin("\nType Package Summary: ").strip
+    summary = readLineFromStdin("\nType Package Summary (Short Description): ").strip
   while not(description.len > 0 and description.len < 999):
-    description = readLineFromStdin("\nType Package Description: ").strip
+    description = readLineFromStdin("\nType Package Description (Long Description): ").strip
   while not(homepage.len > 5 and homepage.len < 999 and homepage.startsWith"http"):
     homepage = readLineFromStdin("\nType Package Web Homepage URL (HTTP/HTTPS): ").strip.toLowerAscii
   while not(downloadurl.len > 5 and downloadurl.len < 999 and downloadurl.startsWith"http"):
