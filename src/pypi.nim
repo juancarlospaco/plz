@@ -803,8 +803,8 @@ when isMainModule:
         result
       when defined(linux):
         if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
-          echo "\nrm --verbose --force " & files2delete.join" "
-      if readLineFromStdin("\nDelete Python files? (y/N): ").normalize == "y":
+          echo "\nsudo rm --verbose --force " & files2delete.join" "
+      if readLineFromStdin("\nDelete " & $files2delete.len & " Python files? (y/N): ").normalize == "y":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pythonfile in files2delete:
           echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
