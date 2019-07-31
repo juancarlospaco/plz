@@ -39,7 +39,7 @@ const
   cmdTar = "tar cafv "
   cmdVerify = "gpg --verify "
 
-const helpy = """ 👑PIP Fast Single-File Hardened Compiled Alternative👑
+const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
 Commands:
   install          Install packages (Download, Decompress, Install packages).
   uninstall        Uninstall packages (Interactive, asks Y/N to user before).
