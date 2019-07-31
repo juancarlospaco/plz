@@ -38,6 +38,7 @@ const
   cmdSign = "gpg --armor --detach-sign --yes --digest-algo sha512 "
   cmdTar = "tar cafv "
   cmdVerify = "gpg --verify "
+  cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag "
 
 const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
 Commands:
@@ -45,9 +46,10 @@ Commands:
   uninstall        Uninstall packages (Interactive, asks Y/N to user before).
   download         Download packages (No installs, no decompress).
   search           Search PyPI for packages (PyPI API is Buggy, is still WIP).
-  hash             Compute hashes of package archives (SHA512+Checksum file).
+  hash             Compute hashes of package archives (SHA256 Checksum file).
   init             New Python project template (Interactive, asks Y/N to user).
   backup           Compressed signed backup of a file and quit (GPG+SHA512).
+  strip            Optimize a Python native binary module using 'strip'.
   newpackages      List all the new Packages uploaded to PyPI recently (RSS).
   lastupdates      List all existing Packages updated on PyPI recently (RSS).
   lastjobs         List all new Job Posts updated on Python recently (RSS).
@@ -767,6 +769,10 @@ when isMainModule:
       quit($cliente.packageLatestRelease(args[1]), 0)
     of "userpackages":
       quit($cliente.userPackages(readLineFromStdin("PyPI Username?: ").normalize), 0)
+    of "strip":
+      if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
+      let (output, exitCode) = execCmdEx(cmdStrip & args[1])
+      quit(output, exitCode)
     of "search":
       quit("Not implemented yet (PyPI API is Buggy)")
       # echo args[1]
