@@ -28,7 +28,7 @@ const
   version = "0.1.0\n" & commitHash
   sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])" """ ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
   pipCacheDir =
-    when defined(linux):   r"~/.cache/pip"
+    when defined(linux):   r"~/.cache/pip"  # PIP "standards"
     elif defined(macos):   r"~/Library/Caches/pip"
     elif defined(windows): r"%LocalAppData%\pip\Cache"
     else:                  getEnv("PIP_DOWNLOAD_CACHE")
@@ -46,7 +46,7 @@ const
   cmdSign = "gpg --armor --detach-sign --yes --digest-algo sha512 "
   cmdTar = "tar cafv "
   cmdVerify = "gpg --verify "
-  cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag "
+  cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag "  ## PIP Wont optimize Production binaries, they are left with all Debugging on!.
 
 const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
 Commands:
