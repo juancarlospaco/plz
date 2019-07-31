@@ -44,7 +44,7 @@ const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
 Commands:
   install          Install packages (Download, Decompress, Install packages).
   uninstall        Uninstall packages (Interactive, asks Y/N to user before).
-  download         Download packages (No installs, no decompress, no compile).
+  upload           Mimics "twine upload" (Interactive,asks user,wont need Twine)
   search           Search PyPI for packages (PyPI API is Buggy, is still WIP).
   hash             Compute hashes of package archives (SHA256 Checksum file).
   init             New Python project template (Interactive, asks Y/N to user).
@@ -84,13 +84,10 @@ Other environment variables (literally copied from python3 executable itself):
   --debugger:FOO       Set the Python debugger. You can use ipdb, ptpdb, etc.
 
 Compile options (Optimize/Enable/Disable features when compiling source code):
-  -d:hardened          Security Hardened mode is enabled. Runs Hardened.
-  -d:contracts         Force Design by Contract enabled. Runs assertive.
-
-Compile options quick tip (Release builds are automatically stripped/optimized):
   Fastest              -d:release -d:danger --gc:markAndSweep
   Safest               -d:release -d:contracts -d:hardened --styleCheck:hint
 
+✅ This wont save any passwords, databases, keys, secrets to disk nor Internet.
  👑 http://nim-lang.org/learn.html 🐍 http://github.com/juancarlospaco ⚡ """
 
 const setupCfg = """# See: https://setuptools.readthedocs.io/en/latest/setuptools.html#metadata
@@ -258,6 +255,7 @@ let
   httpsProxy = getEnv("HTTPS_PROXY", getEnv"https_proxy")
   user = getEnv"USER"
 
+var script = "\n#!/usr/bin/env bash\n# -*- coding: utf-8 -*-\n"
 
 type
   PyPIBase*[HttpType] = object ## Base object.
@@ -268,6 +266,7 @@ type
 
 
 using
+  generateScript: bool
   classifiers: seq[string]
   project_name, project_version, package_name, user, release_version, destDir: string
 
@@ -437,7 +436,8 @@ proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future
     if tagy.innerText.normalize.startsWith("https://"):
       result.add tagy.innerText
 
-proc downloadPackage*(this: PyPI | AsyncPyPI, package_name, release_version, destDir = getTempDir()): Future[string] {.multisync.} =
+proc downloadPackage*(this: PyPI | AsyncPyPI, package_name, release_version,
+  destDir = getTempDir(), generateScript): Future[string] {.multisync.} =
   ## Download a URL for the given release_version. Returns a list of dicts.
   let possibleUrls = await this.releaseUrls(package_name, release_version)
   let choosenUrl = possibleUrls[0]
@@ -445,6 +445,7 @@ proc downloadPackage*(this: PyPI | AsyncPyPI, package_name, release_version, des
   let filename = destDir / choosenUrl.split("/")[^1]
   clientify(this)
   echo "⬇️\t" & choosenUrl
+  if generateScript: script &= "curl -LO " & choosenUrl & "\n"
   await client.downloadFile(choosenUrl, filename)
   assert existsFile(filename), "file failed to download"
   echo "🗜\t", getFileSize(filename), " Bytes total (compressed)"
@@ -453,16 +454,20 @@ proc downloadPackage*(this: PyPI | AsyncPyPI, package_name, release_version, des
   try:
     echo "⬇️\t" & choosenUrl & ".asc"
     await client.downloadFile(choosenUrl & ".asc", filename & ".asc")
+    if generateScript: script &= "curl -LO " & choosenUrl & ".asc" & "\n"
     if findExe"gpg".len > 0 and existsFile(filename & ".asc"):
       echo "🔐\t" & execCmdEx(cmdVerify & filename & ".asc").output.strip
   except:
     echo "💩\tHTTP-404? ➡️ " & choosenUrl & ".asc"
-
+  if generateScript:
+    script &= cmdVerify & filename.replace(destDir, "") & ".asc\n"
+    script &= pipInstallCmd & filename.replace(destDir, "") & "\n"
   result = filename
 
-proc installPackage*(this: PyPI | AsyncPyPI, package_name, release_version): Future[tuple[output: TaintedString, exitCode: int]] {.multisync.} =
+proc installPackage*(this: PyPI | AsyncPyPI, package_name, release_version,
+  generateScript): Future[tuple[output: TaintedString, exitCode: int]] {.multisync.} =
   ## Install a Pacakge.
-  let cmd = pipInstallCmd & quoteShell(await this.downloadPackage(package_name, release_version))
+  let cmd = pipInstallCmd & quoteShell(await this.downloadPackage(package_name, release_version, generateScript=generateScript))
   # echo "📦\t" & cmd
   result = execCmdEx(cmd)
 
@@ -611,6 +616,38 @@ proc backup*(filename: string): tuple[output: TaintedString, exitCode: int] =
           removeFile(filename)
           removeFile(filename & ".sha512")
           removeFile(filename & ".asc")
+
+
+proc ask2User(): tuple[iName, iEmail, iPwd: string] =
+  ## Ask the user for user, mail, password, and return them.
+  postconditions(result.iName.len > 3, result.iEmail.len > 5, result.iPwd.len > 9,
+    result.iName.len < 60, result.iEmail.len < 255, result.iPwd.len < 301)
+  var iName, iEmail, iPwd, iPwd2: string
+  while not(iName.len > 3 and iName.len < 60):  # Max len from DB SQL
+    iName = readLineFromStdin("\nType Username: ").strip
+  while not(iEmail.len > 5 and iEmail.len < 255):
+    iEmail = readLineFromStdin("\nType Email (Lowercase): ").strip.toLowerAscii
+  while not(iPwd.len > 9 and iPwd.len < 301 and iPwd == iPwd2):
+    iPwd = readLineFromStdin("\nType Password: ").strip  # Type it Twice.
+    iPwd2 = readLineFromStdin("\nConfirm Password (Repeat it again): ").strip
+  result = (iName: iName, iEmail: iEmail, iPwd: iPwd)
+
+  # username        = "user",
+  #   password        = "s3cr3t",
+  #   name            = "TestPackage",
+  #   version         = "0.0.1",
+  #   license         = "MIT",
+  #   summary         = "A test package for testing purposes",
+  #   description     = "A test package for testing purposes",
+  #   author          = "Juan Carlos",
+  #   downloadurl     = "https://www.example.com/download",
+  #   authoremail     = "author@example.com",
+  #   maintainer      = "Juan Carlos",
+  #   maintaineremail = "maintainer@example.com",
+  #   homepage        = "https://www.example.com",
+  #   filename        = "pypi.nim",
+  #   md5_digest      = "4266642",
+  #   keywords        = @["test", "testing"],
 
 
 runnableExamples:
@@ -817,13 +854,15 @@ when isMainModule:
       var failed, suces: byte
       echo("🐍\t", now(), ", PID is ", getCurrentProcessId(), ", ",
         args[1..^1].len, " packages to download and install ➡️ ", args[1..^1])
+      let generateScript = readLineFromStdin("\nGenerate Install Script? (y/N): ").normalize == "y"
       let time0 = now()
       for argument in args[1..^1]:
         let semver = $cliente.packageLatestRelease(argument)
         echo "🌎\tPyPI ➡️ " & argument & " " & semver
-        let resultados = cliente.installPackage(argument, semver)
+        let resultados = cliente.installPackage(argument, semver, generateScript)
         echo if resultados.exitCode == 0: "✅\t" else: "❌\t", resultados
         if resultados.exitCode == 0: inc suces else: inc failed
+      if generateScript: echo script & "\n"
       echo(if failed == 0: "✅\t" else: "❌\t", now(), " ", failed,
         " Failed, ", suces, " Success on ", now() - time0,
         " to download/decompress/install ", args[1..^1].len, " packages")
