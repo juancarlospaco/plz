@@ -547,35 +547,41 @@ proc pluginSkeleton() =
   let pluginName = normalize(readLineFromStdin("New Python project name?: "))
   assert pluginName.len > 1, "Name must not be empty string: " & pluginName
   discard existsOrCreateDir(pluginName)
-  writeFile(pluginName / pluginName & ".py", r"print((lambda r:'\n'.join('.'.join('█' if(y<r and((x-r)**2+(y-r)**2<=r**2or(x-3*r)**2+(y-r)**2<=r**2))or(y>=r and x+r>=y and x-r<=4*r-y)else '░' for x in range(4*r))for y in range(1,3*r,2)))(5))")
+  discard existsOrCreateDir(pluginName / pluginName)
+  writeFile(pluginName / pluginName / "__init__.py", r"print((lambda r:'\n'.join('.'.join('█' if(y<r and((x-r)**2+(y-r)**2<=r**2or(x-3*r)**2+(y-r)**2<=r**2))or(y>=r and x+r>=y and x-r<=4*r-y)else '░' for x in range(4*r))for y in range(1,3*r,2)))(5))")
+  writeFile(pluginName / pluginName / "__main__.py", "\nprint('Main Module')\n")
+  writeFile(pluginName / pluginName / "__version__.py", "__version__ = '0.0.1'\n")
   if readLineFromStdin("Generate optional Unitests on ./tests (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / "tests")
-    writeFile(pluginName / "tests/tests.py", testTemplate)
+    writeFile(pluginName / "tests" / "__init__.py", testTemplate)
   if readLineFromStdin("Generate optional Documentation on ./docs (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / "docs")
-    writeFile(pluginName / "docs/documentation.md", "# " & pluginName & "\n\n")
+    writeFile(pluginName / "docs" / "documentation.md", "# " & pluginName & "\n\n")
   if readLineFromStdin("Generate optional Examples on ./examples (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / "examples")
-    writeFile(pluginName / "examples/example.py", "# -*- coding: utf-8 -*-\n\nprint('Example')\n")
+    writeFile(pluginName / "examples" / "example.py", "# -*- coding: utf-8 -*-\n\nprint('Example')\n")
   if readLineFromStdin("Generate optional DevOps on ./devops (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / "devops")
-    writeFile(pluginName / "devops/Dockerfile", dockerfileTemplate)
-    writeFile(pluginName / "devops/build_package.sh", "python3 setup.py sdist --formats=zip\n")
-    writeFile(pluginName / "devops/upload_package.sh", "twine upload .\n")
+    writeFile(pluginName / "devops" / "Dockerfile", dockerfileTemplate)
+    writeFile(pluginName / "devops" / "build_package.sh", "python3 setup.py sdist --formats=zip\n")
+    writeFile(pluginName / "devops" / "upload_package.sh", "twine upload .\n")
   if readLineFromStdin("Generate optional GitHub files on .github (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / ".github")
     discard existsOrCreateDir(pluginName / ".github/ISSUE_TEMPLATE")
     discard existsOrCreateDir(pluginName / ".github/PULL_REQUEST_TEMPLATE")
     writeFile(pluginName / ".github/ISSUE_TEMPLATE/ISSUE_TEMPLATE.md", "")
     writeFile(pluginName / ".github/PULL_REQUEST_TEMPLATE/PULL_REQUEST_TEMPLATE.md", "")
-  if readLineFromStdin("Generate optional files (y/N): ").normalize == "y":
+  if readLineFromStdin("Generate .gitignore file (y/N): ").normalize == "y":
     writeFile(pluginName / ".gitattributes", "*.py linguist-language=Python\n")
     writeFile(pluginName / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.egg-info\n*.egg\n*.log\n__pycache__\n")
+    writeFile(pluginName / ".coveragerc", "")
+  if readLineFromStdin("Generate optional files (y/N): ").normalize == "y":
     writeFile(pluginName / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
     writeFile(pluginName / "LICENSE.txt", "# https://tldrlegal.com/licenses/browse\n")
     writeFile(pluginName / "CODE_OF_CONDUCT.md", "")
     writeFile(pluginName / "CONTRIBUTING.md", "")
     writeFile(pluginName / "README.md", "")
+    writeFile(pluginName / "tox.ini", "")
     writeFile(pluginName / "requirements.txt", "")
     writeFile(pluginName / "setup.cfg", setupCfg)
     writeFile(pluginName / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
@@ -827,5 +833,3 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
   resetAttributes()  # Reset terminal colors.
-  # Delete virtualenvs
-  #
