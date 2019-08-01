@@ -37,6 +37,7 @@ const
     when defined(windows): ".cpython-*.dll"
     elif defined(macos):   ".cpython-*.dynlib"
     else:                  ".cpython-*.so"
+  virtualenvDir = r"~/.virtualenvs"
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
   pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user --no-dependencies " & pipCommons
   cmdChecksum = "sha256sum --tag "  # I prefer SHA512,but PyPI uses SHA256 only?
@@ -63,6 +64,7 @@ Commands:
   latestversion    Show the Latest Version release of a PYPI Package (SemVer).
   open             Open a given module in your default editor (xdg-open).
   forceInstallPip  Force install PIP on a given location directory (get-pip.py).
+  cleanvirtualenv  Delete local Virtualenv (Interactive,asks Y/N to user before)
 
 Options:
   --help           Show Help and quit.
@@ -706,6 +708,18 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       of "cleantemp":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for tmp in walkPattern(getTempDir()): echo $tryRemoveFile(tmp) & "\t" & tmp
+      of "cleanvirtualenvs", "cleanvirtualenv", "clearvirtualenvs", "clearvirtualenv":
+        discard # WIP
+        # let files2delete = block:
+        #   var x: seq[string]
+        #   for pythonfile in walkPattern(virtualenvDir / "*.*"):
+        #     styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
+        #     #if readLineFromStdin("Delete Python Virtualenv? (y/N): ").normalize == "y":
+        #     x.add pythonfile
+        #   x # No official documented way to get virtualenv location on windows
+        # echo "files2delete ", files2delete
+        # styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
+        # for pyc in files2delete: echo $tryRemoveFile(pyc) & "\t" & pyc
       of "cleanpipcache":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile") # Dir Found in the wild
         echo $tryRemoveFile("/tmp/pip-build-root") & "\t/tmp/pip-build-root"
