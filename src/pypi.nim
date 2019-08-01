@@ -1,4 +1,6 @@
 hardenedBuild()  # Security Hardened mode.
+addHandler(newConsoleLogger(fmtStr = verboseFmtStr))
+addHandler(newRollingFileLogger(fmtStr = "$level, $datetime, $appname, "))
 # For compile time code executions, we dont care the optimization or how clunky
 # it looks because is done compile time only,worse case scenario it wont compile
 const
@@ -608,9 +610,6 @@ proc forceInstallPip(destination: string): tuple[output: TaintedString, exitCode
 
 
 when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
-  addHandler(newConsoleLogger(fmtStr = verboseFmtStr))
-  addHandler(newRollingFileLogger(fmtStr = "$level, $datetime, $appname, "))
-  putEnv("PIP_NO_INPUT", "1")
   var taimaout = 99.byte
   var args: seq[string]
   for tipoDeClave, clave, valor in getopt():
@@ -782,4 +781,3 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       )
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
-  resetAttributes()  # Reset terminal colors.
