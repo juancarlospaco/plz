@@ -547,12 +547,10 @@ proc backup(): tuple[output: TaintedString, exitCode: int] =
   var folder: string
   while not(folder.len > 0 and existsDir(folder)):
     folder = readLineFromStdin("Full path of 1 existing folder to Backup?: ").strip
-  let files2backup = block:
-    var x: seq[string]
-    for pythonfile in walkFiles(folder / "*.*"):
-      x.add pythonfile
-      styledEcho(fgGreen, bgBlack, "🗜\t" & pythonfile)
-    x
+  var files2backup: seq[string]
+  for pythonfile in walkFiles(folder / "*.*"):
+    files2backup.add pythonfile
+    styledEcho(fgGreen, bgBlack, "🗜\t" & pythonfile)
   if files2backup.len > 0 and findExe"tar".len > 0:
     result = execCmdEx(cmdTar & folder & ".tar.gz " & files2backup.join" ")
     if result.exitCode == 0 and findExe"sha256sum".len > 0 and readLineFromStdin("SHA256 CheckSum Backup? (y/N): ").normalize == "y":
