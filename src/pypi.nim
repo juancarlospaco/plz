@@ -542,7 +542,7 @@ proc upload*(this: PyPI | AsyncPyPI,
     when this is AsyncPyPI: await client.postContent(pypiUploadUrl, multipart=multipart_data)
     else: client.postContent(pypiUploadUrl, multipart=multipart_data)
 
-proc pluginSkeleton() =
+proc pySkeleton() =
   ## Creates the skeleton (folders and files) for a New Python project.
   let pluginName = normalize(readLineFromStdin("New Python project name?: "))
   assert pluginName.len > 1, "Name must not be empty string: " & pluginName
@@ -771,7 +771,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       # echo args[1]
       # echo cliente.search({"name": @[args[1]]}.toTable)
     of "init":
-      pluginSkeleton()
+      pySkeleton()
     of "hash":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       if findExe"sha512sum".len > 0:
