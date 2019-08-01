@@ -72,6 +72,7 @@ Options:
   --putenv:key=val Set an environment variable "KEY=Value", can be repeated.
   --nopyc          Recursively remove all *.pyc
   --nopycache      Recursively remove all __pycache__
+  --nopypackages   Recursively remove all __pypackages__
   --cleantemp      Remove all files and folders from the OS Temporary folder.
   --cleanpipcache  Remove all files and folders from the PIP Cache folder.
   --nice20         Runs with "nice = 20" (CPU Priority, smooth priority).
@@ -671,6 +672,9 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       of "cleantemp":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for tmp in walkPattern(getTempDir()): echo $tryRemoveFile(tmp) & "\t" & tmp
+      of "nopypackages":
+        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
+        for pyc in walkFiles("./__pypackages__/*.*"): echo $tryRemoveFile(pyc) & "\t" & pyc
       of "cleanvirtualenvs", "cleanvirtualenv", "clearvirtualenvs", "clearvirtualenv":
         discard # WIP
         # let files2delete = block:
