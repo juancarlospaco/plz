@@ -29,7 +29,7 @@ const
     elif defined(macos):   r"~/Library/Caches/pip"
     elif defined(windows): r"%LocalAppData%\pip\Cache"
     else:                  getEnv("PIP_DOWNLOAD_CACHE")
-  xdgOpen =
+  osOpen =
     when defined(macos):   "open "
     elif defined(windows): "start "
     else:                  "xdg-open "
@@ -759,7 +759,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       quit($cliente.packageLatestRelease(args[1]), 0)
     of "open":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
-      discard execCmdEx(xdgOpen & args[1])
+      discard execCmdEx(osOpen & args[1])
     of "userpackages":
       quit($cliente.userPackages(readLineFromStdin("PyPI Username?: ").normalize), 0)
     of "strip":
