@@ -644,9 +644,9 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
   addHandler(newConsoleLogger(fmtStr = verboseFmtStr))
   addHandler(newRollingFileLogger(fmtStr = "$level, $datetime, $appname, "))
   putEnv("PIP_NO_INPUT", "1")
+  randomize()
   var
     taimaout = 99.byte
-    firejail: bool
     args: seq[string]
   for tipoDeClave, clave, valor in getopt():
     case tipoDeClave
@@ -660,7 +660,6 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         else:                   quit(completionBash, 0)
       of "nice20":              discard nice(20.cint)
       of "timeout":              taimaout = valor.parseInt.byte
-      of "isolated", "firejail": firejail = true
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
@@ -682,45 +681,23 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)
         putEnv(envy[0], envy[1])
-      of "debugger":
-        styledEcho(fgYellow, bgBlack, "Python Debugger set to: " & valor)
-        putEnv("PYTHONBREAKPOINT", valor.strip)
-      of "localewarn":
-        styledEcho(fgRed, bgBlack, "Locale coercion set to warning")
-        putEnv("PYTHONCOERCECLOCALE", "warn")
-      of "malloc":
-        styledEcho(fgRed, bgBlack, "Python memory allocators set to Debug")
-        putEnv("PYTHONMALLOC", "debug")
-      of "hashseed":
-        let seeds = valor.parseInt
-        assert seeds in 0..4294967295, "Seed must be between 0 and 4294967295"
-        styledEcho(fgRed, bgBlack, "Python Random Seed set to: " & $seeds)
-        putEnv("PYTHONHASHSEED", $seeds)
-      of "ioencodingutf8":
-        styledEcho(fgRed, bgBlack, "Python I/O Encoding set to UTF-8 Unicode")
-        putEnv("PYTHONIOENCODING", "utf-8")
-      of "pythonhome":
-        styledEcho(fgRed, bgBlack, "Python Home set to: " & valor)
-        putEnv("PYTHONHOME", valor)
-      of "pythonpath":
-        let pypath = getEnv"PYTHONPATH" & ":" & valor
-        styledEcho(fgRed, bgBlack, "Python Home set to: " & pypath)
-        putEnv("PYTHONPATH", pypath)
-      of "pythonstartup":
-        styledEcho(fgRed, bgBlack, "Python startup file set to: " & valor)
-        putEnv("PYTHONSTARTUP", valor)
+      of "debugger": putEnv("PYTHONBREAKPOINT", valor.strip)
+      of "localewarn": putEnv("PYTHONCOERCECLOCALE", "warn")
+      of "malloc": putEnv("PYTHONMALLOC", "debug")
+      of "hashseed": putEnv("PYTHONHASHSEED", $valor)
+      of "ioencodingutf8": putEnv("PYTHONIOENCODING", "utf-8")
+      of "pythonhome": putEnv("PYTHONHOME", valor.strip)
+      of "pythonstartup": putEnv("PYTHONSTARTUP",  valor.strip)
+      of "pythonpath": putEnv("PYTHONPATH",  getEnv"PYTHONPATH" & ":" & valor)
       of "nopyc":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pyc in walkFiles("./*.pyc"):
-          echo $tryRemoveFile(pyc) & "\t" & pyc
+        for pyc in walkFiles("./*.pyc"): echo $tryRemoveFile(pyc) & "\t" & pyc
       of "nopycache":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pycache in walkDirs("__pycache__"):
-          echo $tryRemoveFile(pycache) & "\t" & pycache
+        for pyc in walkDirs("__pycache__"): echo $tryRemoveFile(pyc) & "\t" & pyc
       of "cleantemp":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for something in walkPattern(getTempDir()):
-          echo $tryRemoveFile(something) & "\t" & something
+        for tmp in walkPattern(getTempDir()): echo $tryRemoveFile(tmp) & "\t" & tmp
       of "cleanpipcache":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile") # Dir Found in the wild
         echo $tryRemoveFile("/tmp/pip-build-root") & "\t/tmp/pip-build-root"
@@ -729,11 +706,9 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         echo $tryRemoveFile("/tmp/pip_build_" & user) & "\t/tmp/pip_build_" & user
         echo $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
       of "color":
-        randomize()
         setBackgroundColor(bgBlack)
         setForegroundColor([fgRed, fgGreen, fgYellow, fgBlue, fgMagenta, fgCyan, fgWhite].sample)
-      of "suicide":
-        discard tryRemoveFile(currentSourcePath()[0..^5])
+      of "suicide": discard tryRemoveFile(currentSourcePath()[0..^5])
     of cmdArgument:
       args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
