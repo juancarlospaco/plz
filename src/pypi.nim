@@ -614,20 +614,19 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
     case tipoDeClave
     of cmdShortOption, cmdLongOption:
       case clave.normalize
-      of "version":             quit(version, 0)
+      of "version": quit(version, 0)
       of "license", "licencia": quit("PPL", 0)
       of "completion":  # I find this dumb,but PIP does it,so we add it.
-        if valor == "zsh":      quit(completionZsh, 0)
-        elif valor == "fish":   quit(completionFish, 0)
-        else:                   quit(completionBash, 0)
-      of "nice20":              discard nice(20.cint)
-      of "timeout":             taimaout = valor.parseInt.byte
+        if valor == "zsh": quit(completionZsh, 0)
+        elif valor == "fish": quit(completionFish, 0)
+        else: quit(completionBash, 0)
+      of "nice20": discard nice(20.cint)
+      of "timeout": taimaout = valor.parseInt.byte
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
       of "publicip":
-        quit("🌎\tPublic IP ➡️ " &
-          newHttpClient(timeout=9999).getContent("https://api.ipify.org").strip, 0)
+        quit("🌎\tPublic IP ➡️ " & newHttpClient(timeout=9999).getContent("https://api.ipify.org").strip, 0)
       of "debug", "desbichar":
         quit(pretty(%*{"CompileDate": CompileDate, "CompileTime": CompileTime,
         "NimVersion": NimVersion, "hostCPU": hostCPU, "hostOS": hostOS,
