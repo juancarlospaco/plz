@@ -2,7 +2,7 @@
 
 version       = "1.0.0"
 author        = "Juan Carlos"
-description   = "Pythons PyPI/PIP MultiSync API Client for Nim"
+description   = "Pythons PyPI/PIP API Client written on Nim"
 license       = "PPL"
 srcDir        = "src"
 
