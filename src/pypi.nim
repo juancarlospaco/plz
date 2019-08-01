@@ -611,9 +611,8 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
   addHandler(newConsoleLogger(fmtStr = verboseFmtStr))
   addHandler(newRollingFileLogger(fmtStr = "$level, $datetime, $appname, "))
   putEnv("PIP_NO_INPUT", "1")
-  var
-    taimaout = 99.byte
-    args: seq[string]
+  var taimaout = 99.byte
+  var args: seq[string]
   for tipoDeClave, clave, valor in getopt():
     case tipoDeClave
     of cmdShortOption, cmdLongOption:
