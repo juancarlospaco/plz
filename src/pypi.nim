@@ -449,13 +449,9 @@ proc browse(this: PyPI, classifiers): XmlNode =
   result = parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
 proc upload(this: PyPI,
-             name, version, license, summary, description, author: string,
-             downloadurl, authoremail, maintainer, maintaineremail: string,
-             homepage, filename, md5_digest, username, password: string,
-             keywords: seq[string],
-             requirespython=">=3", filetype="sdist", pyversion="source",
-             description_content_type="text/markdown; charset=UTF-8; variant=GFM",
-             ): string =
+  name, version, license, summary, description, author, downloadurl, authoremail, maintainer, maintaineremail: string,
+  homepage, filename, md5_digest, username, password: string, keywords: seq[string],
+  requirespython=">=3", filetype="sdist", pyversion="source", description_content_type="text/markdown; charset=UTF-8; variant=GFM"): string =
   ## Upload 1 new version of 1 registered package to PyPI from a local filename.
   ## PyPI Upload is HTTP POST with MultipartData with HTTP Basic Auth Base64.
   ## For some unknown reason intentionally undocumented (security by obscurity?)
