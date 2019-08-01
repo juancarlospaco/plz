@@ -395,8 +395,7 @@ proc downloadPackage(this: PyPI, packageName, releaseVersion,
   destDir = getTempDir(), generateScript: bool): string =
   ## Download a URL for the given releaseVersion. Returns filename.
   preconditions packageName.len > 0, releaseVersion.len > 0, existsDir(destDir)
-  let possibleUrls = this.releaseUrls(packageName, releaseVersion)
-  let choosenUrl = possibleUrls[0]
+  let choosenUrl = this.releaseUrls(packageName, releaseVersion)[0]
   assert choosenUrl.startsWith("https://"), "PyPI Download URL is not HTTPS SSL"
   let filename = destDir / choosenUrl.split("/")[^1]
   clientify(this)
