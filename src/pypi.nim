@@ -263,8 +263,6 @@ let
   nuitka = findExe"nuitka"
   headerJson = newHttpHeaders(hdrJson)
   headerXml =  newHttpHeaders(hdrXml)
-  httpProxy = getEnv("HTTP_PROXY", getEnv"http_proxy")
-  httpsProxy = getEnv("HTTPS_PROXY", getEnv"https_proxy")
   user = getEnv"USER"
 
 var script: string
@@ -483,9 +481,9 @@ proc browse*(this: PyPI | AsyncPyPI, classifiers): Future[XmlNode] {.multisync.}
   clientify(this)
   client.headers = headerXml
   let clasifiers = block:
-    var result: string
-    for item in classifiers: result &= xmlRpcParam.format(item)
-    result
+    var x: string
+    for item in classifiers: x &= xmlRpcParam.format(item)
+    x
   let bodi = xmlRpcBody.format("browse", clasifiers)
   result =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
@@ -511,29 +509,29 @@ proc upload*(this: PyPI | AsyncPyPI,
     auth = {"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"}
   # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
   let multipart_data = block:
-    var result = newMultipartData()
-    result["protocol_version"] = "1"
-    result[":action"] = "file_upload"
-    result["metadata_version"] = "2.1"
-    result["author"] = author
-    result["name"] = name.normalize
-    result["md5_digest"] = md5_digest # md5 hash of file in urlsafe base64
-    result["summary"] = summary.normalize
-    result["version"] = version.toLowerAscii
-    result["license"] = license.toLowerAscii
-    result["pyversion"] = pyversion.normalize
-    result["requires_python"] = requirespython
-    result["homepage"] = homepage.toLowerAscii
-    result["filetype"] = filetype.toLowerAscii
-    result["description"] = description.normalize
-    result["keywords"] = keywords.join(" ").normalize
-    result["download_url"] = downloadurl.toLowerAscii
-    result["author_email"] = authoremail.toLowerAscii
-    result["maintainer_email"] = maintaineremail.toLowerAscii
-    result["description_content_type"] = description_content_type.strip
-    result["maintainer"] = if maintainer == "": author else: maintainer
-    result["content"] = (filename, mime, filename.readFile)
-    result
+    var x = newMultipartData()
+    x["protocol_version"] = "1"
+    x[":action"] = "file_upload"
+    x["metadata_version"] = "2.1"
+    x["author"] = author
+    x["name"] = name.normalize
+    x["md5_digest"] = md5_digest # md5 hash of file in urlsafe base64
+    x["summary"] = summary.normalize
+    x["version"] = version.toLowerAscii
+    x["license"] = license.toLowerAscii
+    x["pyversion"] = pyversion.normalize
+    x["requires_python"] = requirespython
+    x["homepage"] = homepage.toLowerAscii
+    x["filetype"] = filetype.toLowerAscii
+    x["description"] = description.normalize
+    x["keywords"] = keywords.join(" ").normalize
+    x["download_url"] = downloadurl.toLowerAscii
+    x["author_email"] = authoremail.toLowerAscii
+    x["maintainer_email"] = maintaineremail.toLowerAscii
+    x["description_content_type"] = description_content_type.strip
+    x["maintainer"] = if maintainer == "": author else: maintainer
+    x["content"] = (filename, mime, filename.readFile)
+    x
   clientify(this)
   client.headers = newHttpHeaders(auth)
   result =  # TODO: Finish this and test against the test dev pypi server.
@@ -599,11 +597,9 @@ proc backup*(filename: string): tuple[output: TaintedString, exitCode: int] =
           removeFile(filename & ".sha512")
           removeFile(filename & ".asc")
 
-
 proc ask2User(): auto =
-  var username, password, name, version, license, summary, description: string
-  var author, downloadurl, authoremail, maintainer, maintaineremail: string
-  var homepage, iPwd2: string
+  var username, password, name, version, license, summary, description, homepage: string
+  var author, downloadurl, authoremail, maintainer, maintaineremail, iPwd2: string
   var keywords: seq[string]
   while not(author.len > 2 and author.len < 99):
     author = readLineFromStdin("\nType Author (Real Name): ").strip
@@ -638,8 +634,7 @@ proc ask2User(): auto =
   result = (username: username, password: password, name: name, author: author,
     version: version, license: license, summary: summary, homepage: homepage,
     description: description,  downloadurl: downloadurl, maintainer: maintainer,
-    authoremail: authoremail,  maintaineremail: maintaineremail, keywords: keywords
-  )
+    authoremail: authoremail,  maintaineremail: maintaineremail, keywords: keywords)
 
 
 runnableExamples:
