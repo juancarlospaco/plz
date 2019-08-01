@@ -571,6 +571,7 @@ proc pySkeleton() =
     discard existsOrCreateDir(pluginName / ".github/PULL_REQUEST_TEMPLATE")
     writeFile(pluginName / ".github/ISSUE_TEMPLATE/ISSUE_TEMPLATE.md", "")
     writeFile(pluginName / ".github/PULL_REQUEST_TEMPLATE/PULL_REQUEST_TEMPLATE.md", "")
+    writeFile(pluginName / ".github/FUNDING.yml", "")
   if readLineFromStdin("Generate .gitignore file (y/N): ").normalize == "y":
     writeFile(pluginName / ".gitattributes", "*.py linguist-language=Python\n")
     writeFile(pluginName / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.egg-info\n*.egg\n*.log\n__pycache__\n")
