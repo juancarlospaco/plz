@@ -1,12 +1,8 @@
 import
   asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
   base64, tables, parseopt, terminal, random, times, posix, logging, osproc,
-  rdstdin, sequtils, md5
-
-import contra
-
+  rdstdin, sequtils, md5, contra
 hardenedBuild()
-
 # For compile time code executions, we dont care the optimization or how clunky
 # it looks because is done compile time only,worse case scenario it wont compile
 const
@@ -135,7 +131,6 @@ classifiers =  # https://pypi.python.org/pypi?%3Aaction=list_classifiers
     Operating System :: MacOS :: MacOS X
     Programming Language :: Python
     Programming Language :: Python :: 3
-    Programming Language :: Python :: 3 :: Only
     Programming Language :: Python :: Implementation :: CPython
     Topic :: Software Development
 
@@ -174,7 +169,6 @@ exclude-source-files = true
 
 const testTemplate = """# -*- coding: utf-8 -*-
 '''Unittest.'''
-
 import unittest
 from random import randint
 # Random order for tests runs. (Original is: -1 if x<y, 0 if x==y, 1 if x>y).
@@ -252,6 +246,17 @@ const completionFish = """function __fish_complete_pip
   string split \  -- (eval $COMP_WORDS[1])
 end
 complete -fa "(__fish_complete_pip)" -c pip """
+
+const licenseHint = """Licenses:
+💡 See https://tldrlegal.com/licenses/browse or https://choosealicense.com
+💡 No License = Proprietary,WTFPL/Unlicense = Proprietary, Dont invent your own
+MIT   ➡️Simple and permissive,short,KISS,maybe can be an Ok default
+PPL   ➡️Simple and permisive,wont allow corporations to steal/sell your code
+GPL   ➡️Ensures that code based on this is shared with the same terms,strict
+LGPL  ➡️Ensures that code based on this is shared with the same terms,no strict
+Apache➡️Simple and explicitly grants Patents
+BSD   ➡️Simple and permissive,but your code can be closed/sold by 3rd party
+"""
 
 let
   py2 = findExe"python2"
@@ -637,32 +642,33 @@ proc ask2User(): auto =
   while not(author.len > 2 and author.len < 99):
     author = readLineFromStdin("\nType Author (Real Name): ").strip
   while not(username.len > 2 and username.len < 99):
-    username = readLineFromStdin("\nType Username (PyPI Username): ").strip
+    username = readLineFromStdin("Type Username (PyPI Username): ").strip
   while not(maintainer.len > 2 and maintainer.len < 99):
-    maintainer = readLineFromStdin("\nType Package Maintainer (Real Name): ").strip
+    maintainer = readLineFromStdin("Type Package Maintainer (Real Name): ").strip
   while not(password.len > 4 and password.len < 999 and password == iPwd2):
-    password = readLineFromStdin("\nType Password: ").strip  # Type it Twice.
-    iPwd2 = readLineFromStdin("\nConfirm Password (Repeat it again): ").strip
+    password = readLineFromStdin("Type Password: ").strip  # Type it Twice.
+    iPwd2 = readLineFromStdin("Confirm Password (Repeat it again): ").strip
   while not(authoremail.len > 5 and authoremail.len < 255 and "@" in authoremail):
-    authoremail = readLineFromStdin("\nType Author Email (Lowercase): ").strip.toLowerAscii
+    authoremail = readLineFromStdin("Type Author Email (Lowercase): ").strip.toLowerAscii
   while not(maintaineremail.len > 5 and maintaineremail.len < 255 and "@" in maintaineremail):
-    maintaineremail = readLineFromStdin("\nType Maintainer Email (Lowercase): ").strip.toLowerAscii
+    maintaineremail = readLineFromStdin("Type Maintainer Email (Lowercase): ").strip.toLowerAscii
   while not(name.len > 0 and name.len < 99):
-    name = readLineFromStdin("\nType Package Name: ").strip.toLowerAscii
+    name = readLineFromStdin("Type Package Name: ").strip.toLowerAscii
   while not(version.len > 4 and version.len < 99 and "." in version):
-    version = readLineFromStdin("\nType Package Version (SemVer): ").normalize
+    version = readLineFromStdin("Type Package Version (SemVer): ").normalize
+  echo licenseHint
   while not(license.len > 2 and license.len < 99):
-    license = readLineFromStdin("\nType Package License: ").normalize
+    license = readLineFromStdin("Type Package License: ").normalize
   while not(summary.len > 0 and summary.len < 999):
-    summary = readLineFromStdin("\nType Package Summary (Short Description): ").strip
+    summary = readLineFromStdin("Type Package Summary (Short Description): ").strip
   while not(description.len > 0 and description.len < 999):
-    description = readLineFromStdin("\nType Package Description (Long Description): ").strip
+    description = readLineFromStdin("Type Package Description (Long Description): ").strip
   while not(homepage.len > 5 and homepage.len < 999 and homepage.startsWith"http"):
-    homepage = readLineFromStdin("\nType Package Web Homepage URL (HTTP/HTTPS): ").strip.toLowerAscii
+    homepage = readLineFromStdin("Type Package Web Homepage URL (HTTP/HTTPS): ").strip.toLowerAscii
   while not(downloadurl.len > 5 and downloadurl.len < 999 and downloadurl.startsWith"http"):
-    downloadurl = readLineFromStdin("\nType Package Web Download URL (HTTP/HTTPS): ").strip.toLowerAscii
+    downloadurl = readLineFromStdin("Type Package Web Download URL (HTTP/HTTPS): ").strip.toLowerAscii
   while not(keywords.len > 1 and keywords.len < 99):
-    keywords = readLineFromStdin("\nType Package Keywords,separated by commas,without spaces,at least 2 (CSV): ").normalize.split(",")
+    keywords = readLineFromStdin("Type Package Keywords,separated by commas,without spaces,at least 2 (CSV): ").normalize.split(",")
   result = (username: username, password: password, name: name, author: author,
     version: version, license: license, summary: summary, homepage: homepage,
     description: description,  downloadurl: downloadurl, maintainer: maintainer,
