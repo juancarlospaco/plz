@@ -404,7 +404,7 @@ proc downloadPackage(this: PyPI, packageName, releaseVersion,
   client.downloadFile(choosenUrl, filename)
   assert existsFile(filename), "file failed to download"
   echo "🗜\t", getFileSize(filename), " Bytes total (compressed)"
-  if findExe"sha512sum".len > 0: echo "🔐\t" & execCmdEx(cmdChecksum & filename).output.strip
+  if findExe"sha256sum".len > 0: echo "🔐\t" & execCmdEx(cmdChecksum & filename).output.strip
   try:
     echo "⬇️\t" & choosenUrl & ".asc"
     client.downloadFile(choosenUrl & ".asc", filename & ".asc")
@@ -541,25 +541,22 @@ proc pySkeleton() =
     writeFile(pluginName / "CHANGELOG." & ext, "# 0.0.1\n\n- First initial version of " & pluginName & "created at " & $now())
   quit("Created a new Python project skeleton, happy hacking, bye...\n", 0)
 
-proc backup(filename: string): tuple[output: TaintedString, exitCode: int] =
-  preconditions filename.len > 0
-  var cmd: string
-  if findExe"sha512sum".len > 0:
-    cmd = cmdChecksum & filename & " > " & filename & ".sha512"
-    when not defined(release): echo cmd
-    result = execCmdEx(cmd)
-    if result.exitCode == 0 and findExe"gpg".len > 0:
-      cmd = cmdSign & filename
-      when not defined(release): echo cmd
-      result = execCmdEx(cmd)
-      if result.exitCode == 0 and findExe"tar".len > 0:
-        cmd = cmdTar & filename & ".tar.gz " & filename & " " & filename & ".sha512 " & filename & ".asc"
-        when not defined(release): echo cmd
-        result = execCmdEx(cmd)
-        if result.exitCode == 0:
-          removeFile(filename)
-          removeFile(filename & ".sha512")
-          removeFile(filename & ".asc")
+proc backup(): tuple[output: TaintedString, exitCode: int] =
+  var folder: string
+  while not(folder.len > 0 and existsDir(folder)):
+    folder = readLineFromStdin("Full path of 1 existing folder to Backup?: ").strip
+  let files2backup = block:
+    var x: seq[string]
+    for pythonfile in walkFiles(folder / "*.*"):
+      x.add pythonfile
+      styledEcho(fgGreen, bgBlack, "🗜\t" & pythonfile)
+    x
+  if files2backup.len > 0 and findExe"tar".len > 0:
+    result = execCmdEx(cmdTar & folder & ".tar.gz " & files2backup.join" ")
+    if result.exitCode == 0 and findExe"sha256sum".len > 0 and readLineFromStdin("SHA256 CheckSum Backup? (y/N): ").normalize == "y":
+      result = execCmdEx(cmdChecksum & folder & ".tar.gz > " & folder & ".tar.gz.sha256")
+    if result.exitCode == 0 and findExe"gpg".len > 0 and readLineFromStdin("GPG Sign Backup? (y/N): ").normalize == "y":
+      result = execCmdEx(cmdSign & folder & ".tar.gz")
 
 proc ask2User(): auto =
   var username, password, name, version, license, summary, description, homepage: string
@@ -728,13 +725,11 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       pySkeleton()
     of "hash":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
-      if findExe"sha512sum".len > 0:
+      if findExe"sha256sum".len > 0:
         let sha512sum = execCmdEx(cmdChecksum & args[1]).output.strip
         echo sha512sum
-        echo "--hash=sha512:" & sha512sum.split(" ")[^1]
-    of "backup":
-      if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
-      quit(backup(args[1]).output, 0)
+        echo "--hash=sha256:" & sha512sum.split(" ")[^1]
+    of "backup": quit(backup().output, 0)
     of "uninstall":
       let files2delete = block:
         var result: seq[string]
