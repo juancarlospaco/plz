@@ -273,10 +273,7 @@ type
     timeout: byte  ## Timeout Seconds for API Calls, byte type, 0~255.
     proxy: Proxy  ## Network IPv4 / IPv6 Proxy support, Proxy type.
 
-using
-  generateScript: bool
-  classifiers: seq[string]
-  projectName, projectVersion, packageName, user, releaseVersion, destDir: string
+using projectName, projectVersion, packageName, user, releaseVersion, destDir: string
 
 template clientify(this: PyPI): untyped =
   ## Build & inject basic HTTP Client with Proxy and Timeout.
@@ -394,7 +391,7 @@ proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
     if tagy.innerText.normalize.startsWith("https://"): result.add tagy.innerText
 
 proc downloadPackage(this: PyPI, packageName, releaseVersion,
-  destDir = getTempDir(), generateScript): string =
+  destDir = getTempDir(), generateScript: bool): string =
   ## Download a URL for the given releaseVersion. Returns filename.
   preconditions packageName.len > 0, releaseVersion.len > 0, existsDir(destDir)
   let possibleUrls = this.releaseUrls(packageName, releaseVersion)
@@ -420,8 +417,8 @@ proc downloadPackage(this: PyPI, packageName, releaseVersion,
   if generateScript: script &= pipInstallCmd & filename.replace(destDir, "") & "\n"
   result = filename
 
-proc installPackage(this: PyPI, packageName, releaseVersion,
-  generateScript): tuple[output: TaintedString, exitCode: int] =
+proc installPackage(this: PyPI, packageName, releaseVersion: string,
+  generateScript: bool): tuple[output: TaintedString, exitCode: int] =
   preconditions packageName.len > 0, releaseVersion.len > 0
   result = execCmdEx(pipInstallCmd & quoteShell(this.downloadPackage(
     packageName, releaseVersion, generateScript=generateScript)))
@@ -443,7 +440,7 @@ proc search(this: PyPI, query: Table[string, seq[string]], operator="and"): XmlN
   let bodi = xmlRpcBody.format("search", xmlRpcParam.format(replace($query, "@", "")) & xmlRpcParam.format(operator))
   result = parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
-proc browse(this: PyPI, classifiers): XmlNode =
+proc browse(this: PyPI, classifiers: seq[string]): XmlNode =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
   ## Classifiers must be a list of standard Trove classifier strings. Returns 100 results max.
   preconditions classifiers.len > 1
