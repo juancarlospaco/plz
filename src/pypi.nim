@@ -94,7 +94,7 @@ Compile options (Optimize/Enable/Disable features when compiling source code):
   Safest               -d:release -d:contracts -d:hardened --styleCheck:hint
 
 ✅ This wont save any passwords, databases, keys, secrets to disk nor Internet.
- 👑 http://nim-lang.org/learn.html 🐍 http://github.com/juancarlospaco ⚡ """
+  👑 http://nim-lang.org/learn.html 🐍 http://github.com/juancarlospaco ⚡ """
 
 const setupCfg = """# See: https://setuptools.readthedocs.io/en/latest/setuptools.html#metadata
 [metadata]
@@ -258,7 +258,6 @@ BSD   ➡️Simple and permissive,but your code can be closed/sold by 3rd party
 """
 
 let
-  py2 = findExe"python2"
   py3 = findExe"python3"
   cython = findExe"cython"
   nuitka = findExe"nuitka"
@@ -642,7 +641,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       of "debug", "desbichar":
         quit(pretty(%*{"CompileDate": CompileDate, "CompileTime": CompileTime,
         "NimVersion": NimVersion, "hostCPU": hostCPU, "hostOS": hostOS,
-        "cpuEndian": cpuEndian, "tempDir": getTempDir(), "python2": py2,
+        "cpuEndian": cpuEndian, "tempDir": getTempDir(),
         "currentDir": getCurrentDir(), "python3": py3, "ssl": defined(ssl),
         "release": defined(release), "contracts": defined(release),
         "hardened": defined(hardened), "sitePackages": sitePackages,
