@@ -62,6 +62,7 @@ Commands:
   userpackages     List all existing Packages by User (Interactive, asks user).
   latestversion    Show the Latest Version release of a PYPI Package (SemVer).
   open             Open a given module in your default editor (xdg-open).
+  forceInstallPip  Force install PIP on a given location directory (get-pip.py).
 
 Options:
   --help           Show Help and quit.
