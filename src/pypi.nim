@@ -618,7 +618,6 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
   addHandler(newConsoleLogger(fmtStr = verboseFmtStr))
   addHandler(newRollingFileLogger(fmtStr = "$level, $datetime, $appname, "))
   putEnv("PIP_NO_INPUT", "1")
-  randomize()
   var
     taimaout = 99.byte
     args: seq[string]
@@ -696,7 +695,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         echo $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
       of "color":
         setBackgroundColor(bgBlack)
-        setForegroundColor([fgRed, fgGreen, fgYellow, fgBlue, fgMagenta, fgCyan, fgWhite].sample)
+        setForegroundColor(fgGreen)
       of "suicide": discard tryRemoveFile(currentSourcePath()[0..^5])
     of cmdArgument:
       args.add clave
