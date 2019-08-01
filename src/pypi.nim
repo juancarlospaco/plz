@@ -637,55 +637,16 @@ proc ask2User(): auto =
     authoremail: authoremail,  maintaineremail: maintaineremail, keywords: keywords)
 
 
-runnableExamples:
-  let cliente = PyPI(timeout: 99)
-  echo cliente.stats()
-  echo cliente.newPackages()
-  echo cliente.lastUpdates()
-  echo cliente.listPackages()
-  echo cliente.htmlAllPackages()
-  echo cliente.changelogLastSerial()
-  echo cliente.listPackagesWithSerial()
-  echo cliente.project(project_name="pip")
-  echo cliente.packageRoles(package_name="pip")
-  echo cliente.userPackages(user="juancarlospaco")
-  echo cliente.htmlPackage(project_name="requests")
-  echo cliente.packageLatestRelease(package_name="pip")
-  echo cliente.releaseUrls(package_name="pip", release_version="18.1")
-  echo cliente.releaseData(package_name="pip", release_version="18.1")
-  echo cliente.release(project_name="microraptor", project_version="2.0.0")
-  #echo cliente.search({"name": @["requests"]}.toTable)
-  #echo cliente.browse(@["Topic :: Utilities", "Topic :: System"])
-  # echo cliente.upload(
-  #   username        = "user",
-  #   password        = "s3cr3t",
-  #   name            = "TestPackage",
-  #   version         = "0.0.1",
-  #   license         = "MIT",
-  #   summary         = "A test package for testing purposes",
-  #   description     = "A test package for testing purposes",
-  #   author          = "Juan Carlos",
-  #   downloadurl     = "https://www.example.com/download",
-  #   authoremail     = "author@example.com",
-  #   maintainer      = "Juan Carlos",
-  #   maintaineremail = "maintainer@example.com",
-  #   homepage        = "https://www.example.com",
-  #   filename        = "pypi.nim",
-  #   md5_digest      = "4266642",
-  #   keywords        = @["test", "testing"],
-  # )
-
-
 ###############################################################################
 
 
-when isMainModule:
+when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
   addHandler(newConsoleLogger(fmtStr = verboseFmtStr))
   addHandler(newRollingFileLogger(fmtStr = "$level, $datetime, $appname, "))
   putEnv("PIP_NO_INPUT", "1")
   var
     taimaout = 99.byte
-    debug, firejail: bool
+    firejail: bool
     args: seq[string]
   for tipoDeClave, clave, valor in getopt():
     case tipoDeClave
@@ -869,5 +830,3 @@ when isMainModule:
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
   resetAttributes()  # Reset terminal colors.
-
-# https://pip.readthedocs.io/en/1.1/requirements.html
