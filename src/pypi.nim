@@ -40,6 +40,7 @@ const
   virtualenvDir = r"~/.virtualenvs"
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
   pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user --no-dependencies " & pipCommons
+  pipMaintenance = "pip3 install --upgrade --no-warn-script-location --user " & pipCommons & " pip virtualenv setuptools wheel twine"
   cmdChecksum = "sha256sum --tag "  # I prefer SHA512,but PyPI uses SHA256 only?
   cmdSign = "gpg --armor --detach-sign --yes --digest-algo sha512 "
   cmdTar = "tar cafv "
