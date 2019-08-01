@@ -1,7 +1,3 @@
-import
-  asyncdispatch, httpclient, strutils, xmlparser, xmltree, json, mimetypes, os,
-  base64, tables, parseopt, terminal, random, times, posix, logging, osproc,
-  rdstdin, sequtils, md5, contra
 hardenedBuild()
 # For compile time code executions, we dont care the optimization or how clunky
 # it looks because is done compile time only,worse case scenario it wont compile
