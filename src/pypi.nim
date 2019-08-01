@@ -13,6 +13,7 @@ const
   pypiUploadUrl = "https://test.pypi.org/legacy/"               ## PyPI Upload POST URL
   pypiJobUrl = "https://www.python.org/jobs/feed/rss/"          ## Python Jobs URL
   pypiStatus = "https://status.python.org/history.rss"          ## PyPI Status XML API URL.
+  pipInstaller = "https://bootstrap.pypa.io/get-pip.py"         ## get-pip URL
   lppXml = "<methodName>list_packages</methodName>"             ## XML RPC Command.
   clsXml = "<methodName>changelog_last_serial</methodName>"     ## XML RPC Command.
   lpsXml = "<methodName>list_packages_with_serial</methodName>" ## XML RPC Command.
@@ -636,6 +637,12 @@ proc ask2User(): auto =
     description: description,  downloadurl: downloadurl, maintainer: maintainer,
     authoremail: authoremail,  maintaineremail: maintaineremail, keywords: keywords)
 
+proc forceInstallPip*(destination: string): tuple[output: TaintedString, exitCode: int] =
+  assert destination.endswith".py", "Wrong filename for Python file"
+  newHttpClient(timeout=9999).downloadFile(pipInstaller, destination) # Download
+  assert existsFile(destination), "File not found: 'get-pip.py' " & destination
+  result = execCmdEx(py3 & destination & " -I") # Installs PIP via get-pip.py
+
 
 ###############################################################################
 
@@ -659,7 +666,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         elif valor == "fish":   quit(completionFish, 0)
         else:                   quit(completionBash, 0)
       of "nice20":              discard nice(20.cint)
-      of "timeout":              taimaout = valor.parseInt.byte
+      of "timeout":             taimaout = valor.parseInt.byte
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
@@ -805,3 +812,5 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
   resetAttributes()  # Reset terminal colors.
+  # Delete virtualenvs
+  #
