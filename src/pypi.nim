@@ -226,9 +226,7 @@ ENV PYTHON_PIP_VERSION 3.7
 ENV PATH /usr/local/bin:$PATH
 # Do your magic here. Download and Compile Python... """
 
-const completionBash = """_pip_completion() {
-  COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD PIP_AUTO_COMPLETE=1 $1 ) )
-}
+const completionBash = """_pip_completion() { COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD PIP_AUTO_COMPLETE=1 $1 ) ) }
 complete -o default -F _pip_completion pip """
 
 const completionZsh = """function _pip_completion {
@@ -270,6 +268,7 @@ let
   user = getEnv"USER"
 
 var script: string
+setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
 
 type
   PyPIBase*[HttpType] = object ## Base object.
@@ -278,13 +277,10 @@ type
   PyPI* = PyPIBase[HttpClient]           ##  Sync PyPI API Client.
   AsyncPyPI* = PyPIBase[AsyncHttpClient] ## Async PyPI API Client.
 
-
 using
   generateScript: bool
   classifiers: seq[string]
   project_name, project_version, package_name, user, release_version, destDir: string
-
-setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
 
 template clientify(this: PyPI | AsyncPyPI): untyped =
   ## Build & inject basic HTTP Client with Proxy and Timeout.
@@ -295,7 +291,6 @@ template clientify(this: PyPI | AsyncPyPI): untyped =
       timeout = when declared(this.timeout): this.timeout.int * 1_000 else: -1,
       proxy = when declared(this.proxy): this.proxy else: nil, userAgent="")
 
-
 proc newPackages*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return an RSS XML XmlNode type with the Newest Packages uploaded to PyPI.
   clientify(this)
@@ -303,7 +298,6 @@ proc newPackages*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   result =
     when this is AsyncPyPI: parseXml(await client.getContent(pypiPackagesXml))
     else: parseXml(client.getContent(pypiPackagesXml))
-
 
 proc lastUpdates*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return an RSS XML XmlNode type with the Latest Updates uploaded to PyPI.
@@ -313,7 +307,6 @@ proc lastUpdates*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
     when this is AsyncPyPI: parseXml(await client.getContent(pypiUpdatesXml))
     else: parseXml(client.getContent(pypiUpdatesXml))
 
-
 proc lastJobs*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return an RSS XML XmlNode type with the Latest Jobs posted to PyPI.
   clientify(this)
@@ -321,7 +314,6 @@ proc lastJobs*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   result =
     when this is AsyncPyPI: parseXml(await client.getContent(pypiJobUrl))
     else: parseXml(client.getContent(pypiJobUrl))
-
 
 proc project*(this: PyPI | AsyncPyPI, project_name): Future[JsonNode] {.multisync.} =
   ## Return all JSON JsonNode type data for project_name from PyPI.
@@ -332,7 +324,6 @@ proc project*(this: PyPI | AsyncPyPI, project_name): Future[JsonNode] {.multisyn
     when this is AsyncPyPI: parseJson(await client.getContent(url=url))
     else: parseJson(client.getContent(url=url))
 
-
 proc release*(this: PyPI | AsyncPyPI, project_name, project_version): Future[JsonNode] {.multisync.} =
   ## Return all JSON data for project_name of an specific version from PyPI.
   clientify(this)
@@ -342,7 +333,6 @@ proc release*(this: PyPI | AsyncPyPI, project_name, project_version): Future[Jso
     when this is AsyncPyPI: parseJson(await client.getContent(url=url))
     else: parseJson(client.getContent(url=url))
 
-
 proc htmlAllPackages*(this: PyPI | AsyncPyPI): Future[string] {.multisync.} =
   ## Return all projects registered on PyPI as HTML string,Legacy Endpoint,Slow.
   clientify(this)
@@ -350,14 +340,12 @@ proc htmlAllPackages*(this: PyPI | AsyncPyPI): Future[string] {.multisync.} =
     when this is AsyncPyPI: await client.getContent(url=pypiApiUrl & "simple")
     else: client.getContent(url=pypiApiUrl & "simple")
 
-
 proc htmlPackage*(this: PyPI | AsyncPyPI, project_name): Future[string] {.multisync.} =
   ## Return a project registered on PyPI as HTML string, Legacy Endpoint, Slow.
   clientify(this)
   result =
     when this is AsyncPyPI: await client.getContent(url=pypiApiUrl & "simple/" & project_name)
     else: client.getContent(url=pypiApiUrl & "simple/" & project_name)
-
 
 proc stats*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
   ## Return all JSON stats data for project_name of an specific version from PyPI.
@@ -367,7 +355,6 @@ proc stats*(this: PyPI | AsyncPyPI): Future[XmlNode] {.multisync.} =
     when this is AsyncPyPI: parseXml(await client.getContent(url=pypiStatus))
     else: parseXml(client.getContent(url=pypiStatus))
 
-
 proc listPackages*(this: PyPI | AsyncPyPI): Future[seq[string]] {.multisync.} =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI. Server-side Slow.
   clientify(this)
@@ -375,9 +362,7 @@ proc listPackages*(this: PyPI | AsyncPyPI): Future[seq[string]] {.multisync.} =
   let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=lppXml))
     else: parseXml(client.postContent(pypiXmlUrl, body=lppXml))
-  for tagy in response.findAll("string"):
-    result.add tagy.innerText
-
+  for tagy in response.findAll("string"): result.add tagy.innerText
 
 proc changelogLastSerial*(this: PyPI | AsyncPyPI): Future[int] {.multisync.} =
   ## Return 1 XML XmlNode with the Last Serial number integer.
@@ -386,9 +371,7 @@ proc changelogLastSerial*(this: PyPI | AsyncPyPI): Future[int] {.multisync.} =
   let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=clsXml))
     else: parseXml(client.postContent(pypiXmlUrl, body=clsXml))
-  for tagy in response.findAll("int"):
-    result = tagy.innerText.parseInt
-
+  for tagy in response.findAll("int"): result = tagy.innerText.parseInt
 
 proc listPackagesWithSerial*(this: PyPI | AsyncPyPI): Future[seq[array[2, string]]] {.multisync.} =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with Serial number integer. Server-side Slow.
@@ -400,7 +383,6 @@ proc listPackagesWithSerial*(this: PyPI | AsyncPyPI): Future[seq[array[2, string
   for tagy in response.findAll("member"):
     result.add [tagy.child"name".innerText, tagy.child"value".child"int".innerText]
 
-
 proc packageLatestRelease*(this: PyPI | AsyncPyPI, package_name): Future[string] {.multisync.} =
   ## Return the latest release registered for the given package_name.
   clientify(this)
@@ -409,9 +391,7 @@ proc packageLatestRelease*(this: PyPI | AsyncPyPI, package_name): Future[string]
   let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
-  for tagy in response.findAll("string"):
-    result = tagy.innerText
-
+  for tagy in response.findAll("string"): result = tagy.innerText
 
 proc packageRoles*(this: PyPI | AsyncPyPI, package_name): Future[seq[XmlNode]] {.multisync.} =
   ## Retrieve a list of role, user for a given package_name. Role is Maintainer or Owner.
@@ -421,9 +401,7 @@ proc packageRoles*(this: PyPI | AsyncPyPI, package_name): Future[seq[XmlNode]] {
   let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
-  for tagy in response.findAll("data"):
-    result.add tagy
-
+  for tagy in response.findAll("data"): result.add tagy
 
 proc userPackages*(this: PyPI | AsyncPyPI, user = user): Future[seq[XmlNode]] {.multisync.} =
   ## Retrieve a list of role, package_name for a given user. Role is Maintainer or Owner.
@@ -433,9 +411,7 @@ proc userPackages*(this: PyPI | AsyncPyPI, user = user): Future[seq[XmlNode]] {.
   let response =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
-  for tagy in response.findAll("data"):
-    result.add tagy
-
+  for tagy in response.findAll("data"): result.add tagy
 
 proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future[seq[string]] {.multisync.} =
   ## Retrieve a list of download URLs for the given release_version. Returns a list of dicts.
@@ -447,12 +423,11 @@ proc releaseUrls*(this: PyPI | AsyncPyPI, package_name, release_version): Future
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
   for tagy in response.findAll("string"):
-    if tagy.innerText.normalize.startsWith("https://"):
-      result.add tagy.innerText
+    if tagy.innerText.normalize.startsWith("https://"): result.add tagy.innerText
 
 proc downloadPackage*(this: PyPI | AsyncPyPI, package_name, release_version,
   destDir = getTempDir(), generateScript): Future[string] {.multisync.} =
-  ## Download a URL for the given release_version. Returns a list of dicts.
+  ## Download a URL for the given release_version. Returns filename.
   let possibleUrls = await this.releaseUrls(package_name, release_version)
   let choosenUrl = possibleUrls[0]
   assert choosenUrl.startsWith("https://"), "PyPI Download URL is not HTTPS SSL"
@@ -463,27 +438,22 @@ proc downloadPackage*(this: PyPI | AsyncPyPI, package_name, release_version,
   await client.downloadFile(choosenUrl, filename)
   assert existsFile(filename), "file failed to download"
   echo "🗜\t", getFileSize(filename), " Bytes total (compressed)"
-  if findExe"sha512sum".len > 0:
-    echo "🔐\t" & execCmdEx(cmdChecksum & filename).output.strip
+  if findExe"sha512sum".len > 0: echo "🔐\t" & execCmdEx(cmdChecksum & filename).output.strip
   try:
     echo "⬇️\t" & choosenUrl & ".asc"
     await client.downloadFile(choosenUrl & ".asc", filename & ".asc")
     if generateScript: script &= "curl -LO " & choosenUrl & ".asc" & "\n"
     if findExe"gpg".len > 0 and existsFile(filename & ".asc"):
       echo "🔐\t" & execCmdEx(cmdVerify & filename & ".asc").output.strip
-      if generateScript:
-        script &= cmdVerify & filename.replace(destDir, "") & ".asc\n"
+      if generateScript: script &= cmdVerify & filename.replace(destDir, "") & ".asc\n"
   except:
     echo "💩\tHTTP-404? ➡️ " & choosenUrl & ".asc"
-  if generateScript:
-    script &= pipInstallCmd & filename.replace(destDir, "") & "\n"
+  if generateScript: script &= pipInstallCmd & filename.replace(destDir, "") & "\n"
   result = filename
 
 proc installPackage*(this: PyPI | AsyncPyPI, package_name, release_version,
   generateScript): Future[tuple[output: TaintedString, exitCode: int]] {.multisync.} =
-  ## Install a Pacakge.
   let cmd = pipInstallCmd & quoteShell(await this.downloadPackage(package_name, release_version, generateScript=generateScript))
-  # echo "📦\t" & cmd
   result = execCmdEx(cmd)
 
 proc releaseData*(this: PyPI | AsyncPyPI, package_name, release_version): Future[XmlNode] {.multisync.} =
@@ -496,7 +466,6 @@ proc releaseData*(this: PyPI | AsyncPyPI, package_name, release_version): Future
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
-
 proc search*(this: PyPI | AsyncPyPI, query: Table[string, seq[string]], operator="and"): Future[XmlNode] {.multisync.} =
   ## Search package database using indicated search spec. Returns 100 results max.
   doAssert operator in ["or", "and"], "operator must be 1 of 'and', 'or'."
@@ -507,21 +476,20 @@ proc search*(this: PyPI | AsyncPyPI, query: Table[string, seq[string]], operator
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
-
 proc browse*(this: PyPI | AsyncPyPI, classifiers): Future[XmlNode] {.multisync.} =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
   ## Classifiers must be a list of standard Trove classifier strings. Returns 100 results max.
   doAssert classifiers.len > 1, "classifiers must be at least 2 strings lenght."
   clientify(this)
   client.headers = headerXml
-  var clasifiers = ""
-  for item in classifiers:
-    clasifiers &= xmlRpcParam.format(item)
+  let clasifiers = block:
+    var result: string
+    for item in classifiers: result &= xmlRpcParam.format(item)
+    result
   let bodi = xmlRpcBody.format("browse", clasifiers)
   result =
     when this is AsyncPyPI: parseXml(await client.postContent(pypiXmlUrl, body=bodi))
     else: parseXml(client.postContent(pypiXmlUrl, body=bodi))
-
 
 proc upload*(this: PyPI | AsyncPyPI,
              name, version, license, summary, description, author: string,
@@ -542,37 +510,35 @@ proc upload*(this: PyPI | AsyncPyPI,
     mime = newMimetypes().getMimetype(fext)
     auth = {"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"}
   # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
-  var multipart_data = newMultipartData()
-  multipart_data["protocol_version"] = "1"
-  multipart_data[":action"] = "file_upload"
-  multipart_data["metadata_version"] = "2.1"
-  multipart_data["author"] = author
-  multipart_data["name"] = name.normalize
-  multipart_data["md5_digest"] = md5_digest # md5 hash of file in urlsafe base64
-  multipart_data["summary"] = summary.normalize
-  multipart_data["version"] = version.toLowerAscii
-  multipart_data["license"] = license.toLowerAscii
-  multipart_data["pyversion"] = pyversion.normalize
-  multipart_data["requires_python"] = requirespython
-  multipart_data["homepage"] = homepage.toLowerAscii
-  multipart_data["filetype"] = filetype.toLowerAscii
-  multipart_data["description"] = description.normalize
-  multipart_data["keywords"] = keywords.join(" ").normalize
-  multipart_data["download_url"] = downloadurl.toLowerAscii
-  multipart_data["author_email"] = authoremail.toLowerAscii
-  multipart_data["maintainer_email"] = maintaineremail.toLowerAscii
-  multipart_data["description_content_type"] = description_content_type.strip
-  multipart_data["maintainer"] = if maintainer == "": author else: maintainer
-  multipart_data["content"] = (filename, mime, filename.readFile)
-  when not defined(release): echo multipart_data.repr, "\n", auth
+  let multipart_data = block:
+    var result = newMultipartData()
+    result["protocol_version"] = "1"
+    result[":action"] = "file_upload"
+    result["metadata_version"] = "2.1"
+    result["author"] = author
+    result["name"] = name.normalize
+    result["md5_digest"] = md5_digest # md5 hash of file in urlsafe base64
+    result["summary"] = summary.normalize
+    result["version"] = version.toLowerAscii
+    result["license"] = license.toLowerAscii
+    result["pyversion"] = pyversion.normalize
+    result["requires_python"] = requirespython
+    result["homepage"] = homepage.toLowerAscii
+    result["filetype"] = filetype.toLowerAscii
+    result["description"] = description.normalize
+    result["keywords"] = keywords.join(" ").normalize
+    result["download_url"] = downloadurl.toLowerAscii
+    result["author_email"] = authoremail.toLowerAscii
+    result["maintainer_email"] = maintaineremail.toLowerAscii
+    result["description_content_type"] = description_content_type.strip
+    result["maintainer"] = if maintainer == "": author else: maintainer
+    result["content"] = (filename, mime, filename.readFile)
+    result
   clientify(this)
   client.headers = newHttpHeaders(auth)
-  if readLineFromStdin("\nShow literal HTTP Headers? (y/N): ").normalize == "y":
-    echo client.headers
   result =  # TODO: Finish this and test against the test dev pypi server.
     when this is AsyncPyPI: await client.postContent(pypiUploadUrl, multipart=multipart_data)
     else: client.postContent(pypiUploadUrl, multipart=multipart_data)
-
 
 proc pluginSkeleton() =
   ## Creates the skeleton (folders and files) for a New Python project.
@@ -580,27 +546,27 @@ proc pluginSkeleton() =
   assert pluginName.len > 1, "Name must not be empty string: " & pluginName
   discard existsOrCreateDir(pluginName)
   writeFile(pluginName / pluginName & ".py", r"print((lambda r:'\n'.join('.'.join('█' if(y<r and((x-r)**2+(y-r)**2<=r**2or(x-3*r)**2+(y-r)**2<=r**2))or(y>=r and x+r>=y and x-r<=4*r-y)else '░' for x in range(4*r))for y in range(1,3*r,2)))(5))")
-  if readLineFromStdin("Generate optional Unitests on ./tests (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional Unitests on ./tests (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / "tests")
     writeFile(pluginName / "tests/tests.py", testTemplate)
-  if readLineFromStdin("Generate optional Documentation on ./docs (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional Documentation on ./docs (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / "docs")
     writeFile(pluginName / "docs/documentation.md", "# " & pluginName & "\n\n")
-  if readLineFromStdin("Generate optional Examples on ./examples (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional Examples on ./examples (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / "examples")
     writeFile(pluginName / "examples/example.py", "# -*- coding: utf-8 -*-\n\nprint('Example')\n")
-  if readLineFromStdin("Generate optional DevOps on ./devops (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional DevOps on ./devops (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / "devops")
     writeFile(pluginName / "devops/Dockerfile", dockerfileTemplate)
     writeFile(pluginName / "devops/build_package.sh", "python3 setup.py sdist --formats=zip\n")
     writeFile(pluginName / "devops/upload_package.sh", "twine upload .\n")
-  if readLineFromStdin("Generate optional GitHub files on .github (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional GitHub files on .github (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / ".github")
     discard existsOrCreateDir(pluginName / ".github/ISSUE_TEMPLATE")
     discard existsOrCreateDir(pluginName / ".github/PULL_REQUEST_TEMPLATE")
     writeFile(pluginName / ".github/ISSUE_TEMPLATE/ISSUE_TEMPLATE.md", "")
     writeFile(pluginName / ".github/PULL_REQUEST_TEMPLATE/PULL_REQUEST_TEMPLATE.md", "")
-  if readLineFromStdin("Generate optional files (y/N): ").string.strip.toLowerAscii == "y":
+  if readLineFromStdin("Generate optional files (y/N): ").normalize == "y":
     writeFile(pluginName / ".gitattributes", "*.py linguist-language=Python\n")
     writeFile(pluginName / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.egg-info\n*.egg\n*.log\n__pycache__\n")
     writeFile(pluginName / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
