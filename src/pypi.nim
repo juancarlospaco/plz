@@ -463,10 +463,7 @@ proc upload(this: PyPI,
   # https://warehouse.readthedocs.io/api-reference/legacy/#upload-api
   # github.com/python/cpython/blob/master/Lib/distutils/command/upload.py#L131-L135
   doAssert filename.existsFile, "filename must be 1 existent valid readable file"
-  let
-    fext = filename.splitFile.ext.toLowerAscii
-    mime = newMimetypes().getMimetype(fext)
-    auth = {"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"}
+  let mime = newMimetypes().getMimetype(filename.splitFile.ext.toLowerAscii)
   # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
   let multipartData = block:
     var x = newMultipartData()
@@ -493,7 +490,7 @@ proc upload(this: PyPI,
     x["content"] = (filename, mime, filename.readFile)
     x
   clientify(this) # TODO: Finish this and test against the test dev pypi server.
-  client.headers = newHttpHeaders(auth)
+  client.headers = newHttpHeaders({"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"})
   result = client.postContent(pypiUploadUrl, multipart=multipartData)
 
 proc pySkeleton() =
