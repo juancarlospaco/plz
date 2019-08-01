@@ -577,15 +577,17 @@ proc pluginSkeleton() =
     writeFile(pluginName / ".coveragerc", "")
   if readLineFromStdin("Generate optional files (y/N): ").normalize == "y":
     writeFile(pluginName / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
-    writeFile(pluginName / "LICENSE.txt", "# https://tldrlegal.com/licenses/browse\n")
-    writeFile(pluginName / "CODE_OF_CONDUCT.md", "")
-    writeFile(pluginName / "CONTRIBUTING.md", "")
-    writeFile(pluginName / "README.md", "")
     writeFile(pluginName / "tox.ini", "")
     writeFile(pluginName / "requirements.txt", "")
     writeFile(pluginName / "setup.cfg", setupCfg)
     writeFile(pluginName / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
-    writeFile(pluginName / "CHANGELOG.md", "# 0.0.1\n\n- First initial version created at " & $now())
+    let ext = if readLineFromStdin("Use Markdown(MD) instead of ReSTructuredText(RST)  (y/N): ").normalize == "y": "md" else: "rst"
+    writeFile(pluginName / "LICENSE." & ext, "See https://tldrlegal.com/licenses/browse\n")
+    writeFile(pluginName / "CODE_OF_CONDUCT." & ext, "")
+    writeFile(pluginName / "CONTRIBUTING." & ext, "")
+    writeFile(pluginName / "AUTHORS." & ext, "# Authors\n\n- " & user & "\n")
+    writeFile(pluginName / "README." & ext, "# " & pluginName & "\n")
+    writeFile(pluginName / "CHANGELOG." & ext, "# 0.0.1\n\n- First initial version of " & pluginName & "created at " & $now())
   quit("Created a new Python project skeleton, happy hacking, bye...\n", 0)
 
 proc backup*(filename: string): tuple[output: TaintedString, exitCode: int] =
