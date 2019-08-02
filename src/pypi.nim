@@ -531,7 +531,6 @@ proc pySkeleton() =
     writeFile(pluginName / ".coveragerc", "")
   if readLineFromStdin("Generate optional files (y/N): ").normalize == "y":
     writeFile(pluginName / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
-    writeFile(pluginName / "tox.ini", "")
     writeFile(pluginName / "requirements.txt", "")
     writeFile(pluginName / "setup.cfg", setupCfg)
     writeFile(pluginName / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
