@@ -1,6 +1,6 @@
 hardenedBuild()  # Security Hardened mode.
-addHandler(newConsoleLogger(fmtStr = verboseFmtStr))
-addHandler(newRollingFileLogger(fmtStr = "$level, $datetime, $appname, "))
+addHandler(newConsoleLogger(fmtStr = ""))
+addHandler(newRollingFileLogger(fmtStr = "$levelname, $datetime, $appname, "))
 # For compile time code executions, we dont care the optimization or how clunky
 # it looks because is done compile time only,worse case scenario it wont compile
 const
@@ -401,21 +401,21 @@ proc downloadPackage(this: PyPI, packageName, releaseVersion,
   assert choosenUrl.startsWith("https://"), "PyPI Download URL is not HTTPS SSL"
   let filename = destDir / choosenUrl.split("/")[^1]
   clientify(this)
-  echo "⬇️\t" & choosenUrl
+  info "⬇️\t" & choosenUrl
   if generateScript: script &= "curl -LO " & choosenUrl & "\n"
   client.downloadFile(choosenUrl, filename)
   assert existsFile(filename), "file failed to download"
-  echo "🗜\t", getFileSize(filename), " Bytes total (compressed)"
-  if findExe"sha256sum".len > 0: echo "🔐\t" & execCmdEx(cmdChecksum & filename).output.strip
+  info "🗜\t" & $getFileSize(filename) & " Bytes total (compressed)"
+  if findExe"sha256sum".len > 0: info "🔐\t" & execCmdEx(cmdChecksum & filename).output.strip
   try:
-    echo "⬇️\t" & choosenUrl & ".asc"
+    info "⬇️\t" & choosenUrl & ".asc"
     client.downloadFile(choosenUrl & ".asc", filename & ".asc")
     if generateScript: script &= "curl -LO " & choosenUrl & ".asc" & "\n"
     if findExe"gpg".len > 0 and existsFile(filename & ".asc"):
-      echo "🔐\t" & execCmdEx(cmdVerify & filename & ".asc").output.strip
+      info "🔐\t" & execCmdEx(cmdVerify & filename & ".asc").output.strip
       if generateScript: script &= cmdVerify & filename.replace(destDir, "") & ".asc\n"
   except:
-    echo "💩\tHTTP-404? ➡️ " & choosenUrl & ".asc"
+    warn "💩\tHTTP-404? ➡️ " & choosenUrl & ".asc"
   if generateScript: script &= pipInstallCmd & filename.replace(destDir, "") & "\n"
   result = filename
 
@@ -579,7 +579,7 @@ proc ask2User(): auto =
     name = readLineFromStdin("Type Package Name: ").strip.toLowerAscii
   while not(version.len > 4 and version.len < 99 and "." in version):
     version = readLineFromStdin("Type Package Version (SemVer): ").normalize
-  echo licenseHint
+  info licenseHint
   while not(license.len > 2 and license.len < 99):
     license = readLineFromStdin("Type Package License: ").normalize
   while not(summary.len > 0 and summary.len < 999):
@@ -652,16 +652,16 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       of "pythonpath": putEnv("PYTHONPATH",  getEnv"PYTHONPATH" & ":" & valor)
       of "nopyc":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pyc in walkFiles("./*.pyc"): echo $tryRemoveFile(pyc) & "\t" & pyc
+        for pyc in walkFiles("./*.pyc"): info $tryRemoveFile(pyc) & "\t" & pyc
       of "nopycache":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pyc in walkDirs("__pycache__"): echo $tryRemoveFile(pyc) & "\t" & pyc
+        for pyc in walkDirs("__pycache__"): info $tryRemoveFile(pyc) & "\t" & pyc
       of "cleantemp":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for tmp in walkPattern(getTempDir()): echo $tryRemoveFile(tmp) & "\t" & tmp
+        for tmp in walkPattern(getTempDir()): info $tryRemoveFile(tmp) & "\t" & tmp
       of "nopypackages":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pyc in walkFiles("./__pypackages__/*.*"): echo $tryRemoveFile(pyc) & "\t" & pyc
+        for pyc in walkFiles("./__pypackages__/*.*"): info $tryRemoveFile(pyc) & "\t" & pyc
       of "cleanvirtualenvs", "cleanvirtualenv", "clearvirtualenvs", "clearvirtualenv":
         let files2delete = block:
           var x: seq[string]
@@ -670,17 +670,17 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
             #if readLineFromStdin("Delete Python Virtualenv? (y/N): ").normalize == "y":
             x.add pythonfile
           x # No official documented way to get virtualenv location on windows
-        echo "files2delete ", files2delete
+        info("files2delete " & files2delete)
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pyc in files2delete: echo $tryRemoveFile(pyc) & "\t" & pyc
+        for pyc in files2delete: info $tryRemoveFile(pyc) & "\t" & pyc
         quit()
       of "cleanpipcache":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile") # Dir Found in the wild
-        echo $tryRemoveFile("/tmp/pip-build-root") & "\t/tmp/pip-build-root"
-        echo $tryRemoveFile("/tmp/pip_build_root") & "\t/tmp/pip_build_root"
-        echo $tryRemoveFile("/tmp/pip-build-" & user) & "\t/tmp/pip-build-" & user
-        echo $tryRemoveFile("/tmp/pip_build_" & user) & "\t/tmp/pip_build_" & user
-        echo $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
+        info $tryRemoveFile("/tmp/pip-build-root") & "\t/tmp/pip-build-root"
+        info $tryRemoveFile("/tmp/pip_build_root") & "\t/tmp/pip_build_root"
+        info $tryRemoveFile("/tmp/pip-build-" & user) & "\t/tmp/pip-build-" & user
+        info $tryRemoveFile("/tmp/pip_build_" & user) & "\t/tmp/pip_build_" & user
+        info $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
       of "color":
         setBackgroundColor(bgBlack)
         setForegroundColor(fgGreen)
@@ -719,16 +719,16 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       quit(output, exitCode)
     of "search":
       quit("Not implemented yet (PyPI API is Buggy)")
-      # echo args[1]
-      # echo cliente.search({"name": @[args[1]]}.toTable)
+      # info args[1]
+      # info cliente.search({"name": @[args[1]]}.toTable)
     of "init":
       pySkeleton()
     of "hash":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       if findExe"sha256sum".len > 0:
         let sha512sum = execCmdEx(cmdChecksum & args[1]).output.strip
-        echo sha512sum
-        echo "--hash=sha256:" & sha512sum.split(" ")[^1]
+        info sha512sum
+        info "--hash=sha256:" & sha512sum.split(" ")[^1]
     of "backup": quit(backup().output, 0)
     of "uninstall":
       let files2delete = block:
@@ -746,34 +746,34 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         result
       when defined(linux):
         if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
-          echo "\nsudo rm --verbose --force ", files2delete.join" "
+          info "\nsudo rm --verbose --force " & files2delete.join" "
       if readLineFromStdin("\nDelete " & $files2delete.len & " Python files? (y/N): ").normalize == "y":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pythonfile in files2delete:
-          echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
+          info $tryRemoveFile(pythonfile) & "\t" & pythonfile
     of "install":
       var failed, suces: byte
-      echo("🐍\t", now(), ", PID is ", getCurrentProcessId(), ", ",
-        args[1..^1].len, " packages to download and install ➡️ ", args[1..^1])
+      info("🐍\t" & $now() & ", PID is " & $getCurrentProcessId() & ", " &
+        $args[1..^1].len & " packages to download and install ➡️ " & $args[1..^1])
       let generateScript = readLineFromStdin("\nGenerate Install Script? (y/N): ").normalize == "y"
       let time0 = now()
       for argument in args[1..^1]:
         let semver = $cliente.packageLatestRelease(argument)
-        echo "🌎\tPyPI ➡️ " & argument & " " & semver
+        info "🌎\tPyPI ➡️ " & argument & " " & semver
         let resultados = cliente.installPackage(argument, semver, generateScript)
-        echo if resultados.exitCode == 0: "✅\t" else: "❌\t", resultados
+        info (if resultados.exitCode == 0: "✅\t" else: "❌\t") & $resultados
         if resultados.exitCode == 0: inc suces else: inc failed
-      if generateScript: echo "\n", script
-      echo(if failed == 0: "✅\t" else: "❌\t", now(), " ", failed,
-        " Failed, ", suces, " Success on ", now() - time0,
-        " to download/decompress/install ", args[1..^1].len, " packages")
+      if generateScript: info "\n" & script
+      info((if failed == 0: "✅\t" else: "❌\t") & $now() & " " & $failed &
+        " Failed, " & $suces & " Success on " & $(now() - time0) &
+        " to download/install " & $args[1..^1].len & " packages")
     of "upload":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       doAssert existsFile(args[1]), "File not found: " & args[1]
       let (username, password, name, author, version, license, summary, homepage,
         description, downloadurl, maintainer, authoremail, maintaineremail, keywords
       ) = ask2User()
-      echo cliente.upload(
+      info cliente.upload(
         username = username, password = password, name = name,
         version = version, license = license, summary = summary,
         description = description, author = author, downloadurl = downloadurl,
