@@ -463,7 +463,8 @@ proc upload(this: PyPI,
   ## For some unknown reason intentionally undocumented (security by obscurity?)
   # https://warehouse.readthedocs.io/api-reference/legacy/#upload-api
   # github.com/python/cpython/blob/master/Lib/distutils/command/upload.py#L131-L135
-  doAssert filename.existsFile, "filename must be 1 existent valid readable file"
+  preconditions(existsFile(filename), name.len > 0, version.len > 0, license.len > 0, summary.len > 0, description.len > 0, author.len > 0, downloadurl.len > 0,
+  authoremail.len > 0, maintainer.len > 0, maintaineremail.len > 0, homepage.len > 0, md5_digest.len > 0, username.len > 0, password.len > 0, keywords.len > 0)
   let mime = newMimetypes().getMimetype(filename.splitFile.ext.toLowerAscii)
   # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
   let multipartData = block:
@@ -663,17 +664,17 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pyc in walkFiles("./__pypackages__/*.*"): echo $tryRemoveFile(pyc) & "\t" & pyc
       of "cleanvirtualenvs", "cleanvirtualenv", "clearvirtualenvs", "clearvirtualenv":
-        discard # WIP
-        # let files2delete = block:
-        #   var x: seq[string]
-        #   for pythonfile in walkPattern(virtualenvDir / "*.*"):
-        #     styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
-        #     #if readLineFromStdin("Delete Python Virtualenv? (y/N): ").normalize == "y":
-        #     x.add pythonfile
-        #   x # No official documented way to get virtualenv location on windows
-        # echo "files2delete ", files2delete
-        # styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        # for pyc in files2delete: echo $tryRemoveFile(pyc) & "\t" & pyc
+        let files2delete = block:
+          var x: seq[string]
+          for pythonfile in walkPattern(virtualenvDir / "*.*"):
+            styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
+            #if readLineFromStdin("Delete Python Virtualenv? (y/N): ").normalize == "y":
+            x.add pythonfile
+          x # No official documented way to get virtualenv location on windows
+        echo "files2delete ", files2delete
+        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
+        for pyc in files2delete: echo $tryRemoveFile(pyc) & "\t" & pyc
+        quit()
       of "cleanpipcache":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile") # Dir Found in the wild
         echo $tryRemoveFile("/tmp/pip-build-root") & "\t/tmp/pip-build-root"
@@ -684,10 +685,15 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       of "color":
         setBackgroundColor(bgBlack)
         setForegroundColor(fgGreen)
+
+
+
       of "suicide": discard tryRemoveFile(currentSourcePath()[0..^5])
     of cmdArgument:
       args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
+
+
   let is1argOnly = args.len == 2  # command + arg == 2 ("install foo")
   if args.len > 0:
     let cliente = PyPI(timeout: taimaout)
