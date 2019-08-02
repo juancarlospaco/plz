@@ -92,10 +92,6 @@ Other environment variables (literally copied from python3 executable itself):
   --localewarn         Set the locale coerce to Warning.
   --debugger:FOO       Set the Python debugger. You can use ipdb, ptpdb, etc.
 
-Compile options (Optimize/Enable/Disable features when compiling source code):
-  Fastest              -d:release -d:danger --gc:markAndSweep
-  Safest               -d:release -d:contracts -d:hardened --styleCheck:hint
-
 ✅ This wont save any passwords, databases, keys, secrets to disk nor Internet.
   👑 http://nim-lang.org/learn.html 🐍 http://github.com/juancarlospaco ⚡ """
 
@@ -337,22 +333,19 @@ proc listPackages(this: PyPI): seq[string] =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI. Server-side Slow.
   clientify(this)
   client.headers = headerXml
-  let response = parseXml(client.postContent(pypiXmlUrl, body=lppXml))
-  for tagy in response.findAll("string"): result.add tagy.innerText
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body=lppXml)).findAll("string"): result.add tagy.innerText
 
 proc changelogLastSerial(this: PyPI): int =
   ## Return 1 XML XmlNode with the Last Serial number integer.
   clientify(this)
   client.headers = headerXml
-  let response = parseXml(client.postContent(pypiXmlUrl, body=clsXml))
-  for tagy in response.findAll("int"): result = tagy.innerText.parseInt
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body=clsXml)).findAll("int"): result = tagy.innerText.parseInt
 
 proc listPackagesWithSerial(this: PyPI): seq[array[2, string]] =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with Serial number integer. Server-side Slow.
   clientify(this)
   client.headers = headerXml
-  let response = parseXml(client.postContent(pypiXmlUrl, body=lpsXml))
-  for tagy in response.findAll("member"):
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body=lpsXml)).findAll("member"):
     result.add [tagy.child"name".innerText, tagy.child"value".child"int".innerText]
 
 proc packageLatestRelease(this: PyPI, packageName): string =
@@ -361,8 +354,7 @@ proc packageLatestRelease(this: PyPI, packageName): string =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_releases", xmlRpcParam.format(packageName))
-  let response = parseXml(client.postContent(pypiXmlUrl, body=bodi))
-  for tagy in response.findAll("string"): result = tagy.innerText
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body=bodi)).findAll("string"): result = tagy.innerText
 
 proc packageRoles(this: PyPI, packageName): seq[XmlNode] =
   ## Retrieve a list of role, user for a given packageName. Role is Maintainer or Owner.
@@ -370,8 +362,7 @@ proc packageRoles(this: PyPI, packageName): seq[XmlNode] =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(packageName))
-  let response = parseXml(client.postContent(pypiXmlUrl, body=bodi))
-  for tagy in response.findAll("data"): result.add tagy
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body=bodi)).findAll("data"): result.add tagy
 
 proc userPackages(this: PyPI, user = user): seq[XmlNode] =
   ## Retrieve a list of role, packageName for a given user. Role is Maintainer or Owner.
@@ -379,8 +370,7 @@ proc userPackages(this: PyPI, user = user): seq[XmlNode] =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
-  let response = parseXml(client.postContent(pypiXmlUrl, body=bodi))
-  for tagy in response.findAll("data"): result.add tagy
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body=bodi)).findAll("data"): result.add tagy
 
 proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
   ## Retrieve a list of download URLs for the given releaseVersion. Returns a list of dicts.
@@ -389,8 +379,7 @@ proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
   client.headers = headerXml
   let bodi = xmlRpcBody.format("release_urls",
     xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
-  let response = parseXml(client.postContent(pypiXmlUrl, body=bodi))
-  for tagy in response.findAll("string"):
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body=bodi)).findAll("string"):
     if tagy.innerText.normalize.startsWith("https://"): result.add tagy.innerText
 
 proc downloadPackage(this: PyPI, packageName, releaseVersion,
