@@ -77,7 +77,7 @@ Isolation of Virtualenv are very poor and limited compared to Docker.
 No one Deploys anything without Docker nowadays.
 Virtualenv is not Immutable.
 Virtualenv is not Versioned.
-Virtualenv is not really Reproducible, a Virtualenv on Linux may work while it might fail on Mac.
+Virtualenv is not really Reproducible, a Virtualenv may work on Linux but fail on Mac.
 Virtualenv wont isolate anything at all about Python Native modules.
 Having any kind of custom install procedure for software on servers is just not a thing these days,
 even if we loved Virtualenv and hated Docker is just not a thing anymore.
