@@ -9,7 +9,7 @@
 # Features
 
 - The only PIP alternative in the world that just works even with PIP/Python/Virtualenv completely broken.
-- Works fully independently self-contained standalone native binary.
+- Works fully independently self-contained standalone application.
 - [Design by Contract, Contract Programming](https://dev.to/juancarlospaco/design-by-contract-immutability-side-effects-and-gulag-44fk).
 - Security Hardened by default (based from [Gentoo Hardened](https://wiki.gentoo.org/wiki/Hardened_Gentoo) and [Debian Hardened](https://wiki.debian.org/Hardening), checked with [`hardening-check`](https://bitbucket.org/Alexander-Shukaev/hardening-check)).
 - Coded following the [Power of 10: NASA Coding guidelines for safety-critical code](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code#Rules) (as much as possible).
@@ -79,7 +79,8 @@ Virtualenv is not Immutable.
 Virtualenv is not Versioned.
 Virtualenv is not really Reproducible, a Virtualenv on Linux may work while it might fail on Mac.
 Virtualenv wont isolate anything at all about Python Native modules.
-Having any kind of custom install procedure for software on servers is just not a thing these days.
+Having any kind of custom install procedure for software on servers is just not a thing these days,
+even if we loved Virtualenv and hated Docker is just not a thing anymore.
 
 
 # API Bugs
