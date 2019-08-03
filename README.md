@@ -40,6 +40,17 @@
 - KISS, Packaging should be KISS.
 
 
+# Install
+
+```console
+git clone https://github.com/juancarlospaco/nim-pypi.git
+cd nim-py/src
+nim c -d:release pypi.nim
+strip --strip-all pypi
+cp --verbose pypi ~/.nimble/bin/pypi
+```
+
+
 # FAQ
 
 - This requires Cython ?.
