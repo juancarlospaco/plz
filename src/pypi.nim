@@ -218,6 +218,31 @@ class TestName(unittest.TestCase):
 if __name__ in "__main__":
     unittest.main() """
 
+const serviceTemplate = """[Unit]
+Description=Example Service
+Documentation=https://example.com/documentation
+After=network-online.target
+
+[Service]
+Type=simple
+User=nobody         # Change to your user.
+Restart=always      # on-failure
+RestartSec=1        # Sleep Seconds before restarting the process.
+# RuntimeMaxSec=1w  # Restart process periodically. 1w=week, 1d=day, 1m=minute.
+TimeoutStartSec=999 # Timeout Seconds while starting the process.
+TimeoutStopSec=999  # Timeout Seconds while stopping the process.
+# ExecStartPre=     # Execute BEFORE start.
+ExecStart=echo      # Execute your application command.
+# ExecStartPost=    # Execute AFTER start.
+# ExecReload=       # Execute while restarting the process.
+# ExecStop=         # Execute while stopping the process.
+# ExecStopPost=     # Execute AFTER stopping the process.
+# Environment=      # You can add any Environment variables here.
+# WorkingDirectory=/home/<user>/  # MODIFY to your installation path
+
+[Install]
+WantedBy=multi-user.target """
+
 const dockerfileTemplate = """FROM alpine:latest
 RUN apk add --no-cache ca-certificates gnupg tar xz bzip2 coreutils dpkg findutils gcc libc-dev linux-headers make openssl readline sqlite zlib tk tcl ncurses gdbm
 ENV LANG C.UTF-8
@@ -505,6 +530,7 @@ proc pySkeleton() =
   if readLineFromStdin("Generate optional DevOps on ./devops (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / "devops")
     writeFile(pluginName / "devops" / "Dockerfile", dockerfileTemplate)
+    writeFile(pluginName / "devops" / pluginName & ".service", serviceTemplate)
     writeFile(pluginName / "devops" / "build_package.sh", "python3 setup.py sdist --formats=zip\n")
     writeFile(pluginName / "devops" / "upload_package.sh", "twine upload .\n")
   if readLineFromStdin("Generate optional GitHub files on .github (y/N): ").normalize == "y":
