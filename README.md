@@ -8,6 +8,7 @@
 
 # Features
 
+- Works fully independently, even with PIP/Python/Virtualenv completely broken.
 - [Design by Contract, Contract Programming](https://dev.to/juancarlospaco/design-by-contract-immutability-side-effects-and-gulag-44fk).
 - Security Hardened by default (based from [Gentoo Hardened](https://wiki.gentoo.org/wiki/Hardened_Gentoo) and [Debian Hardened](https://wiki.debian.org/Hardening), checked with [`hardening-check`](https://bitbucket.org/Alexander-Shukaev/hardening-check)).
 - Coded following the [Power of 10: NASA Coding guidelines for safety-critical code](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code#Rules) (as much as possible).
@@ -15,7 +16,6 @@
 - Compiled machine code performance, as fast as optimized hand crafted C.
 - Faster than Cython, Pypy, Go, NodeJS, D.
 - High performance with low resources (RPi, VPS, cloud, old pc, etc).
-- Works fully independently, even with PIP/Python/Virtualenv completely broken.
 - Immutable programming, No Global Mutable State.
 - Single file binary, it can even delete itself after use.
 - Single file source code, KISS.
