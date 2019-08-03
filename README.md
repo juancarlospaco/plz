@@ -19,7 +19,7 @@
 - High performance with low resources (RPi, VPS, cloud, old pc, etc).
 - Immutable programming, No Global Mutable State.
 - Single file binary, it can even delete itself after use.
-- Single file source code, KISS.
+- Single file source code.
 - 0 Dependencies.
 - ~750Kb file size.
 - No Installs, no setups, just copy & paste and run (even on Alpine).
@@ -37,6 +37,7 @@
 - No user Tracking Analytics by default.
 - No YAML used on the Core, No YAML Vulnerabilities (you can still use YAML).
 - No `node_modules/`.
+- KISS, Packaging should be KISS.
 
 
 # FAQ
@@ -96,6 +97,12 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 - http://tonsky.me/blog/disenchantment
 - https://chriswarrick.com/blog/2018/07/17/pipenv-promises-a-lot-delivers-very-little/
 - https://old.reddit.com/r/Python/comments/chkah3/is_pipenv_dead_why_has_the_project_stopped/
+
+- https://github.com/pypa/pipenv/commit/6d77e4a0551528d5d72d81e8a15da4722ad82f26
+- https://github.com/pypa/pipenv/commit/1c956d37e6ad20babdb5021610b2ed2c9c4203f2
+- https://github.com/pypa/pipenv/commit/e3c72e167d21b921bd3bd89d4217b04628919bb2
+- https://np.reddit.com/r/Python/comments/8jd6aq/why_is_pipenv_the_recommended_packaging_tool_by/
+
 - https://github.com/mitsuhiko/pipsi#pipsi (Dead Project).
 - https://github.com/ofek/hatch
 - https://github.com/pypa/pip/tree/master/src/pip/_internal/commands
