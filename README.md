@@ -85,7 +85,7 @@ even if we loved Virtualenv and hated Docker is just not a thing anymore.
 
 # API Bugs
 
-From XML-RPC API Server-side this endpoints wont work anymore:
+From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 
 - `release_downloads`, `top_packages`, `updated_releases`, `changed_packages`.
 - Sometimes it returns Python Tracebacks as strings on the body of the response.
@@ -93,6 +93,7 @@ From XML-RPC API Server-side this endpoints wont work anymore:
 
 #### Notes
 
+- http://tonsky.me/blog/disenchantment
 - https://chriswarrick.com/blog/2018/07/17/pipenv-promises-a-lot-delivers-very-little/
 - https://old.reddit.com/r/Python/comments/chkah3/is_pipenv_dead_why_has_the_project_stopped/
 - https://github.com/mitsuhiko/pipsi#pipsi (Dead Project).
