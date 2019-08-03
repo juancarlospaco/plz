@@ -38,6 +38,29 @@
 - No `node_modules/`
 
 
+# FAQ
+
+This requires Cython ?.
+
+No.
+
+- This runs on Python2 ?.
+
+I dunno. (Not supported)
+
+- This runs on 32Bit ?.
+
+I dunno. (Not supported)
+
+- This works with SSL ?.
+
+Yes.
+
+- This requires Nimble ?.
+
+No.
+
+
 # API Bugs
 
 From XML-RPC API Server-side this endpoints wont work anymore:
