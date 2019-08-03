@@ -23,6 +23,7 @@
 - 0 Dependencies.
 - ~750Kb file size.
 - No Installs, no setups, just copy & paste and run (even on Alpine).
+- New Python project skeleton creator (GitHub, Pre-Commit, etc supports).
 - DRY code via Templates.
 - Self-Linting, Self-Documented.
 - Real Inferred Static Typed.
