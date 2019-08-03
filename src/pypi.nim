@@ -522,6 +522,7 @@ proc pySkeleton() =
     writeFile(pluginName / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
     writeFile(pluginName / "requirements.txt", "")
     writeFile(pluginName / "setup.cfg", setupCfg)
+    writeFile(pluginName / "Makefile", "")
     writeFile(pluginName / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
     let ext = if readLineFromStdin("Use Markdown(MD) instead of ReSTructuredText(RST)  (y/N): ").normalize == "y": "md" else: "rst"
     writeFile(pluginName / "LICENSE." & ext, "See https://tldrlegal.com/licenses/browse\n")
@@ -614,6 +615,8 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
+
+
       of "publicip":
         quit("🌎\tPublic IP ➡️ " & newHttpClient(timeout=9999).getContent("https://api.ipify.org").strip, 0)
       of "debug", "desbichar":
