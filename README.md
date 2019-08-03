@@ -90,6 +90,7 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 
 - `release_downloads`, `top_packages`, `updated_releases`, `changed_packages`.
 - Sometimes it returns Python Tracebacks as strings on the body of the response.
+- Since is a big project, some features are not yet implemented as App, but the source contains the functionanity whatsoever.
 
 
 #### Notes
