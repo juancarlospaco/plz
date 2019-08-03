@@ -40,7 +40,7 @@
 
 # FAQ
 
-This requires Cython ?.
+- This requires Cython ?.
 
 No.
 
@@ -59,6 +59,26 @@ Yes.
 - This requires Nimble ?.
 
 No.
+
+- This requires Nim ?.
+
+No.
+
+- This wont support Virtualenv?.
+
+No. By design it wont support Virtualenv, intentionally.
+
+Thats precisely why it started, others seems to fight over Virtualenv support,
+we dont even use Virtualenv, everyone uses Docker nowadays, we use Docker, you probably use Docker,
+we dont even care about Virtualenv, we dont use it, ...is just Legacy.
+
+Isolation of Virtualenv are very poor and limited compared to Docker.
+No one Deploys anything without Docker nowadays.
+Virtualenv is not Immutable.
+Virtualenv is not Versioned.
+Virtualenv is not really Reproducible, a Virtualenv on Linux may work while it might fail on Mac.
+Virtualenv wont isolate anything at all about Python Native modules.
+Having any kind of custom install procedure for software on servers is just not a thing these days.
 
 
 # API Bugs
