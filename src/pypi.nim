@@ -7,7 +7,7 @@ setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
 # For compile time code executions, we dont care the optimization or how clunky
 # it looks because is done compile time only,worse case scenario it wont compile
 const
-  pypiApiUrl = "https://pypi.org/"                             ## PyPI Base API URL.
+  pypiApiUrl = "https://pypi.org/"                              ## PyPI Base API URL.
   pypiXmlUrl = pypiApiUrl & "pypi"                              ## PyPI XML RPC API URL.
   pypiPackagesXml = "https://pypi.org/rss/packages.xml"         ## PyPI XML API URL.
   pypiUpdatesXml = "https://pypi.org/rss/updates.xml"           ## PyPI XML API URL.
@@ -976,3 +976,6 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
 # RUN apt-get update && apt-get install -y --no-install-recommends git
 # RUN pip install pre-commit WORKDIR /lint
 # RUN git init ADD .pre-commit-config.yaml /lint/.pre-commit-config.yaml RUN pre-commit install-hooks
+# https://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-file.html
+# https://www.ibm.com/support/knowledgecenter/en/ssw_aix_71/filesreference/netrc.html
+# some kind of INI file format???
