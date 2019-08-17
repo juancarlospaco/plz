@@ -1,6 +1,9 @@
 hardenedBuild()  # Security Hardened mode.
+
 addHandler(newConsoleLogger(fmtStr = ""))
 addHandler(newRollingFileLogger(fmtStr = "$levelname, $datetime, $appname, "))
+setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
+
 # For compile time code executions, we dont care the optimization or how clunky
 # it looks because is done compile time only,worse case scenario it wont compile
 const
@@ -242,6 +245,7 @@ ExecStart=echo      # Execute your application command.
 
 [Install]
 WantedBy=multi-user.target """
+
 # http://github.com/pre-commit/pre-commit/blob/master/pre_commit/resources/hook-tmpl
 const precommitTemplate = """import distutils.spawn, os, subprocess, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -453,7 +457,6 @@ let
   user = getEnv"USER"
 
 var script: string
-setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
 
 type
   PyPI = object ## Base object.
