@@ -788,24 +788,42 @@ proc forceInstallPip(destination: string): tuple[output: TaintedString, exitCode
   assert existsFile(destination), "File not found: 'get-pip.py' " & destination
   result = execCmdEx(py3 & destination & " -I") # Installs PIP via get-pip.py
 
+proc parseRecord(filename: string): seq[seq[string]] =
+  ## Parse RECORD files from Python packages, they are Headerless CSV.
+  preconditions filename.endsWith"RECORD", existsFile(filename)
+  postconditions result.len > 0
+  var parser: CsvParser
+  var stream = newFileStream(filename, fmRead)
+  assert stream != nil, "Failed to parse a CSV from file to string stream"
+  open(parser, stream, filename)
+  while readRow(parser): result.add parser.row
+  close(parser)
+
 proc uninstall(args: seq[string]) =
   ## Uninstall a Python package, deletes the files, optional uninstall script.
+  # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD
+  styledEcho(fgGreen, bgBlack, "Uninstall " & $args.len & " Packages: " & $args)
+  let recordFiles = block:
+    var x: seq[string]
+    for argument in args:
+      for record in walkFiles(sitePackages / argument & "-*.dist-info" / "RECORD"):
+        x.add record  # RECORD Metadata file (CSV without file extension).
+    x
+  styledEcho(fgGreen, bgBlack, "Found " & $recordFiles.len & " Metadata files: " & $recordFiles)
   let files2delete = block:
     var x: seq[string]
-    for argument in args[1..^1]:
-      for pythonfile in walkFiles(sitePackages / argument / "*.*"):
-        x.add pythonfile
-        styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
-      for pythonfile in walkFiles(sitePackages / argument & "-*.dist-info" / "*"):
-        x.add pythonfile  # Metadata folder & files (no file extension)
-        styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
-      for pythonfile in walkFiles(sitePackages / argument & pyExtPattern):
-        x.add pythonfile  # *.so are compiled native binary modules
-        styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
+    for record in recordFiles:
+      for recordfile in parseRecord(record):
+        x.add sitePackages / recordfile[0]
     x
   if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
-    info(when defined(windows): "\ndel " else: "\nsudo rm --verbose --force " & files2delete.join" ")
-  if readLineFromStdin("\nDelete " & $files2delete.len & " Python files? (y/N): ").normalize == "y":
+    let sudo =
+      if readLineFromStdin("\nGenerate Uninstall Script for Admin/Root? (y/N): ").normalize == "y":
+        when defined(windows): "\nrunas /user:Administrator " else: "\nsudo "
+      else: "\n"
+    const cmd = when defined(windows): "del " else: "rm --verbose --force "
+    info(sudo & cmd & files2delete.join" ")
+  if readLineFromStdin("\nDelete " & $files2delete.len & " files? (y/N): ").normalize == "y":
     styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
     for pythonfile in files2delete:
       info $tryRemoveFile(pythonfile) & "\t" & pythonfile
@@ -940,7 +958,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         info "--hash=sha256:" & sha512sum.split(" ")[^1]
     of "backup": quit(backup().output, 0)
     of "uninstall":
-      uninstall(args)
+      uninstall(args[1..^1])
     of "install":
       var failed, suces: byte
       info("🐍\t" & $now() & ", PID is " & $getCurrentProcessId() & ", " &
