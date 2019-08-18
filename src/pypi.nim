@@ -801,7 +801,7 @@ proc parseRecord(filename: string): seq[seq[string]] =
 
 proc uninstall(args: seq[string]) =
   ## Uninstall a Python package, deletes the files, optional uninstall script.
-  # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD
+  # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD is a CSV
   preconditions args.len > 0
   styledEcho(fgGreen, bgBlack, "Uninstall " & $args.len & " Packages:\t" & $args)
   let recordFiles = block:
@@ -1007,6 +1007,4 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
 # RUN apt-get update && apt-get install -y --no-install-recommends git
 # RUN pip install pre-commit WORKDIR /lint
 # RUN git init ADD .pre-commit-config.yaml /lint/.pre-commit-config.yaml RUN pre-commit install-hooks
-# https://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-file.html
-# https://www.ibm.com/support/knowledgecenter/en/ssw_aix_71/filesreference/netrc.html
 # some kind of INI file format???
