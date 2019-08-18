@@ -81,7 +81,6 @@ Options:
   --cleantemp      Remove all files and folders from the OS Temporary folder.
   --cleanpipcache  Remove all files and folders from the PIP Cache folder.
   --nice20         Runs with "nice = 20" (CPU Priority, smooth priority).
-  --completion:zsh Show Auto-Completion for Bash/ZSH/Fish terminal and quit.
   --publicip       Show your Public IP Address (Internet connectivity check).
   --suicide        Deletes itself permanently and exit (single file binary).
 
@@ -417,25 +416,6 @@ ENV PYTHON_VERSION 3.7
 ENV PYTHON_PIP_VERSION 3.7
 ENV PATH /usr/local/bin:$PATH
 # Do your magic here. Download and Compile Python... """
-
-const completionBash = """_pip_completion() { COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" COMP_CWORD=$COMP_CWORD PIP_AUTO_COMPLETE=1 $1 ) ) }
-complete -o default -F _pip_completion pip """
-
-const completionZsh = """function _pip_completion {
-  local words cword
-  read -Ac words
-  read -cn cword
-  reply=( $( COMP_WORDS="$words[*]" COMP_CWORD=$(( cword-1 )) PIP_AUTO_COMPLETE=1 $words[1] ) )
-}
-compctl -K _pip_completion pip """
-
-const completionFish = """function __fish_complete_pip
-  set -lx COMP_WORDS (commandline -o) ""
-  set -lx COMP_CWORD ( math (contains -i -- (commandline -t) $COMP_WORDS)-1 )
-  set -lx PIP_AUTO_COMPLETE 1
-  string split \  -- (eval $COMP_WORDS[1])
-end
-complete -fa "(__fish_complete_pip)" -c pip """
 
 const licenseHint = """Licenses:
 💡 See https://tldrlegal.com/licenses/browse or https://choosealicense.com
@@ -851,10 +831,6 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       case clave.normalize
       of "version": quit(version, 0)
       of "license", "licencia": quit("PPL", 0)
-      of "completion":  # I find this dumb,but PIP does it,so we add it.
-        if valor == "zsh": quit(completionZsh, 0)
-        elif valor == "fish": quit(completionFish, 0)
-        else: quit(completionBash, 0)
       of "nice20": discard nice(20.cint)
       of "timeout": taimaout = valor.parseInt.byte
       of "help", "ayuda", "fullhelp":
