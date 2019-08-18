@@ -95,6 +95,12 @@ Virtualenv wont isolate anything at all about Python Native modules.
 Having any kind of custom install procedure for software on servers is just not a thing these days,
 even if we loved Virtualenv and hated Docker is just not a thing anymore.
 
+Example, Coding Python Modules on fresh installed Windows, with only Git and Nim installed, no Virtualenvs/PIP required:
+
+![win-compile](https://user-images.githubusercontent.com/1189414/63147831-b8bf6100-bfd5-11e9-9e6e-91d61040f139.png "Git Clone and Compile on Windows 10 with only Git and Nim installed, just 2 commands!")
+
+- Git Clone and Compile on Windows 10 on just 2 commands!.
+
 
 # API Bugs
 
