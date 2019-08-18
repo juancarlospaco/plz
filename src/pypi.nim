@@ -802,6 +802,7 @@ proc parseRecord(filename: string): seq[seq[string]] =
 proc uninstall(args: seq[string]) =
   ## Uninstall a Python package, deletes the files, optional uninstall script.
   # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD
+  preconditions args.len > 0
   styledEcho(fgGreen, bgBlack, "Uninstall " & $args.len & " Packages:\t" & $args)
   let recordFiles = block:
     var x: seq[string]
