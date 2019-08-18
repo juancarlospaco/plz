@@ -809,7 +809,7 @@ proc uninstall(args: seq[string]) =
       for record in walkFiles(sitePackages / argument & "-*.dist-info" / "RECORD"):
         x.add record  # RECORD Metadata file (CSV without file extension).
     x
-  # styledEcho(fgGreen, bgBlack, "Found " & $recordFiles.len & " Metadata files: " & $recordFiles)
+  # echo "Found " & $recordFiles.len & " Metadata files: " & $recordFiles
   let files2delete = block:
     var x: seq[string]
     var size: int
