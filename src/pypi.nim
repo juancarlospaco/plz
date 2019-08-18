@@ -72,7 +72,7 @@ Options:
   --help           Show Help and quit.
   --version        Show Version and quit.
   --license        Show License and quit.
-  --debug          Show Debug info and quit (for Developers).
+  --debug          Show Debug info and quit (for Developers and Bug Reporting).
   --timeout=42     Set Timeout.
   --putenv:key=val Set an environment variable "KEY=Value", can be repeated.
   --nopyc          Recursively remove all *.pyc
