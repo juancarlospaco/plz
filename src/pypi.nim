@@ -802,19 +802,24 @@ proc parseRecord(filename: string): seq[seq[string]] =
 proc uninstall(args: seq[string]) =
   ## Uninstall a Python package, deletes the files, optional uninstall script.
   # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD
-  styledEcho(fgGreen, bgBlack, "Uninstall " & $args.len & " Packages: " & $args)
+  styledEcho(fgGreen, bgBlack, "Uninstall " & $args.len & " Packages:\t" & $args)
   let recordFiles = block:
     var x: seq[string]
     for argument in args:
       for record in walkFiles(sitePackages / argument & "-*.dist-info" / "RECORD"):
         x.add record  # RECORD Metadata file (CSV without file extension).
     x
-  styledEcho(fgGreen, bgBlack, "Found " & $recordFiles.len & " Metadata files: " & $recordFiles)
+  # styledEcho(fgGreen, bgBlack, "Found " & $recordFiles.len & " Metadata files: " & $recordFiles)
   let files2delete = block:
     var x: seq[string]
+    var size: int
     for record in recordFiles:
       for recordfile in parseRecord(record):
         x.add sitePackages / recordfile[0]
+        if recordfile.len == 3 and recordfile[2].len > 0:
+          size += parseInt(recordfile[2])
+    styledEcho(fgGreen, bgBlack, "Total disk space freed:\t" &
+      formatSize(size.int64, prefix = bpColloquial, includeSpace = true))
     x
   if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
     let sudo =
@@ -822,7 +827,9 @@ proc uninstall(args: seq[string]) =
         when defined(windows): "\nrunas /user:Administrator " else: "\nsudo "
       else: "\n"
     const cmd = when defined(windows): "del " else: "rm --verbose --force "
-    info(sudo & cmd & files2delete.join" ")
+    info(sudo & cmd & files2delete.join" " & "\n")
+  for pyfile in files2delete:
+    styledEcho(fgRed, bgBlack, "🗑\t" & pyfile)
   if readLineFromStdin("\nDelete " & $files2delete.len & " files? (y/N): ").normalize == "y":
     styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
     for pythonfile in files2delete:
