@@ -64,7 +64,7 @@ Commands:
   stats            PyPI service status report from official statuspage (RSS).
   userpackages     List all existing Packages by User (Interactive, asks user).
   latestversion    Show the Latest Version release of a PYPI Package (SemVer).
-  open             Open a given module in your default editor (xdg-open).
+  open             Open a given module in your default code editor (xdg-open).
   forceInstallPip  Force install PIP on a given location directory (get-pip.py).
   cleanvirtualenv  Delete local Virtualenv (Interactive,asks Y/N to user before)
 
