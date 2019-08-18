@@ -805,24 +805,24 @@ proc uninstall(args: seq[string]) =
   preconditions args.len > 0
   styledEcho(fgGreen, bgBlack, "Uninstall " & $args.len & " Packages:\t" & $args)
   let recordFiles = block:
-    var x: seq[string]
+    var output: seq[string]
     for argument in args:
       for record in walkFiles(sitePackages / argument & "-*.dist-info" / "RECORD"):
-        x.add record  # RECORD Metadata file (CSV without file extension).
-    x
+        output.add record  # RECORD Metadata file (CSV without file extension).
+    output
   assert recordFiles.len > 0, "RECORD Metadata CSV files not found."
   # echo "Found " & $recordFiles.len & " Metadata files: " & $recordFiles
   let files2delete = block:
-    var x: seq[string]
+    var output: seq[string]
     var size: int
     for record in recordFiles:
       for recordfile in parseRecord(record):
-        x.add sitePackages / recordfile[0]
+        output.add sitePackages / recordfile[0]
         if recordfile.len == 3 and recordfile[2].len > 0:
           size += parseInt(recordfile[2])
     styledEcho(fgGreen, bgBlack, "Total disk space freed:\t" &
       formatSize(size.int64, prefix = bpColloquial, includeSpace = true))
-    x
+    output
   assert files2delete.len > 0, "Files of a Python Package not found."
   if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
     let sudo =
