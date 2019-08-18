@@ -810,6 +810,7 @@ proc uninstall(args: seq[string]) =
       for record in walkFiles(sitePackages / argument & "-*.dist-info" / "RECORD"):
         x.add record  # RECORD Metadata file (CSV without file extension).
     x
+  assert recordFiles.len > 0, "RECORD Metadata CSV files not found."
   # echo "Found " & $recordFiles.len & " Metadata files: " & $recordFiles
   let files2delete = block:
     var x: seq[string]
@@ -822,6 +823,7 @@ proc uninstall(args: seq[string]) =
     styledEcho(fgGreen, bgBlack, "Total disk space freed:\t" &
       formatSize(size.int64, prefix = bpColloquial, includeSpace = true))
     x
+  assert files2delete.len > 0, "Files of a Python Package not found."
   if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
     let sudo =
       if readLineFromStdin("\nGenerate Uninstall Script for Admin/Root? (y/N): ").normalize == "y":
