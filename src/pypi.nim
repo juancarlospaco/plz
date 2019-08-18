@@ -73,10 +73,9 @@ Options:
   --version        Show Version and quit.
   --license        Show License and quit.
   --debug          Show Debug info and quit (for Developers and Bug Reporting).
-  --timeout=42     Set Timeout.
+  --timeout=42     Set the default timeout on seconds (for HTTPS Downloads).
   --putenv:key=val Set an environment variable "KEY=Value", can be repeated.
   --nopyc          Recursively remove all *.pyc
-  --nopycache      Recursively remove all __pycache__
   --nopypackages   Recursively remove all __pypackages__
   --cleantemp      Remove all files and folders from the OS Temporary folder.
   --cleanpipcache  Remove all files and folders from the PIP Cache folder.
@@ -846,8 +845,6 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       of "nopyc":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pyc in walkFiles("./*.pyc"): info $tryRemoveFile(pyc) & "\t" & pyc
-      of "nopycache":
-        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pyc in walkDirs("__pycache__"): info $tryRemoveFile(pyc) & "\t" & pyc
       of "cleantemp":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
