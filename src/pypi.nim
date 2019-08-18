@@ -84,16 +84,6 @@ Options:
   --publicip       Show your Public IP Address (Internet connectivity check).
   --suicide        Deletes itself permanently and exit (single file binary).
 
-Other environment variables (literally copied from python3 executable itself):
-  --pythonstartup:f.py Python file executed at startup (not directly executed).
-  --pythonpath:FOO     ADD ':'-separated list of directories to the PYTHONPATH
-  --pythonhome:FOO     Alternate Python directory.
-  --ioencodingutf8     Set Encoding to UTF-8 to Python stdin/stdout/stderr.
-  --hashseed:42        Random Seed, integer in the range [0, 4294967295].
-  --malloc             Set Python memory allocators to Debug.
-  --localewarn         Set the locale coerce to Warning.
-  --debugger:FOO       Set the Python debugger. You can use ipdb, ptpdb, etc.
-
 ✅ This wont save any passwords, databases, keys, secrets to disk nor Internet.
   👑 http://nim-lang.org/learn.html 🐍 http://github.com/juancarlospaco ⚡ """
 
@@ -836,8 +826,6 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
-
-
       of "publicip":
         quit("🌎\tPublic IP ➡️ " & newHttpClient(timeout=9999).getContent("https://api.ipify.org").strip, 0)
       of "debug", "desbichar":
@@ -855,14 +843,6 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)
         putEnv(envy[0], envy[1])
-      of "debugger": putEnv("PYTHONBREAKPOINT", valor.strip)
-      of "localewarn": putEnv("PYTHONCOERCECLOCALE", "warn")
-      of "malloc": putEnv("PYTHONMALLOC", "debug")
-      of "hashseed": putEnv("PYTHONHASHSEED", $valor)
-      of "ioencodingutf8": putEnv("PYTHONIOENCODING", "utf-8")
-      of "pythonhome": putEnv("PYTHONHOME", valor.strip)
-      of "pythonstartup": putEnv("PYTHONSTARTUP",  valor.strip)
-      of "pythonpath": putEnv("PYTHONPATH",  getEnv"PYTHONPATH" & ":" & valor)
       of "nopyc":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pyc in walkFiles("./*.pyc"): info $tryRemoveFile(pyc) & "\t" & pyc
