@@ -72,6 +72,7 @@ Options:
   --help           Show Help and quit.
   --version        Show Version and quit.
   --license        Show License and quit.
+  --enUsUtf8       Force Encoding to UTF-8 and Language to English (en_US.UTF-8)
   --debug          Show Debug info and quit (for Developers and Bug Reporting).
   --timeout=42     Set the default timeout on seconds (for HTTPS Downloads).
   --putenv:key=val Set an environment variable "KEY=Value", can be repeated.
@@ -697,6 +698,11 @@ proc pySkeleton() =
     writeFile(pluginName / "CHANGELOG." & ext, "# 0.0.1\n\n- First initial version of " & pluginName & "created at " & $now())
   quit("Created a new Python project skeleton, happy hacking, bye...\n", 0)
 
+proc enUsUtf8() {.inline.} =
+  for envar in ["LC_CTYPE", "LC_NUMERIC", "LC_TIME", "LC_COLLATE", "LC_NAME",
+  "LC_MONETARY", "LC_MESSAGES", "LC_PAPER", "LC_ADDRESS", "LC_TELEPHONE", "LANG",
+  "LC_MEASUREMENT", "LC_IDENTIFICATION", "LC_ALL"]: putEnv(envar, "en_US.UTF-8")
+
 proc backup(): tuple[output: TaintedString, exitCode: int] =
   var folder: string
   while not(folder.len > 0 and existsDir(folder)):
@@ -838,6 +844,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         "currentCompilerExe": getCurrentCompilerExe(), "int.high": int.high,
         "processorsCount": countProcessors(), "danger": defined(danger),
         "currentProcessId": getCurrentProcessId(), "version": version}), 0)
+      of "enusutf8": enUsUtf8()
       of "putenv":
         let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)
