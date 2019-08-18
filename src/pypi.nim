@@ -788,6 +788,28 @@ proc forceInstallPip(destination: string): tuple[output: TaintedString, exitCode
   assert existsFile(destination), "File not found: 'get-pip.py' " & destination
   result = execCmdEx(py3 & destination & " -I") # Installs PIP via get-pip.py
 
+proc uninstall(args: seq[string]) =
+  ## Uninstall a Python package, deletes the files, optional uninstall script.
+  let files2delete = block:
+    var x: seq[string]
+    for argument in args[1..^1]:
+      for pythonfile in walkFiles(sitePackages / argument / "*.*"):
+        x.add pythonfile
+        styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
+      for pythonfile in walkFiles(sitePackages / argument & "-*.dist-info" / "*"):
+        x.add pythonfile  # Metadata folder & files (no file extension)
+        styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
+      for pythonfile in walkFiles(sitePackages / argument & pyExtPattern):
+        x.add pythonfile  # *.so are compiled native binary modules
+        styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
+    x
+  if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
+    info(when defined(windows): "\ndel " else: "\nsudo rm --verbose --force " & files2delete.join" ")
+  if readLineFromStdin("\nDelete " & $files2delete.len & " Python files? (y/N): ").normalize == "y":
+    styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
+    for pythonfile in files2delete:
+      info $tryRemoveFile(pythonfile) & "\t" & pythonfile
+
 
 ###############################################################################
 
@@ -918,26 +940,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         info "--hash=sha256:" & sha512sum.split(" ")[^1]
     of "backup": quit(backup().output, 0)
     of "uninstall":
-      let files2delete = block:
-        var result: seq[string]
-        for argument in args[1..^1]:
-          for pythonfile in walkFiles(sitePackages / argument / "*.*"):
-            result.add pythonfile
-            styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
-          for pythonfile in walkFiles(sitePackages / argument & "-*.dist-info" / "*"):
-            result.add pythonfile  # Metadata folder & files (no file extension)
-            styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
-          for pythonfile in walkFiles(sitePackages / argument & pyExtPattern):
-            result.add pythonfile  # *.so are compiled native binary modules
-            styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
-        result
-      when defined(linux):
-        if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
-          info "\nsudo rm --verbose --force " & files2delete.join" "
-      if readLineFromStdin("\nDelete " & $files2delete.len & " Python files? (y/N): ").normalize == "y":
-        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pythonfile in files2delete:
-          info $tryRemoveFile(pythonfile) & "\t" & pythonfile
+      uninstall(args)
     of "install":
       var failed, suces: byte
       info("🐍\t" & $now() & ", PID is " & $getCurrentProcessId() & ", " &
