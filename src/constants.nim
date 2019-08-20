@@ -52,9 +52,9 @@ Commands:
   download        Download packages (Interactive,no decompress,asks destination)
   upload          Mimics "twine upload" (Interactive,asks user,wont need Twine).
   search          Search PyPI for packages (PyPI API is Buggy, is still WIP).
-  doc             Convert Markdown/ReSTructuredText to HTML(MD/RST can be mixed)
-  doc2latex       Convert Markdown/ReSTructuredText to Tex (MD/RST can be mixed)
-  doc2json        Convert Markdown/ReSTructuredText to JSON(MD/RST can be mixed)
+  doc             Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
+  doc2latex       Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
+  doc2json        Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
   hash            Compute hashes of package archives (SHA256 Checksum file).
   init            New Python project template (Interactive, asks Y/N to user).
   backup          Compressed signed backup of a file and quit (GPG + SHA512).
