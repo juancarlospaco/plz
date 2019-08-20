@@ -1,5 +1,3 @@
-<!--
-
 # PLZ
 
 - PLZ [Python PIP](https://pypi.org) alternative.
@@ -151,5 +149,3 @@ but the source contains the functionanity whatsoever.
 
 - http://tonsky.me/blog/disenchantment
 - https://chriswarrick.com/blog/2018/07/17/pipenv-promises-a-lot-delivers-very-little/
-
--->
