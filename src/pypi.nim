@@ -53,6 +53,7 @@ const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
 Commands:
   install          Install packages (Download, Decompress, Install packages).
   uninstall        Uninstall packages (Interactive, asks Y/N to user before).
+  reinstall        Uninstall & Install packages (Interactive, asks Y/N to user).
   upload           Mimics "twine upload" (Interactive,asks user,wont need Twine)
   search           Search PyPI for packages (PyPI API is Buggy, is still WIP).
   hash             Compute hashes of package archives (SHA256 Checksum file).
@@ -86,7 +87,8 @@ Options:
   --suicide        Deletes itself permanently and exit (single file binary).
 
 ✅ This wont save any passwords, databases, keys, secrets to disk nor Internet.
-  👑 http://nim-lang.org/learn.html 🐍 http://github.com/juancarlospaco ⚡ """
+Learn more http://nim-lang.org/learn.html http://nim-lang.org/documentation.html
+http://nim-lang.github.io/Nim/lib.html http://nim-lang.org/docs/theindex.html"""
 
 const setupCfg = """# See: https://setuptools.readthedocs.io/en/latest/setuptools.html#metadata
 [metadata]
@@ -589,10 +591,10 @@ proc install(this: PyPI, args: seq[string]) =
   ## Install a Python package, download & decompress files, runs python setup.py
   var failed, suces: byte
   info("🐍\t" & $now() & ", PID is " & $getCurrentProcessId() & ", " &
-    $args[1..^1].len & " packages to download and install ➡️ " & $args[1..^1])
+    $args.len & " packages to download and install ➡️ " & $args)
   let generateScript = readLineFromStdin("Generate Install Script? (y/N): ").normalize == "y"
   let time0 = now()
-  for argument in args[1..^1]:
+  for argument in args:
     let semver = $this.packageLatestRelease(argument)
     info "🌎\tPyPI ➡️ " & argument & " " & semver
     let resultados = this.installPackage(argument, semver, generateScript)
@@ -601,7 +603,7 @@ proc install(this: PyPI, args: seq[string]) =
   if generateScript: info "\n" & script
   info((if failed == 0: "✅\t" else: "❌\t") & $now() & " " & $failed &
     " Failed, " & $suces & " Success on " & $(now() - time0) &
-    " to download/install " & $args[1..^1].len & " packages")
+    " to download/install " & $args.len & " packages")
 
 proc releaseData(this: PyPI, packageName, releaseVersion): XmlNode =
   ## Retrieve metadata describing a specific releaseVersion. Returns a dict.
@@ -956,6 +958,10 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       cliente.uninstall(args[1..^1])
     of "install":
       cliente.install(args[1..^1])
+    of "reinstall":
+      let packages = args[1..^1]
+      cliente.uninstall(packages)
+      cliente.install(packages)
     of "upload":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       doAssert existsFile(args[1]), "File not found: " & args[1]
