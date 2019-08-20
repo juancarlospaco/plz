@@ -455,7 +455,7 @@ proc function(a, b: int): auto {.exportpy.} =
 ##############################################################################
 
 
-# hardenedBuild()  # Security Hardened mode.
+hardenedBuild()  # Security Hardened mode.
 addHandler(newConsoleLogger(fmtStr = ""))
 addHandler(newRollingFileLogger(fmtStr = "$levelname, $datetime, $appname, "))
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
