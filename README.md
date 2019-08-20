@@ -16,8 +16,16 @@ $ plz hash file.py         # Show SHA CheckSum of file/package
 $ plz open file.py         # Open a module in your default code editor
 $ plz backup               # Compressed signed backup of file/package (GPG + SHA512)
 $ plz init                 # New Python project template (Interactive)
-$ plz stats                # PyPI official service status report.
-$ plz forceInstallPip      # Force install PIP on arbitrary folder (get-pip.py).
+$ plz stats                # PyPI official service status report
+$ plz newpackages          # List all the new Packages uploaded to PyPI recently
+$ plz lastupdates          # List all existing Packages updated on PyPI recently
+$ plz lastjobs             # List all new Job Posts updated on Python recently
+$ plz userpackages         # List all existing Packages by User (Interactive)
+$ plz latestversion        # Show the Latest Version of a PYPI Package (SemVer)
+$ plz forceInstallPip      # Force install PIP on arbitrary folder (get-pip.py)
+$ plz --enUsUtf8           # Force Encoding to UTF-8 and Language to English
+$ plz --nopyc              # Recursively remove all __pycache__ and *.pyc
+$ plz --debug              # Show Debug info (for Developers and Bug Reporting)
 $ plz --version            # Show Version
 $ plz --help               # Show Help
 ```
