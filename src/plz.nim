@@ -321,7 +321,7 @@ proc backup(): tuple[output: TaintedString, exitCode: int] =
   for pythonfile in walkFiles(folder / "*.*"):
     files2backup.add pythonfile
     styledEcho(fgGreen, bgBlack, "🗜\t" & pythonfile)
-  if files2backup.len > 0 and findExe"tar".len > 0:
+  if likely(files2backup.len > 0 and findExe"tar".len > 0):
     result = execCmdEx(cmdTar & folder & ".tar.gz " & files2backup.join" ")
     if result.exitCode == 0 and findExe"sha256sum".len > 0 and readLineFromStdin("SHA256 CheckSum Backup? (y/N): ").normalize == "y":
       result = execCmdEx(cmdChecksum & folder & ".tar.gz > " & folder & ".tar.gz.sha256")
