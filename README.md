@@ -2,20 +2,24 @@
 
 # PLZ
 
-- PLZ [Python PIP](https://pypi.org) faster alternative.
+- PLZ [Python PIP](https://pypi.org) alternative.
 
 
 # Use
 
 ```console
-plz install pre-commit   # Install 1 or more packages
-plz uninstall pre-commit # Uninstall 1 or more packages
-plz reinstall pre-commit # Reinstall 1 or more packages
-plz download pre-commit  # Download 1 or more packages
-plz hash file.py         # Show SHA CheckSum of file/package
-plz init                 # New Python project template (Interactive)
-plz --version            # Show Version
-plz --help               # Show Help
+$ plz install pre-commit   # Install 1 or more packages
+$ plz uninstall pre-commit # Uninstall 1 or more packages
+$ plz reinstall pre-commit # Reinstall 1 or more packages
+$ plz download pre-commit  # Download 1 or more packages
+$ plz hash file.py         # Show SHA CheckSum of file/package
+$ plz open file.py         # Open a module in your default code editor (xdg-open).
+$ plz backup               # Compressed signed backup of file/package (GPG+SHA512)
+$ plz init                 # New Python project template (Interactive)
+$ plz stats                # PyPI official service status report.
+$ plz forceInstallPip      # Force install PIP on arbitrary folder (get-pip.py).
+$ plz --version            # Show Version
+$ plz --help               # Show Help
 ```
 
 - For more info see the Help.
@@ -28,7 +32,7 @@ plz --help               # Show Help
 - [Design by Contract, Contract Programming](https://dev.to/juancarlospaco/design-by-contract-immutability-side-effects-and-gulag-44fk).
 - Security Hardened by default (based from [Gentoo Hardened](https://wiki.gentoo.org/wiki/Hardened_Gentoo) and [Debian Hardened](https://wiki.debian.org/Hardening), checked with [`hardening-check`](https://bitbucket.org/Alexander-Shukaev/hardening-check)).
 - Coded following the [Power of 10: NASA Coding guidelines for safety-critical code](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code#Rules) (as much as possible).
-- No Regular Expressions used on the Core, [No Regex Bugs and Vulnerabilities](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019).
+- No Regular Expressions used, [No Regex Bugs and Vulnerabilities](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019).
 - Compiled machine code performance, as fast as optimized hand crafted C.
 - Faster than Cython, Pypy, Go, NodeJS, D.
 - High performance with low resources (RPi, VPS, cloud, old pc, etc).
@@ -36,24 +40,23 @@ plz --help               # Show Help
 - Single file binary, it can even delete itself after use.
 - Single file source code.
 - 0 Dependencies.
-- ~750Kb file size.
+- ~1 Megabyte file size.
 - No Installs, no setups, just copy & paste and run (even on Alpine).
-- New Python project skeleton creator (GitHub, Pre-Commit, etc supports).
-- DRY code via Templates.
+- New Python project skeleton creator (supports GitHub, Pre-Commit, etc).
 - Self-Linting, Self-Documented.
 - Real Inferred Static Typed.
 - Colored output on the Terminal.
 - Project skeleton creator to create your own new Python projects.
 - Wont save any passwords, databases, keys, secrets, to disk nor Internet.
 - No temporary folders nor files.
-- Optimize Python native module binary (PIP Wont optimize binaries,it left all Debugging on)
+- Optimize Python native module binary (PIP Wont optimize binaries).
 - Not meant as a drop-in replacement for anything pre-existing.
-- 1 language for the whole stack, including high performance modules without requiring C.
+- 1 language for the whole stack, including high performance modules.
 - No Global Interpreter Lock.
 - No user Tracking Analytics by default.
 - No YAML used on the Core, No YAML Vulnerabilities (you can still use YAML).
 - No `node_modules/`.
-- KISS, Packaging should be KISS.
+- DRY code via Templates.
 
 
 # Install
@@ -69,6 +72,14 @@ plz --help               # Show Help
 
 ```console
 $ nimble install https://github.com/juancarlospaco/plz.git
+```
+
+Or even more manual:
+
+```console
+$ git clone https://github.com/juancarlospaco/plz.git
+cd plz
+nim c plz/plz.nim
 ```
 
 </details>
