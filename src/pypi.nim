@@ -51,24 +51,25 @@ const
 
 const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
 Commands:
-  install          Install packages (Download, Decompress, Install packages).
-  uninstall        Uninstall packages (Interactive, asks Y/N to user before).
-  reinstall        Uninstall & Install packages (Interactive, asks Y/N to user).
-  upload           Mimics "twine upload" (Interactive,asks user,wont need Twine)
-  search           Search PyPI for packages (PyPI API is Buggy, is still WIP).
-  hash             Compute hashes of package archives (SHA256 Checksum file).
-  init             New Python project template (Interactive, asks Y/N to user).
-  backup           Compressed signed backup of a file and quit (GPG + SHA512).
-  strip            Optimize size of Python native binary module (PIP wont strip)
-  newpackages      List all the new Packages uploaded to PyPI recently (RSS).
-  lastupdates      List all existing Packages updated on PyPI recently (RSS).
-  lastjobs         List all new Job Posts updated on Python recently (RSS).
-  stats            PyPI service status report from official statuspage (RSS).
-  userpackages     List all existing Packages by User (Interactive, asks user).
-  latestversion    Show the Latest Version release of a PYPI Package (SemVer).
-  open             Open a given module in your default code editor (xdg-open).
-  forceInstallPip  Force install PIP on a given location directory (get-pip.py).
-  cleanvirtualenv  Delete local Virtualenv (Interactive,asks Y/N to user before)
+  install         Install packages (Download, Decompress, Install packages).
+  uninstall       Uninstall packages (Interactive, asks Y/N to user before).
+  reinstall       Uninstall & Install packages (Interactive, asks Y/N to user).
+  download        Download packages (Wont decompress,Interactive,asks Y/N user).
+  upload          Mimics "twine upload" (Interactive,asks user,wont need Twine).
+  search          Search PyPI for packages (PyPI API is Buggy, is still WIP).
+  hash            Compute hashes of package archives (SHA256 Checksum file).
+  init            New Python project template (Interactive, asks Y/N to user).
+  backup          Compressed signed backup of a file and quit (GPG + SHA512).
+  strip           Optimize size of Python native binary module (PIP wont strip).
+  newpackages     List all the new Packages uploaded to PyPI recently (RSS).
+  lastupdates     List all existing Packages updated on PyPI recently (RSS).
+  lastjobs        List all new Job Posts updated on Python recently (RSS).
+  stats           PyPI service status report from official statuspage (RSS).
+  userpackages    List all existing Packages by User (Interactive, asks user).
+  latestversion   Show the Latest Version release of a PYPI Package (SemVer).
+  open            Open a given module in your default code editor (xdg-open).
+  forceInstallPip Force install PIP on a given location directory (get-pip.py).
+  cleanvirtualenv Delete local Virtualenv (Interactive,asks Y/N to user before).
 
 Options:
   --help           Show Help and quit.
