@@ -468,4 +468,11 @@ let
   headerXml =  newHttpHeaders(hdrXml)
   user = when defined(windows): getEnv"%username%" else: getEnv"USER"
 
-using projectName, projectVersion, packageName, user, releaseVersion, destDir: string
+using
+  generateScript: bool
+  query: Table[string, seq[string]]
+  args, classifiers, keywords: seq[string]
+  projectName, projectVersion, packageName, user, releaseVersion: string
+  destDir, name, version, license, summary, description, author: string
+  downloadurl, authoremail, maintainer, maintaineremail, filename: string
+  homepage, md5_digest, username, password, destination: string
