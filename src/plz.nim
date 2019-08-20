@@ -227,29 +227,29 @@ proc upload(this: PyPI, name, version, license, summary, description, author,
   let mime = newMimetypes().getMimetype(filename.splitFile.ext.toLowerAscii)
   # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
   let multipartData = block:
-    var x = newMultipartData()
-    x["protocol_version"] = "1"
-    x[":action"] = "file_upload"
-    x["metadata_version"] = "2.1"
-    x["author"] = author
-    x["name"] = name.normalize
-    x["md5_digest"] = md5_digest # md5 hash of file in urlsafe base64
-    x["summary"] = summary.normalize
-    x["version"] = version.toLowerAscii
-    x["license"] = license.toLowerAscii
-    x["pyversion"] = pyversion.normalize
-    x["requires_python"] = requirespython
-    x["homepage"] = homepage.toLowerAscii
-    x["filetype"] = filetype.toLowerAscii
-    x["description"] = description.normalize
-    x["keywords"] = keywords.join(" ").normalize
-    x["download_url"] = downloadurl.toLowerAscii
-    x["author_email"] = authoremail.toLowerAscii
-    x["maintainer_email"] = maintaineremail.toLowerAscii
-    x["description_content_type"] = description_content_type.strip
-    x["maintainer"] = if maintainer == "": author else: maintainer
-    x["content"] = (filename, mime, filename.readFile)
-    x
+    var output = newMultipartData()
+    output["protocol_version"] = "1"
+    output[":action"] = "file_upload"
+    output["metadata_version"] = "2.1"
+    output["author"] = author
+    output["name"] = name.normalize
+    output["md5_digest"] = md5_digest # md5 hash of file in urlsafe base64
+    output["summary"] = summary.normalize
+    output["version"] = version.toLowerAscii
+    output["license"] = license.toLowerAscii
+    output["pyversion"] = pyversion.normalize
+    output["requires_python"] = requirespython
+    output["homepage"] = homepage.toLowerAscii
+    output["filetype"] = filetype.toLowerAscii
+    output["description"] = description.normalize
+    output["keywords"] = keywords.join(" ").normalize
+    output["download_url"] = downloadurl.toLowerAscii
+    output["author_email"] = authoremail.toLowerAscii
+    output["maintainer_email"] = maintaineremail.toLowerAscii
+    output["description_content_type"] = description_content_type.strip
+    output["maintainer"] = if maintainer == "": author else: maintainer
+    output["content"] = (filename, mime, filename.readFile)
+    output
   clientify(this) # TODO: Finish this and test against the test dev pypi server.
   client.headers = newHttpHeaders({"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"})
   result = client.postContent(pypiUploadUrl, multipart = multipartData)
