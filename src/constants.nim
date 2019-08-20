@@ -466,4 +466,4 @@ let
   py3 = findExe"python3"
   headerJson = newHttpHeaders(hdrJson)
   headerXml =  newHttpHeaders(hdrXml)
-  user = getEnv"USER"
+  user = when defined(windows): getEnv"%username%" else: getEnv"USER"
