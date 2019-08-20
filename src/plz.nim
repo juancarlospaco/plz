@@ -114,7 +114,7 @@ proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
     if tagy.innerText.normalize.startsWith("https://"): result.add tagy.innerText
 
 proc downloadPackage(this: PyPI, packageName, releaseVersion,
-  destDir = getTempDir(), generateScript: bool): string =
+  destDir = getTempDir(), generateScript): string =
   ## Download a URL for the given releaseVersion. Returns filename.
   preconditions packageName.len > 0, releaseVersion.len > 0, existsDir(destDir)
   let choosenUrl = this.releaseUrls(packageName, releaseVersion)[0]
@@ -139,8 +139,8 @@ proc downloadPackage(this: PyPI, packageName, releaseVersion,
   if generateScript: script &= pipInstallCmd & filename.replace(destDir, "") & "\n"
   result = filename
 
-proc installPackage(this: PyPI, packageName, releaseVersion: string,
-  generateScript: bool): tuple[output: TaintedString, exitCode: int] =
+proc installPackage(this: PyPI, packageName, releaseVersion,
+  generateScript): tuple[output: TaintedString, exitCode: int] =
   preconditions packageName.len > 0, releaseVersion.len > 0
   let packageFile = this.downloadPackage(
     packageName, releaseVersion, generateScript=generateScript)
@@ -154,7 +154,7 @@ proc installPackage(this: PyPI, packageName, releaseVersion: string,
       result = execCmdEx(py3 & " " & path / "setup.py install --user")
       setCurrentDir(oldDir)
 
-proc install(this: PyPI, args: seq[string]) =
+proc install(this: PyPI, args) =
   ## Install a Python package, download & decompress files, runs python setup.py
   var failed, suces: byte
   info("🐍\t" & $now() & ", PID is " & $getCurrentProcessId() & ", " &
@@ -172,7 +172,7 @@ proc install(this: PyPI, args: seq[string]) =
     " Failed, " & $suces & " Success on " & $(now() - time0) &
     " to download/install " & $args.len & " packages")
 
-proc download(this: PyPI, args: seq[string]) =
+proc download(this: PyPI, args) =
   ## Download a package to a local folder, dont decompress nor install.
   var where: string
   while not existsDir(where):
@@ -189,7 +189,7 @@ proc releaseData(this: PyPI, packageName, releaseVersion): XmlNode =
     xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
   result = parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
-proc search(this: PyPI, query: Table[string, seq[string]], operator="and"): XmlNode =
+proc search(this: PyPI, query, operator = "and"): XmlNode =
   ## Search package database using indicated search spec. Returns 100 results max.
   preconditions operator in ["or", "and"]
   clientify(this)
@@ -197,7 +197,7 @@ proc search(this: PyPI, query: Table[string, seq[string]], operator="and"): XmlN
   let bodi = xmlRpcBody.format("search", xmlRpcParam.format(replace($query, "@", "")) & xmlRpcParam.format(operator))
   result = parseXml(client.postContent(pypiXmlUrl, body=bodi))
 
-proc browse(this: PyPI, classifiers: seq[string]): XmlNode =
+proc browse(this: PyPI, classifiers): XmlNode =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
   ## Classifiers must be a list of standard Trove classifier strings. Returns 100 results max.
   preconditions classifiers.len > 1
@@ -209,10 +209,11 @@ proc browse(this: PyPI, classifiers: seq[string]): XmlNode =
     x
   result = parseXml(client.postContent(pypiXmlUrl, body=xmlRpcBody.format("browse", clasifiers)))
 
-proc upload(this: PyPI,
-  name, version, license, summary, description, author, downloadurl, authoremail, maintainer, maintaineremail: string,
-  homepage, filename, md5_digest, username, password: string, keywords: seq[string],
-  requirespython=">=3", filetype="sdist", pyversion="source", description_content_type="text/markdown; charset=UTF-8; variant=GFM"): string =
+proc upload(this: PyPI, name, version, license, summary, description, author,
+  downloadurl, authoremail, maintainer, maintaineremail, homepage, filename,
+  md5_digest, username, password: string, keywords: seq[string],
+  requirespython=">=3", filetype="sdist", pyversion="source",
+  description_content_type="text/markdown; charset=UTF-8; variant=GFM"): string =
   ## Upload 1 new version of 1 registered package to PyPI from a local filename.
   ## PyPI Upload is HTTP POST with MultipartData with HTTP Basic Auth Base64.
   ## For some unknown reason intentionally undocumented (security by obscurity?)
@@ -363,13 +364,13 @@ proc ask2User(): auto =
     description: description,  downloadurl: downloadurl, maintainer: maintainer,
     authoremail: authoremail,  maintaineremail: maintaineremail, keywords: keywords)
 
-proc forceInstallPip(destination: string): tuple[output: TaintedString, exitCode: int] =
+proc forceInstallPip(destination): tuple[output: TaintedString, exitCode: int] =
   preconditions destination.endsWith".py"
   newHttpClient(timeout=9999).downloadFile(pipInstaller, destination) # Download
   assert existsFile(destination), "File not found: 'get-pip.py' " & destination
   result = execCmdEx(py3 & destination & " -I") # Installs PIP via get-pip.py
 
-proc parseRecord(filename: string): seq[seq[string]] =
+proc parseRecord(filename): seq[seq[string]] =
   ## Parse RECORD files from Python packages, they are Headerless CSV.
   preconditions filename.endsWith"RECORD", existsFile(filename)
   postconditions result.len > 0
@@ -380,7 +381,7 @@ proc parseRecord(filename: string): seq[seq[string]] =
   while readRow(parser): result.add parser.row
   close(parser)
 
-proc uninstall(this: PyPI, args: seq[string]) =
+proc uninstall(this: PyPI, args) =
   ## Uninstall a Python package, deletes the files, optional uninstall script.
   # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD is a CSV
   preconditions args.len > 0
