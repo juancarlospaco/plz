@@ -58,6 +58,10 @@ cp --verbose pypi ~/.nimble/bin/pypi
 
 No.
 
+- This requires DotNet Frameworks on Windows ?.
+
+No.
+
 - This runs on Python2 ?.
 
 I dunno. (Not supported)
@@ -125,6 +129,9 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 - https://github.com/ofek/hatch
 - https://github.com/pypa/pip/tree/master/src/pip/_internal/commands
 - http://pyfound.blogspot.com/2019/07/pypi-now-supports-uploading-via-api.html
+- https://snarky.ca/how-do-you-verify-pypi-can-be-trusted
+- https://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-file.html
+- https://www.ibm.com/support/knowledgecenter/en/ssw_aix_71/filesreference/netrc.html
 
 Quote from PIPEnv Project status:
 
