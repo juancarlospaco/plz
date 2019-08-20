@@ -44,21 +44,24 @@ const
   cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag "  ## PIP Wont optimize Production binaries, they are left with all Debugging on!.
 
 
+# TODO:
+# upload          Mimics "twine upload" (Interactive,asks user,wont need Twine).
+# search          Search PyPI for packages (PyPI API is Buggy, is still WIP).
+# doc             Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
+# doc2latex       Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
+# doc2json        Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
+# extract         Extract a valid compressed file of any format (LibArchive).
+# cleanvirtualenv Delete local Virtualenv (Interactive,asks Y/N to user before).
+
 const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
 Commands:
   install         Install packages (Download, Decompress, Install packages).
   uninstall       Uninstall packages (Interactive, asks Y/N to user before).
   reinstall       Uninstall & Install packages (Interactive, asks Y/N to user).
   download        Download packages (Interactive,no decompress,asks destination)
-  upload          Mimics "twine upload" (Interactive,asks user,wont need Twine).
-  search          Search PyPI for packages (PyPI API is Buggy, is still WIP).
-  doc             Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
-  doc2latex       Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
-  doc2json        Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
   hash            Compute hashes of package archives (SHA256 Checksum file).
   init            New Python project template (Interactive, asks Y/N to user).
   backup          Compressed signed backup of a file and quit (GPG + SHA512).
-  extract         Extract a valid compressed file of any format (LibArchive).
   strip           Optimize size of Python native binary module (PIP wont strip).
   newpackages     List all the new Packages uploaded to PyPI recently (RSS).
   lastupdates     List all existing Packages updated on PyPI recently (RSS).
@@ -68,7 +71,6 @@ Commands:
   latestversion   Show the Latest Version release of a PYPI Package (SemVer).
   open            Open a given module in your default code editor (xdg-open).
   forceInstallPip Force install PIP on a given location directory (get-pip.py).
-  cleanvirtualenv Delete local Virtualenv (Interactive,asks Y/N to user before).
 
 Options:
   --help           Show Help and quit.
