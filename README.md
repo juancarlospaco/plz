@@ -59,7 +59,7 @@ $ nim c plz/plz.nim
 # Dependencies
 
 - **None**
-- It does NOT depend on `pip`.
+- It does NOT depend on `pip` (Not a `pip` wrapper).
 
 
 # Platforms
