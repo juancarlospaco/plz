@@ -1,5 +1,3 @@
-include "./constants/constants.nim"
-
 type
   PyPI = object ## Base object.
     timeout: byte  ## Timeout Seconds for API Calls, byte type, 0~255.
