@@ -24,7 +24,7 @@ const
     when defined(linux):   r"~/.cache/pip"  # PIP "standards"
     elif defined(macos):   r"~/Library/Caches/pip"
     elif defined(windows): r"%LocalAppData%\pip\Cache"
-    else:                  getEnv("PIP_DOWNLOAD_CACHE")
+    else:                  getEnv"PIP_DOWNLOAD_CACHE"
   osOpen =
     when defined(macos):   "open "
     elif defined(windows): "start "
@@ -86,12 +86,13 @@ Options:
   --publicip       Show your Public IP Address (Internet connectivity check).
   --suicide        Deletes itself permanently and exit (single file binary).
 
-✅ This wont save any passwords, databases, keys, secrets to disk nor Internet.
-Learn more http://nim-lang.org/learn.html http://nim-lang.org/documentation.html
-http://nim-lang.github.io/Nim/lib.html http://nim-lang.org/docs/theindex.html"""
+http://nim-lang.org http://github.com/juancarlospaco http://github.com/yglukhov/nimpy
+"""
 
 
-const setupCfg = """# See: https://setuptools.readthedocs.io/en/latest/setuptools.html#metadata
+const setupCfg = """
+# See: https://setuptools.readthedocs.io/en/latest/setuptools.html#metadata
+
 [metadata]
 name             = example
 provides         = example
@@ -161,7 +162,8 @@ exclude-source-files = true
 # [options.packages.find]
 # where   = .
 # include = *.py, *.pyw
-# exclude = *.c, *.so, *.js, *.tests, *.tests.*, tests.*, tests """
+# exclude = *.c, *.so, *.js, *.tests, *.tests.*, tests.*, tests
+"""
 
 
 const testTemplate = """# -*- coding: utf-8 -*-
@@ -218,10 +220,12 @@ class TestName(unittest.TestCase):
             do_something_that_raises() # This line  Must raise SomeException
 
 if __name__ in "__main__":
-    unittest.main() """
+    unittest.main()
+"""
 
 
-const serviceTemplate = """[Unit]
+const serviceTemplate = """
+[Unit]
 Description=Example Service
 Documentation=https://example.com/documentation
 After=network-online.target
@@ -244,11 +248,13 @@ ExecStart=echo      # Execute your application command.
 # WorkingDirectory=/home/<user>/  # MODIFY to your installation path
 
 [Install]
-WantedBy=multi-user.target """
+WantedBy=multi-user.target
+"""
 
 
 # http://github.com/pre-commit/pre-commit/blob/master/pre_commit/resources/hook-tmpl
-const precommitTemplate = """import distutils.spawn, os, subprocess, sys
+const precommitTemplate = """
+import distutils.spawn, os, subprocess, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 Z40 = '0' * 40
 ID_HASH = '138fd403232d2ddd5efb44317e38bf03'
@@ -409,16 +415,19 @@ def main():
         return 1
 
 if __name__ == '__main__':
-    exit(main()) """
+    exit(main())
+"""
 
 
-const dockerfileTemplate = """FROM alpine:latest
+const dockerfileTemplate = """
+FROM alpine:latest
 RUN apk add --no-cache ca-certificates gnupg tar xz bzip2 coreutils dpkg findutils gcc libc-dev linux-headers make openssl readline sqlite zlib tk tcl ncurses gdbm
 ENV LANG C.UTF-8
 ENV PYTHON_VERSION 3.7
 ENV PYTHON_PIP_VERSION 3.7
 ENV PATH /usr/local/bin:$PATH
-# Do your magic here. Download and Compile Python... """
+# Do your magic here. Download and Compile Python...
+"""
 
 
 const licenseHint = """Licenses:
