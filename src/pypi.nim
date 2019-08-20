@@ -860,7 +860,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
       of "publicip":
-        quit("🌎\tPublic IP ➡️ " & newHttpClient(timeout=9999).getContent("https://api.ipify.org").strip, 0)
+        quit(newHttpClient(timeout=9999).getContent("https://api.ipify.org").strip, 0)
       of "debug", "desbichar":
         quit(pretty(%*{"CompileDate": CompileDate, "CompileTime": CompileTime,
         "NimVersion": NimVersion, "hostCPU": hostCPU, "hostOS": hostOS,
