@@ -1,9 +1,20 @@
 <!--
 
-# PyPI
+# PLZ
 
-- [Pythons PyPI / PIP](https://pypi.org) Faster API Client.
-*(WIP, everything is subject to change on future, join the development!)*
+- PLZ [Python PIP](https://pypi.org) faster alternative.
+
+
+# Use
+
+```console
+plz install pre-commit     # Install 1 or more packages
+plz uninstall pre-commit   # Uninstall 1 or more packages
+plz reinstall pre-commit   # Reinstall 1 or more packages
+plz download pre-commit    # Download 1 or more packages
+plz --version              # Show Version
+plz --help                 # Show Help
+```
 
 
 # Features
@@ -43,13 +54,41 @@
 
 # Install
 
+- [**Download it!.**](https://github.com/juancarlospaco/plz/releases)
+- `1` MegaByte single-file standalone native binary executable, no install required, just copy it and run it.
+
+# Compile
+
+- Manually compiling is usually not needed, but if you want to do it:
+
 ```console
-git clone https://github.com/juancarlospaco/nim-pypi.git
-cd nim-py/src
+git clone https://github.com/juancarlospaco/plz.git
+cd plz
 nim c -d:release pypi.nim
 strip --strip-all pypi
 cp --verbose pypi ~/.nimble/bin/pypi
 ```
+
+
+# Uninstall
+
+- Delete it.
+
+
+# Dependencies
+
+- **None**
+
+
+# Platforms
+
+- ✅ Linux
+- ✅ Windows
+- ✅ Mac
+- ✅ Raspberry Pi
+- ✅ ARM
+- ✅ BSD
+- ✅ Anything that can compile C.
 
 
 # FAQ
@@ -70,13 +109,13 @@ I dunno. (Not supported)
 
 I dunno. (Not supported)
 
-- This works with SSL ?.
+- This works on Mac?.
 
 Yes.
 
-- This requires Nimble ?.
+- This works with SSL ?.
 
-No.
+Yes.
 
 - This requires Nim ?.
 
