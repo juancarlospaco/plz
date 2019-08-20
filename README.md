@@ -2,6 +2,8 @@
 
 - PLZ [Python PIP](https://pypi.org) alternative.
 
+![](python-wat.png "plz for Linux & Windows! (1 Mb, 1 file)")
+
 
 # Use
 
@@ -25,6 +27,8 @@ $ plz --help               # Show Help
 
 # Features
 
+- 1 Megabyte, 1 file.
+- 0 Dependencies.
 - The only PIP alternative in the world that just works even with PIP/Python/Virtualenv completely broken.
 - Works fully independently self-contained standalone application.
 - [Design by Contract, Contract Programming](https://dev.to/juancarlospaco/design-by-contract-immutability-side-effects-and-gulag-44fk).
@@ -37,8 +41,6 @@ $ plz --help               # Show Help
 - Immutable programming, No Global Mutable State.
 - Single file binary, it can even delete itself after use.
 - Single file source code.
-- 0 Dependencies.
-- ~1 Megabyte file size.
 - No Installs, no setups, just copy & paste and run (even on Alpine).
 - New Python project skeleton creator (supports GitHub, Pre-Commit, etc).
 - Self-Linting, Self-Documented.
