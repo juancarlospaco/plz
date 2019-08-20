@@ -165,8 +165,4 @@ Quote from PIPEnv Project:
 > and we have about 15 dependencies which I personally maintain).
 
 
-<marquee>
-
 ![](pepehack.gif "Work in progress!")
-
-</marquee>
