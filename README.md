@@ -4,7 +4,7 @@
 
 ![](python-wat.png "plz for Linux & Windows! (1 Mb, 1 file)")
 
-![](pepehacks.gif "Work in progress!")
+![](pepehack.gif "Work in progress!")
 
 
 # Use
