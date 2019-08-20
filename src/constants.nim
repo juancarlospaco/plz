@@ -49,7 +49,7 @@ Commands:
   install         Install packages (Download, Decompress, Install packages).
   uninstall       Uninstall packages (Interactive, asks Y/N to user before).
   reinstall       Uninstall & Install packages (Interactive, asks Y/N to user).
-  download        Download packages (Wont decompress,Interactive,asks Y/N user).
+  download        Download packages (Interactive,no decompress,asks destination)
   upload          Mimics "twine upload" (Interactive,asks user,wont need Twine).
   search          Search PyPI for packages (PyPI API is Buggy, is still WIP).
   doc             Convert Markdown/ReSTructuredText to HTML(MD/RST can be mixed)
