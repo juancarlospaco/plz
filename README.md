@@ -14,7 +14,7 @@ $ plz reinstall pre-commit # Reinstall 1 or more packages
 $ plz download pre-commit  # Download 1 or more packages
 $ plz hash file.py         # Show SHA CheckSum of file/package
 $ plz open file.py         # Open a module in your default code editor
-$ plz backup               # Compressed signed backup of file/package (GPG + SHA512)
+$ plz backup               # Compressed signed backup of file/package (GPG+SHA512)
 $ plz init                 # New Python project template (Interactive)
 $ plz stats                # PyPI official service status report
 $ plz newpackages          # List all the new Packages uploaded to PyPI recently
