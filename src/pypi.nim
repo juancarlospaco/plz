@@ -1,20 +1,5 @@
 include "constants.nim"
 
-hardenedBuild()  # Security Hardened mode.
-addHandler(newConsoleLogger(fmtStr = ""))
-addHandler(newRollingFileLogger(fmtStr = "$levelname, $datetime, $appname, "))
-setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
-
-let
-  py3 = findExe"python3"
-  cython = findExe"cython"
-  nuitka = findExe"nuitka"
-  headerJson = newHttpHeaders(hdrJson)
-  headerXml =  newHttpHeaders(hdrXml)
-  user = getEnv"USER"
-
-var script: string
-
 type
   PyPI = object ## Base object.
     timeout: byte  ## Timeout Seconds for API Calls, byte type, 0~255.
@@ -455,7 +440,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         "currentDir": getCurrentDir(), "python3": py3, "ssl": defined(ssl),
         "release": defined(release), "contracts": defined(release),
         "hardened": defined(hardened), "sitePackages": sitePackages,
-        "pipCacheDir": pipCacheDir, "cython": cython, "nuitka": nuitka,
+        "pipCacheDir": pipCacheDir,
         "currentCompilerExe": getCurrentCompilerExe(), "int.high": int.high,
         "processorsCount": countProcessors(), "danger": defined(danger),
         "currentProcessId": getCurrentProcessId(), "version": version}), 0)
