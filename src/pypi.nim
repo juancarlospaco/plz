@@ -1,3 +1,4 @@
+
 hardenedBuild()  # Security Hardened mode.
 
 addHandler(newConsoleLogger(fmtStr = ""))
@@ -40,7 +41,7 @@ const
     else:                  ".cpython-*.so"
   virtualenvDir = r"~/.virtualenvs"
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
-  pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user --no-dependencies " & pipCommons
+  pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user " & pipCommons
   pipMaintenance = "pip3 install --upgrade --no-warn-script-location --user " & pipCommons & " pip virtualenv setuptools wheel twine"
   cmdChecksum = "sha256sum --tag "  # I prefer SHA512,but PyPI uses SHA256 only?
   cmdSign = "gpg --armor --detach-sign --yes --digest-algo sha512 "
@@ -572,8 +573,35 @@ proc downloadPackage(this: PyPI, packageName, releaseVersion,
 proc installPackage(this: PyPI, packageName, releaseVersion: string,
   generateScript: bool): tuple[output: TaintedString, exitCode: int] =
   preconditions packageName.len > 0, releaseVersion.len > 0
-  result = execCmdEx(pipInstallCmd & quoteShell(this.downloadPackage(
-    packageName, releaseVersion, generateScript=generateScript)))
+  let packageFile = this.downloadPackage(
+    packageName, releaseVersion, generateScript=generateScript)
+  if unlikely(packageFile.endsWith".whl"): extract(packageFile, sitePackages)
+  else:
+    extract(packageFile, getTempDir())
+    let path = packageFile[0..^5]
+    if existsFile(path  / "setup.py"):
+      let oldDir = getCurrentDir()
+      setCurrentDir(path)
+      result = execCmdEx(py3 & " " & path / "setup.py install --user")
+      setCurrentDir(oldDir)
+
+proc install(this: PyPI, args: seq[string]) =
+  ## Install a Python package, download & decompress files, runs python setup.py
+  var failed, suces: byte
+  info("🐍\t" & $now() & ", PID is " & $getCurrentProcessId() & ", " &
+    $args[1..^1].len & " packages to download and install ➡️ " & $args[1..^1])
+  let generateScript = readLineFromStdin("Generate Install Script? (y/N): ").normalize == "y"
+  let time0 = now()
+  for argument in args[1..^1]:
+    let semver = $this.packageLatestRelease(argument)
+    info "🌎\tPyPI ➡️ " & argument & " " & semver
+    let resultados = this.installPackage(argument, semver, generateScript)
+    info (if resultados.exitCode == 0: "✅\t" else: "❌\t") & resultados.output
+    if resultados.exitCode == 0: inc suces else: inc failed
+  if generateScript: info "\n" & script
+  info((if failed == 0: "✅\t" else: "❌\t") & $now() & " " & $failed &
+    " Failed, " & $suces & " Success on " & $(now() - time0) &
+    " to download/install " & $args[1..^1].len & " packages")
 
 proc releaseData(this: PyPI, packageName, releaseVersion): XmlNode =
   ## Retrieve metadata describing a specific releaseVersion. Returns a dict.
@@ -774,7 +802,7 @@ proc parseRecord(filename: string): seq[seq[string]] =
   while readRow(parser): result.add parser.row
   close(parser)
 
-proc uninstall(args: seq[string]) =
+proc uninstall(this: PyPI, args: seq[string]) =
   ## Uninstall a Python package, deletes the files, optional uninstall script.
   # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD is a CSV
   preconditions args.len > 0
@@ -881,14 +909,10 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       of "color":
         setBackgroundColor(bgBlack)
         setForegroundColor(fgGreen)
-
-
-
       of "suicide": discard tryRemoveFile(currentSourcePath()[0..^5])
     of cmdArgument:
       args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
-
 
   let is1argOnly = args.len == 2  # command + arg == 2 ("install foo")
   if args.len > 0:
@@ -928,23 +952,9 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         info "--hash=sha256:" & sha512sum.split(" ")[^1]
     of "backup": quit(backup().output, 0)
     of "uninstall":
-      uninstall(args[1..^1])
+      cliente.uninstall(args[1..^1])
     of "install":
-      var failed, suces: byte
-      info("🐍\t" & $now() & ", PID is " & $getCurrentProcessId() & ", " &
-        $args[1..^1].len & " packages to download and install ➡️ " & $args[1..^1])
-      let generateScript = readLineFromStdin("Generate Install Script? (y/N): ").normalize == "y"
-      let time0 = now()
-      for argument in args[1..^1]:
-        let semver = $cliente.packageLatestRelease(argument)
-        info "🌎\tPyPI ➡️ " & argument & " " & semver
-        let resultados = cliente.installPackage(argument, semver, generateScript)
-        info (if resultados.exitCode == 0: "✅\t" else: "❌\t") & $resultados
-        if resultados.exitCode == 0: inc suces else: inc failed
-      if generateScript: info "\n" & script
-      info((if failed == 0: "✅\t" else: "❌\t") & $now() & " " & $failed &
-        " Failed, " & $suces & " Success on " & $(now() - time0) &
-        " to download/install " & $args[1..^1].len & " packages")
+      cliente.install(args[1..^1])
     of "upload":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       doAssert existsFile(args[1]), "File not found: " & args[1]
@@ -961,10 +971,3 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       )
 
   else: quit("Wrong Parameters, please see Help with: --help", 1)
-
-
-# FROM python:3.7.3-slim
-# RUN apt-get update && apt-get install -y --no-install-recommends git
-# RUN pip install pre-commit WORKDIR /lint
-# RUN git init ADD .pre-commit-config.yaml /lint/.pre-commit-config.yaml RUN pre-commit install-hooks
-# some kind of INI file format???
