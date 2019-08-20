@@ -1,4 +1,4 @@
-include "plz/constants.nim"
+include "./plz/constants.nim"
 
 type
   PyPI = object ## Base object.
