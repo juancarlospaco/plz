@@ -76,8 +76,8 @@ Or even more manual:
 
 ```console
 $ git clone https://github.com/juancarlospaco/plz.git
-cd plz
-nim c plz/plz.nim
+$ cd plz
+$ nim c plz/plz.nim
 ```
 
 </details>
@@ -141,8 +141,8 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 
 - `release_downloads`, `top_packages`, `updated_releases`, `changed_packages`.
 - Sometimes it returns Python Tracebacks as strings on the body of the response.
-- Since is a big project, some features are not yet implemented as App,
-but the source contains the functionanity whatsoever.
+- Its a big project, some features are not yet implemented as App,
+but source contains the functionanity whatsoever.
 
 
 #### Notes
