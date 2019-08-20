@@ -422,7 +422,7 @@ proc uninstall(this: PyPI, args) =
 ###############################################################################
 
 
-when isMainModule: # https://pip.readthedocs.io/en/1.1/requirements.html
+when isMainModule:
   var taimaout = 99.byte
   var args: seq[string]
   for tipoDeClave, clave, valor in getopt():
@@ -433,11 +433,11 @@ when isMainModule: # https://pip.readthedocs.io/en/1.1/requirements.html
       of "license", "licencia": quit("PPL", 0)
       of "nice20": discard nice(20.cint)
       of "timeout": taimaout = valor.parseInt.byte
+      of "enusutf8": enUsUtf8()
+      of "publicip": quit(newHttpClient(timeout = 9999).getContent("https://api.ipify.org").strip, 0)
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
-      of "publicip":
-        quit(newHttpClient(timeout = 9999).getContent("https://api.ipify.org").strip, 0)
       of "debug", "desbichar":
         quit(pretty(%*{"CompileDate": CompileDate, "CompileTime": CompileTime,
         "NimVersion": NimVersion, "hostCPU": hostCPU, "hostOS": hostOS,
@@ -449,7 +449,6 @@ when isMainModule: # https://pip.readthedocs.io/en/1.1/requirements.html
         "currentCompilerExe": getCurrentCompilerExe(), "int.high": int.high,
         "processorsCount": countProcessors(), "danger": defined(danger),
         "currentProcessId": getCurrentProcessId(), "version": version}), 0)
-      of "enusutf8": enUsUtf8()
       of "putenv":
         let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)
@@ -458,7 +457,7 @@ when isMainModule: # https://pip.readthedocs.io/en/1.1/requirements.html
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pyc in walkFiles(getCurrentDir() / "*.pyc"): info $tryRemoveFile(pyc) & "\t" & pyc
         for pyc in walkDirs(getCurrentDir() / "__pycache__"): info $tryRemoveFile(pyc) & "\t" & pyc
-      of "cleantemp":
+      of "cleantemp", "cleartemp":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for tmp in walkPattern(getTempDir() / "**" / "*.*"): info $tryRemoveFile(tmp) & "\t" & tmp
         for tmp in walkPattern(getTempDir() / "**" / "*"): info $tryRemoveFile(tmp) & "\t" & tmp
@@ -477,7 +476,7 @@ when isMainModule: # https://pip.readthedocs.io/en/1.1/requirements.html
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pyc in files2delete: info $tryRemoveFile(pyc) & "\t" & pyc
         quit()
-      of "cleanpipcache":
+      of "cleanpipcache", "clearpipcache":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile") # Dir Found in the wild
         info $tryRemoveFile("/tmp/pip-build-root") & "\t/tmp/pip-build-root"
         info $tryRemoveFile("/tmp/pip_build_root") & "\t/tmp/pip_build_root"
@@ -488,30 +487,33 @@ when isMainModule: # https://pip.readthedocs.io/en/1.1/requirements.html
         setBackgroundColor(bgBlack)
         setForegroundColor(fgGreen)
       of "suicide": discard tryRemoveFile(currentSourcePath()[0..^5])
-    of cmdArgument:
-      args.add clave
+    of cmdArgument: args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
 
   let is1argOnly = args.len == 2 # command + arg == 2 ("install foo")
   if args.len > 0:
     let cliente = PyPI(timeout: taimaout)
     case args[0].normalize
-    of "stats":
-      quit($cliente.stats(), 0)
-    of "newpackages":
-      quit($cliente.newPackages(), 0)
-    of "lastupdates":
-      quit($cliente.lastUpdates(), 0)
-    of "lastjobs":
-      quit($cliente.lastJobs(), 0)
+    of "init": pySkeleton()
+    of "backup": quit(backup().output, 0)
+    of "stats": quit($cliente.stats(), 0)
+    of "newpackages": quit($cliente.newPackages(), 0)
+    of "lastupdates": quit($cliente.lastUpdates(), 0)
+    of "lastjobs": quit($cliente.lastJobs(), 0)
+    of "userpackages": quit($cliente.userPackages(readLineFromStdin("PyPI Username?: ").normalize), 0)
+    of "uninstall": cliente.uninstall(args[1..^1])
+    of "install": cliente.install(args[1..^1])
+    of "download": cliente.download(args[1..^1])
+    of "reinstall":
+      let packages = args[1..^1]
+      cliente.uninstall(packages)
+      cliente.install(packages)
     of "latestversion":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       quit($cliente.packageLatestRelease(args[1]), 0)
     of "open":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       discard execCmdEx(osOpen & args[1])
-    of "userpackages":
-      quit($cliente.userPackages(readLineFromStdin("PyPI Username?: ").normalize), 0)
     of "strip":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       let (output, exitCode) = execCmdEx(cmdStrip & args[1])
@@ -520,25 +522,12 @@ when isMainModule: # https://pip.readthedocs.io/en/1.1/requirements.html
       quit("Not implemented yet (PyPI API is Buggy)")
       # info args[1]
       # info cliente.search({"name": @[args[1]]}.toTable)
-    of "init":
-      pySkeleton()
     of "hash":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       if findExe"sha256sum".len > 0:
         let sha512sum = execCmdEx(cmdChecksum & args[1]).output.strip
         info sha512sum
         info "--hash=sha256:" & sha512sum.split(" ")[^1]
-    of "backup": quit(backup().output, 0)
-    of "uninstall":
-      cliente.uninstall(args[1..^1])
-    of "install":
-      cliente.install(args[1..^1])
-    of "reinstall":
-      let packages = args[1..^1]
-      cliente.uninstall(packages)
-      cliente.install(packages)
-    of "download":
-      cliente.download(args[1..^1])
     of "upload":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       doAssert existsFile(args[1]), "File not found: " & args[1]
