@@ -82,29 +82,6 @@ No.
 
 No.
 
-- This wont support Virtualenv?.
-
-No. By design it wont support Virtualenv, intentionally.
-
-Thats precisely why it started, others seems to fight over Virtualenv support,
-we dont even use Virtualenv, everyone uses Docker nowadays, we use Docker, you probably use Docker,
-we dont even care about Virtualenv, we dont use it, ...is just Legacy.
-
-Isolation of Virtualenv are very poor and limited compared to Docker.
-No one Deploys anything without Docker nowadays.
-Virtualenv is not Immutable.
-Virtualenv is not Versioned.
-Virtualenv is not really Reproducible, a Virtualenv may work on Linux but fail on Mac.
-Virtualenv wont isolate anything at all about Python Native modules.
-Having any kind of custom install procedure for software on servers is just not a thing these days,
-even if we loved Virtualenv and hated Docker is just not a thing anymore.
-
-Example, Coding Python Modules on fresh installed Windows, with only Git and Nim installed, no Virtualenvs/PIP required:
-
-![win-compile](https://user-images.githubusercontent.com/1189414/63147831-b8bf6100-bfd5-11e9-9e6e-91d61040f139.png "Git Clone and Compile on Windows 10 with only Git and Nim installed, just 2 commands!")
-
-- Git Clone and Compile on Windows 10 on just 2 commands!.
-
 
 # API Bugs
 
@@ -112,29 +89,13 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 
 - `release_downloads`, `top_packages`, `updated_releases`, `changed_packages`.
 - Sometimes it returns Python Tracebacks as strings on the body of the response.
-- Since is a big project, some features are not yet implemented as App, but the source contains the functionanity whatsoever.
+- Since is a big project, some features are not yet implemented as App,
+but the source contains the functionanity whatsoever.
 
 
 #### Notes
 
 - http://tonsky.me/blog/disenchantment
 - https://chriswarrick.com/blog/2018/07/17/pipenv-promises-a-lot-delivers-very-little/
-- https://old.reddit.com/r/Python/comments/chkah3/is_pipenv_dead_why_has_the_project_stopped/
-- https://github.com/pypa/pipenv/commit/6d77e4a0551528d5d72d81e8a15da4722ad82f26
-- https://github.com/pypa/pipenv/commit/1c956d37e6ad20babdb5021610b2ed2c9c4203f2
-- https://github.com/pypa/pipenv/commit/e3c72e167d21b921bd3bd89d4217b04628919bb2
-- https://np.reddit.com/r/Python/comments/8jd6aq/why_is_pipenv_the_recommended_packaging_tool_by/
-- https://www.reddit.com/r/Python/comments/8lapa5/comparison_of_pipenv_vs_piptools/
-- https://github.com/mitsuhiko/pipsi#pipsi (Dead Project).
-- https://github.com/ofek/hatch
-- https://github.com/pypa/pip/tree/master/src/pip/_internal/commands
-- http://pyfound.blogspot.com/2019/07/pypi-now-supports-uploading-via-api.html
-- https://snarky.ca/how-do-you-verify-pypi-can-be-trusted
-- https://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-file.html
-- https://www.ibm.com/support/knowledgecenter/en/ssw_aix_71/filesreference/netrc.html
-
-Quote from PIPEnv Project status:
-
-> PIPEnv Release cadence came to a super dramatic halt because of a lot of upstream issues (pip broke, setuptools broke, then pip and setuptools both released breaking fixes, and we have about 15 upstream dependencies which I personally maintain)
 
 -->
