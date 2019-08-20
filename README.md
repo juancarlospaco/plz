@@ -151,6 +151,10 @@ but source contains the functionanity whatsoever.
 
 - http://tonsky.me/blog/disenchantment
 - https://chriswarrick.com/blog/2018/07/17/pipenv-promises-a-lot-delivers-very-little/
-
+- https://old.reddit.com/r/Python/comments/chkah3/is_pipenv_dead_why_has_the_project_stopped/
+- https://github.com/pypa/pipenv/commit/6d77e4a0551528d5d72d81e8a15da4722ad82f26
+- https://github.com/pypa/pipenv/commit/1c956d37e6ad20babdb5021610b2ed2c9c4203f2
+- https://github.com/pypa/pipenv/commit/e3c72e167d21b921bd3bd89d4217b04628919bb2
+- https://github.com/mitsuhiko/pipsi#pipsi (Dead Project)
 
 ![](pepehack.gif "Work in progress!")
