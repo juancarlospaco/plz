@@ -164,5 +164,6 @@ Quote from PIPEnv Project:
 > (pip broke, setuptools broke, then pip and setuptools both released breaking fixes,
 > and we have about 15 dependencies which I personally maintain).
 
-
-![](pepehack.gif "Work in progress!")
+<marquee>
+  ![](pepehack.gif "Work in progress!")
+</marquee>
