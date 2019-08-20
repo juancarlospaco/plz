@@ -395,15 +395,13 @@ proc uninstall(this: PyPI, args) =
       for r in walkFiles(sitePackages / argument & "-*.dist-info" / "RECORD"): output.add r
     output
   assert recordFiles.len > 0, "RECORD Metadata CSV files not found."
-  # echo "Found " & $recordFiles.len & " Metadata files: " & $recordFiles
   let files2delete = block:
     var output: seq[string]
     var size: int
     for record in recordFiles:
       for recordfile in parseRecord(record):
         output.add sitePackages / recordfile[0]
-        if recordfile.len == 3 and recordfile[2].len > 0:
-          size += parseInt(recordfile[2])
+        if recordfile.len == 3 and recordfile[2].len > 0: size += parseInt(recordfile[2])
     styledEcho(fgGreen, bgBlack, "Total disk space freed:\t" &
       formatSize(size.int64, prefix = bpColloquial, includeSpace = true))
     output
@@ -415,12 +413,10 @@ proc uninstall(this: PyPI, args) =
       else: "\n"
     const cmd = when defined(windows): "del " else: "rm --verbose --force "
     info(sudo & cmd & files2delete.join" " & "\n")
-  for pyfile in files2delete:
-    styledEcho(fgRed, bgBlack, "🗑\t" & pyfile)
+  for pyfile in files2delete: styledEcho(fgRed, bgBlack, "🗑\t" & pyfile)
   if readLineFromStdin("\nDelete " & $files2delete.len & " files? (y/N): ").normalize == "y":
     styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-    for pythonfile in files2delete:
-      info $tryRemoveFile(pythonfile) & "\t" & pythonfile
+    for pythonfile in files2delete: info $tryRemoveFile(pythonfile) & "\t" & pythonfile
 
 
 ###############################################################################
