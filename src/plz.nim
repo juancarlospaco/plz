@@ -41,7 +41,8 @@ proc release(this: PyPI, projectName, projectVersion): JsonNode =
   preconditions projectName.len > 0, projectVersion.len > 0
   clientify(this)
   client.headers = headerJson
-  result = parseJson(client.getContent(pypiApiUrl & "pypi/" & projectName & "/" & projectVersion & "/json"))
+  result = parseJson(client.getContent(
+    pypiApiUrl & "pypi/" & projectName & "/" & projectVersion & "/json"))
 
 proc htmlAllPackages(this: PyPI): string =
   ## Return all projects registered on PyPI as HTML string,Legacy Endpoint,Slow.
@@ -64,13 +65,15 @@ proc listPackages(this: PyPI): seq[string] =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI. Server-side Slow.
   clientify(this)
   client.headers = headerXml
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = lppXml)).findAll("string"): result.add tagy.innerText
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = lppXml)).findAll("string"):
+    result.add tagy.innerText
 
 proc changelogLastSerial(this: PyPI): int =
   ## Return 1 XML XmlNode with the Last Serial number integer.
   clientify(this)
   client.headers = headerXml
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = clsXml)).findAll("int"): result = tagy.innerText.parseInt
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = clsXml)).findAll("int"):
+    result = tagy.innerText.parseInt
 
 proc listPackagesWithSerial(this: PyPI): seq[array[2, string]] =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with Serial number integer. Server-side Slow.
@@ -85,7 +88,8 @@ proc packageLatestRelease(this: PyPI, packageName): string =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_releases", xmlRpcParam.format(packageName))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("string"): result = tagy.innerText
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("string"):
+    result = tagy.innerText
 
 proc packageRoles(this: PyPI, packageName): seq[XmlNode] =
   ## Retrieve a list of role, user for a given packageName. Role is Maintainer or Owner.
@@ -93,7 +97,8 @@ proc packageRoles(this: PyPI, packageName): seq[XmlNode] =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(packageName))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("data"): result.add tagy
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("data"):
+    result.add tagy
 
 proc userPackages(this: PyPI, user = user): seq[XmlNode] =
   ## Retrieve a list of role, packageName for a given user. Role is Maintainer or Owner.
@@ -101,7 +106,8 @@ proc userPackages(this: PyPI, user = user): seq[XmlNode] =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("data"): result.add tagy
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("data"):
+    result.add tagy
 
 proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
   ## Retrieve a list of download URLs for the given releaseVersion. Returns a list of dicts.
