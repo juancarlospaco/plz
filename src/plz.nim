@@ -1,15 +1,15 @@
 include "constants.nim"
 
 type
-  PyPI = object ## Base object.
-    timeout: byte  ## Timeout Seconds for API Calls, byte type, 0~255.
+  PyPI = object   ## Base object.
+    timeout: byte ## Timeout Seconds for API Calls, byte type, 0~255.
     proxy: Proxy  ## Network IPv4 / IPv6 Proxy support, Proxy type.
 
 template clientify(this: PyPI): untyped =
   ## Build & inject basic HTTP Client with Proxy and Timeout.
   var client {.inject.} = newHttpClient(
     timeout = when declared(this.timeout): this.timeout.int * 1_000 else: -1,
-    proxy = when declared(this.proxy): this.proxy else: nil, userAgent="")
+    proxy = when declared(this.proxy): this.proxy else: nil, userAgent = "")
 
 proc newPackages(this: PyPI): XmlNode =
   ## Return an RSS XML XmlNode type with the Newest Packages uploaded to PyPI.
@@ -46,37 +46,37 @@ proc release(this: PyPI, projectName, projectVersion): JsonNode =
 proc htmlAllPackages(this: PyPI): string =
   ## Return all projects registered on PyPI as HTML string,Legacy Endpoint,Slow.
   clientify(this)
-  result = client.getContent(url=pypiApiUrl & "simple")
+  result = client.getContent(url = pypiApiUrl & "simple")
 
 proc htmlPackage(this: PyPI, projectName): string =
   ## Return a project registered on PyPI as HTML string, Legacy Endpoint, Slow.
   preconditions projectName.len > 0
   clientify(this)
-  result = client.getContent(url=pypiApiUrl & "simple/" & projectName)
+  result = client.getContent(url = pypiApiUrl & "simple/" & projectName)
 
 proc stats(this: PyPI): XmlNode =
   ## Return all JSON stats data for projectName of an specific version from PyPI.
   clientify(this)
   client.headers = headerXml
-  result = parseXml(client.getContent(url=pypiStatus))
+  result = parseXml(client.getContent(url = pypiStatus))
 
 proc listPackages(this: PyPI): seq[string] =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI. Server-side Slow.
   clientify(this)
   client.headers = headerXml
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body=lppXml)).findAll("string"): result.add tagy.innerText
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = lppXml)).findAll("string"): result.add tagy.innerText
 
 proc changelogLastSerial(this: PyPI): int =
   ## Return 1 XML XmlNode with the Last Serial number integer.
   clientify(this)
   client.headers = headerXml
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body=clsXml)).findAll("int"): result = tagy.innerText.parseInt
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = clsXml)).findAll("int"): result = tagy.innerText.parseInt
 
 proc listPackagesWithSerial(this: PyPI): seq[array[2, string]] =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with Serial number integer. Server-side Slow.
   clientify(this)
   client.headers = headerXml
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body=lpsXml)).findAll("member"):
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = lpsXml)).findAll("member"):
     result.add [tagy.child"name".innerText, tagy.child"value".child"int".innerText]
 
 proc packageLatestRelease(this: PyPI, packageName): string =
@@ -85,7 +85,7 @@ proc packageLatestRelease(this: PyPI, packageName): string =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_releases", xmlRpcParam.format(packageName))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body=bodi)).findAll("string"): result = tagy.innerText
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("string"): result = tagy.innerText
 
 proc packageRoles(this: PyPI, packageName): seq[XmlNode] =
   ## Retrieve a list of role, user for a given packageName. Role is Maintainer or Owner.
@@ -93,7 +93,7 @@ proc packageRoles(this: PyPI, packageName): seq[XmlNode] =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(packageName))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body=bodi)).findAll("data"): result.add tagy
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("data"): result.add tagy
 
 proc userPackages(this: PyPI, user = user): seq[XmlNode] =
   ## Retrieve a list of role, packageName for a given user. Role is Maintainer or Owner.
@@ -101,7 +101,7 @@ proc userPackages(this: PyPI, user = user): seq[XmlNode] =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body=bodi)).findAll("data"): result.add tagy
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("data"): result.add tagy
 
 proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
   ## Retrieve a list of download URLs for the given releaseVersion. Returns a list of dicts.
@@ -110,7 +110,7 @@ proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
   client.headers = headerXml
   let bodi = xmlRpcBody.format("release_urls",
     xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body=bodi)).findAll("string"):
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("string"):
     if tagy.innerText.normalize.startsWith("https://"): result.add tagy.innerText
 
 proc downloadPackage(this: PyPI, packageName, releaseVersion,
@@ -143,12 +143,12 @@ proc installPackage(this: PyPI, packageName, releaseVersion,
   generateScript): tuple[output: TaintedString, exitCode: int] =
   preconditions packageName.len > 0, releaseVersion.len > 0
   let packageFile = this.downloadPackage(
-    packageName, releaseVersion, generateScript=generateScript)
+    packageName, releaseVersion, generateScript = generateScript)
   if unlikely(packageFile.endsWith".whl"): extract(packageFile, sitePackages)
   else:
     extract(packageFile, getTempDir())
     let path = packageFile[0..^5]
-    if existsFile(path  / "setup.py"):
+    if existsFile(path / "setup.py"):
       let oldDir = getCurrentDir()
       setCurrentDir(path)
       result = execCmdEx(py3 & " " & path / "setup.py install --user")
@@ -187,7 +187,7 @@ proc releaseData(this: PyPI, packageName, releaseVersion): XmlNode =
   client.headers = headerXml
   let bodi = xmlRpcBody.format("release_data",
     xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
-  result = parseXml(client.postContent(pypiXmlUrl, body=bodi))
+  result = parseXml(client.postContent(pypiXmlUrl, body = bodi))
 
 proc search(this: PyPI, query, operator = "and"): XmlNode =
   ## Search package database using indicated search spec. Returns 100 results max.
@@ -195,7 +195,7 @@ proc search(this: PyPI, query, operator = "and"): XmlNode =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("search", xmlRpcParam.format(replace($query, "@", "")) & xmlRpcParam.format(operator))
-  result = parseXml(client.postContent(pypiXmlUrl, body=bodi))
+  result = parseXml(client.postContent(pypiXmlUrl, body = bodi))
 
 proc browse(this: PyPI, classifiers): XmlNode =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
@@ -207,13 +207,13 @@ proc browse(this: PyPI, classifiers): XmlNode =
     var x: string
     for item in classifiers: x &= xmlRpcParam.format(item)
     x
-  result = parseXml(client.postContent(pypiXmlUrl, body=xmlRpcBody.format("browse", clasifiers)))
+  result = parseXml(client.postContent(pypiXmlUrl, body = xmlRpcBody.format("browse", clasifiers)))
 
 proc upload(this: PyPI, name, version, license, summary, description, author,
   downloadurl, authoremail, maintainer, maintaineremail, homepage, filename,
   md5_digest, username, password: string, keywords: seq[string],
-  requirespython=">=3", filetype="sdist", pyversion="source",
-  description_content_type="text/markdown; charset=UTF-8; variant=GFM"): string =
+  requirespython = ">=3", filetype = "sdist", pyversion = "source",
+  description_content_type = "text/markdown; charset=UTF-8; variant=GFM"): string =
   ## Upload 1 new version of 1 registered package to PyPI from a local filename.
   ## PyPI Upload is HTTP POST with MultipartData with HTTP Basic Auth Base64.
   ## For some unknown reason intentionally undocumented (security by obscurity?)
@@ -249,7 +249,7 @@ proc upload(this: PyPI, name, version, license, summary, description, author,
     x
   clientify(this) # TODO: Finish this and test against the test dev pypi server.
   client.headers = newHttpHeaders({"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"})
-  result = client.postContent(pypiUploadUrl, multipart=multipartData)
+  result = client.postContent(pypiUploadUrl, multipart = multipartData)
 
 proc pySkeleton() =
   ## Creates the skeleton (folders and files) for a New Python project.
@@ -336,7 +336,7 @@ proc ask2User(): auto =
   while not(maintainer.len > 2 and maintainer.len < 99):
     maintainer = readLineFromStdin("Type Package Maintainer (Real Name): ").strip
   while not(password.len > 4 and password.len < 999 and password == iPwd2):
-    password = readLineFromStdin("Type Password: ").strip  # Type it Twice.
+    password = readLineFromStdin("Type Password: ").strip # Type it Twice.
     iPwd2 = readLineFromStdin("Confirm Password (Repeat it again): ").strip
   while not(authoremail.len > 5 and authoremail.len < 255 and "@" in authoremail):
     authoremail = readLineFromStdin("Type Author Email (Lowercase): ").strip.toLowerAscii
@@ -361,12 +361,12 @@ proc ask2User(): auto =
     keywords = readLineFromStdin("Type Package Keywords,separated by commas,without spaces,at least 2 (CSV): ").normalize.split(",")
   result = (username: username, password: password, name: name, author: author,
     version: version, license: license, summary: summary, homepage: homepage,
-    description: description,  downloadurl: downloadurl, maintainer: maintainer,
-    authoremail: authoremail,  maintaineremail: maintaineremail, keywords: keywords)
+    description: description, downloadurl: downloadurl, maintainer: maintainer,
+    authoremail: authoremail, maintaineremail: maintaineremail, keywords: keywords)
 
 proc forceInstallPip(destination): tuple[output: TaintedString, exitCode: int] =
   preconditions destination.endsWith".py"
-  newHttpClient(timeout=9999).downloadFile(pipInstaller, destination) # Download
+  newHttpClient(timeout = 9999).downloadFile(pipInstaller, destination) # Download
   assert existsFile(destination), "File not found: 'get-pip.py' " & destination
   result = execCmdEx(py3 & destination & " -I") # Installs PIP via get-pip.py
 
@@ -390,7 +390,7 @@ proc uninstall(this: PyPI, args) =
     var output: seq[string]
     for argument in args:
       for record in walkFiles(sitePackages / argument & "-*.dist-info" / "RECORD"):
-        output.add record  # RECORD Metadata file (CSV without file extension).
+        output.add record # RECORD Metadata file (CSV without file extension).
     output
   assert recordFiles.len > 0, "RECORD Metadata CSV files not found."
   # echo "Found " & $recordFiles.len & " Metadata files: " & $recordFiles
@@ -424,7 +424,7 @@ proc uninstall(this: PyPI, args) =
 ###############################################################################
 
 
-when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
+when isMainModule: # https://pip.readthedocs.io/en/1.1/requirements.html
   var taimaout = 99.byte
   var args: seq[string]
   for tipoDeClave, clave, valor in getopt():
@@ -439,7 +439,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
       of "publicip":
-        quit(newHttpClient(timeout=9999).getContent("https://api.ipify.org").strip, 0)
+        quit(newHttpClient(timeout = 9999).getContent("https://api.ipify.org").strip, 0)
       of "debug", "desbichar":
         quit(pretty(%*{"CompileDate": CompileDate, "CompileTime": CompileTime,
         "NimVersion": NimVersion, "hostCPU": hostCPU, "hostOS": hostOS,
@@ -494,7 +494,7 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
 
-  let is1argOnly = args.len == 2  # command + arg == 2 ("install foo")
+  let is1argOnly = args.len == 2 # command + arg == 2 ("install foo")
   if args.len > 0:
     let cliente = PyPI(timeout: taimaout)
     case args[0].normalize
