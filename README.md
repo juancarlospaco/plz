@@ -4,8 +4,6 @@
 
 ![](python-wat.png "plz for Linux & Windows! (1 Mb, 1 file)")
 
-![](pepehack.gif "Work in progress!")
-
 
 # Use
 
@@ -153,3 +151,6 @@ but source contains the functionanity whatsoever.
 
 - http://tonsky.me/blog/disenchantment
 - https://chriswarrick.com/blog/2018/07/17/pipenv-promises-a-lot-delivers-very-little/
+
+
+![](pepehack.gif "Work in progress!")
