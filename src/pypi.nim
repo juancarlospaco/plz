@@ -174,6 +174,14 @@ proc install(this: PyPI, args: seq[string]) =
     " Failed, " & $suces & " Success on " & $(now() - time0) &
     " to download/install " & $args.len & " packages")
 
+proc download(this: PyPI, args: seq[string]) =
+  ## Download a package to a local folder, dont decompress nor install.
+  var where: string
+  while not existsDir(where):
+    where = readLineFromStdin("Download to where? (Full path to folder): ")
+  for pkg in args:
+    echo this.downloadPackage(pkg, $this.packageLatestRelease(pkg), where, false)
+
 proc releaseData(this: PyPI, packageName, releaseVersion): XmlNode =
   ## Retrieve metadata describing a specific releaseVersion. Returns a dict.
   preconditions packageName.len > 0, releaseVersion.len > 0
@@ -532,6 +540,8 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
       let packages = args[1..^1]
       cliente.uninstall(packages)
       cliente.install(packages)
+    of "download":
+      cliente.download(args[1..^1])
     of "upload":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       doAssert existsFile(args[1]), "File not found: " & args[1]
