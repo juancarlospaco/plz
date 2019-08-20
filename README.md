@@ -8,13 +8,17 @@
 # Use
 
 ```console
-plz install pre-commit     # Install 1 or more packages
-plz uninstall pre-commit   # Uninstall 1 or more packages
-plz reinstall pre-commit   # Reinstall 1 or more packages
-plz download pre-commit    # Download 1 or more packages
-plz --version              # Show Version
-plz --help                 # Show Help
+plz install pre-commit   # Install 1 or more packages
+plz uninstall pre-commit # Uninstall 1 or more packages
+plz reinstall pre-commit # Reinstall 1 or more packages
+plz download pre-commit  # Download 1 or more packages
+plz hash file.py         # Show SHA CheckSum of file/package
+plz init                 # New Python project template (Interactive)
+plz --version            # Show Version
+plz --help               # Show Help
 ```
+
+- For more info see the Help.
 
 
 # Features
@@ -55,19 +59,19 @@ plz --help                 # Show Help
 # Install
 
 - [**Download it!.**](https://github.com/juancarlospaco/plz/releases)
-- `1` MegaByte single-file standalone native binary executable, no install required, just copy it and run it.
+- ~`1` MegaByte single-file standalone native binary executable, no install required, just copy it and run it.
 
-# Compile
+#### Compile
 
-- Manually compiling is usually not needed, but if you want to do it:
+<details>
+
+<summary> Manually compiling is usually not needed, but if you want to do it </summary>
 
 ```console
-git clone https://github.com/juancarlospaco/plz.git
-cd plz
-nim c -d:release pypi.nim
-strip --strip-all pypi
-cp --verbose pypi ~/.nimble/bin/pypi
+$ nimble install https://github.com/juancarlospaco/plz.git
 ```
+
+</details>
 
 
 # Uninstall
