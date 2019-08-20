@@ -57,9 +57,13 @@ Commands:
   download        Download packages (Wont decompress,Interactive,asks Y/N user).
   upload          Mimics "twine upload" (Interactive,asks user,wont need Twine).
   search          Search PyPI for packages (PyPI API is Buggy, is still WIP).
+  doc             Convert Markdown/ReSTructuredText to HTML(MD/RST can be mixed)
+  doc2latex       Convert Markdown/ReSTructuredText to Tex (MD/RST can be mixed)
+  doc2json        Convert Markdown/ReSTructuredText to JSON(MD/RST can be mixed)
   hash            Compute hashes of package archives (SHA256 Checksum file).
   init            New Python project template (Interactive, asks Y/N to user).
   backup          Compressed signed backup of a file and quit (GPG + SHA512).
+  extract         Extract a compressed file of any format (LibArchive).
   strip           Optimize size of Python native binary module (PIP wont strip).
   newpackages     List all the new Packages uploaded to PyPI recently (RSS).
   lastupdates     List all existing Packages updated on PyPI recently (RSS).
@@ -422,6 +426,13 @@ Apache➡️Simple and explicitly grants Patents
 BSD   ➡️Simple and permissive,but your code can be closed/sold by 3rd party
 """
 
+const nimpyTemplate = """import os, strutils, nimpy
+
+proc function(a, b: int): auto {.exportpy.} =
+  ## Documentation comment, Markdown/ReSTructuredText/PlainText, generates HTML.
+  a + b  # Comment, ignored by compiler.       https://github.com/yglukhov/nimpy
+"""
+
 let
   py3 = findExe"python3"
   cython = findExe"cython"
@@ -685,6 +696,7 @@ proc pySkeleton() =
   writeFile(pluginName / pluginName / "__init__.py", r"print((lambda r:'\n'.join('.'.join('█' if(y<r and((x-r)**2+(y-r)**2<=r**2or(x-3*r)**2+(y-r)**2<=r**2))or(y>=r and x+r>=y and x-r<=4*r-y)else '░' for x in range(4*r))for y in range(1,3*r,2)))(5))")
   writeFile(pluginName / pluginName / "__main__.py", "\nprint('Main Module')\n")
   writeFile(pluginName / pluginName / "__version__.py", "__version__ = '0.0.1'\n")
+  writeFile(pluginName / pluginName / "main.nim", nimpyTemplate)
   if readLineFromStdin("Generate optional Unitests on ./tests (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / "tests")
     writeFile(pluginName / "tests" / "__init__.py", testTemplate)
@@ -708,8 +720,8 @@ proc pySkeleton() =
     writeFile(pluginName / ".github/PULL_REQUEST_TEMPLATE/PULL_REQUEST_TEMPLATE.md", "")
     writeFile(pluginName / ".github/FUNDING.yml", "")
   if readLineFromStdin("Generate .gitignore file (y/N): ").normalize == "y":
-    writeFile(pluginName / ".gitattributes", "*.py linguist-language=Python\n")
-    writeFile(pluginName / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.egg-info\n*.egg\n*.log\n__pycache__\n")
+    writeFile(pluginName / ".gitattributes", "*.py linguist-language=Python\n*.nim linguist-language=Nim\n")
+    writeFile(pluginName / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.egg-info\n*.egg\n*.log\n__pycache__\n*.c\n*.h\n*.o\n")
     writeFile(pluginName / ".coveragerc", "")
   if readLineFromStdin("Generate Pre-Commit files (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / ".hooks")
