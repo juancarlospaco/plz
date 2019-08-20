@@ -126,18 +126,18 @@ proc downloadPackage(this: PyPI, packageName, releaseVersion,
   let choosenUrl = this.releaseUrls(packageName, releaseVersion)[0]
   assert choosenUrl.startsWith("https://"), "PyPI Download URL is not HTTPS SSL"
   let filename = destDir / choosenUrl.split("/")[^1]
-  clientify(this)
   info "⬇️\t" & choosenUrl
   if generateScript: script &= "curl -LO " & choosenUrl & "\n"
+  clientify(this)
   client.downloadFile(choosenUrl, filename)
   assert existsFile(filename), "file failed to download"
   info "🗜\t" & $getFileSize(filename) & " Bytes total (compressed)"
-  if findExe"sha256sum".len > 0: info "🔐\t" & execCmdEx(cmdChecksum & filename).output.strip
+  if likely(findExe"sha256sum".len > 0): info "🔐\t" & execCmdEx(cmdChecksum & filename).output.strip
   try:
     info "⬇️\t" & choosenUrl & ".asc"
     client.downloadFile(choosenUrl & ".asc", filename & ".asc")
     if generateScript: script &= "curl -LO " & choosenUrl & ".asc" & "\n"
-    if findExe"gpg".len > 0 and existsFile(filename & ".asc"):
+    if unlikely(findExe"gpg".len > 0 and existsFile(filename & ".asc")):
       info "🔐\t" & execCmdEx(cmdVerify & filename & ".asc").output.strip
       if generateScript: script &= cmdVerify & filename.replace(destDir, "") & ".asc\n"
   except:
@@ -180,11 +180,10 @@ proc install(this: PyPI, args) =
 
 proc download(this: PyPI, args) =
   ## Download a package to a local folder, dont decompress nor install.
-  var where: string
-  while not existsDir(where):
-    where = readLineFromStdin("Download to where? (Full path to folder): ")
-  for pkg in args:
-    echo this.downloadPackage(pkg, $this.packageLatestRelease(pkg), where, false)
+  var dir: string
+  while not existsDir(dir):
+    dir = readLineFromStdin("Download to where? (Full path to existing folder): ")
+  for pkg in args: echo this.downloadPackage(pkg, $this.packageLatestRelease(pkg), dir, false)
 
 proc releaseData(this: PyPI, packageName, releaseVersion): XmlNode =
   ## Retrieve metadata describing a specific releaseVersion. Returns a dict.
@@ -200,8 +199,8 @@ proc search(this: PyPI, query, operator = "and"): XmlNode =
   preconditions operator in ["or", "and"]
   clientify(this)
   client.headers = headerXml
-  let bodi = xmlRpcBody.format("search", xmlRpcParam.format(replace($query, "@", "")) & xmlRpcParam.format(operator))
-  result = parseXml(client.postContent(pypiXmlUrl, body = bodi))
+  result = parseXml(client.postContent(pypiXmlUrl, body = xmlRpcBody.format(
+    "search", xmlRpcParam.format(replace($query, "@", "")) & xmlRpcParam.format(operator))))
 
 proc browse(this: PyPI, classifiers): XmlNode =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
@@ -209,11 +208,9 @@ proc browse(this: PyPI, classifiers): XmlNode =
   preconditions classifiers.len > 1
   clientify(this)
   client.headers = headerXml
-  let clasifiers = block:
-    var x: string
-    for item in classifiers: x &= xmlRpcParam.format(item)
-    x
-  result = parseXml(client.postContent(pypiXmlUrl, body = xmlRpcBody.format("browse", clasifiers)))
+  var s: string
+  for item in classifiers: s &= xmlRpcParam.format(item)
+  result = parseXml(client.postContent(pypiXmlUrl, body = xmlRpcBody.format("browse", s)))
 
 proc upload(this: PyPI, name, version, license, summary, description, author,
   downloadurl, authoremail, maintainer, maintaineremail, homepage, filename,
