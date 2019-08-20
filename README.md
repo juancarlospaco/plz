@@ -97,7 +97,6 @@ $ nim c plz/plz.nim
 - High performance with low resources (RPi, VPS, cloud, old pc, etc).
 - Immutable programming, No Global Mutable State.
 - Single file binary, it can even delete itself after use.
-- Single file source code.
 - No Installs, no setups, just copy & paste and run (even on Alpine).
 - New Python project skeleton creator (supports GitHub, Pre-Commit, etc).
 - Self-Linting, Self-Documented.
@@ -112,7 +111,8 @@ $ nim c plz/plz.nim
 - No Global Interpreter Lock.
 - No user Tracking Analytics by default.
 - No YAML used on the Core, No YAML Vulnerabilities (you can still use YAML).
-- No `node_modules/`.
+- Tiny single file source code.
+- No `node_modules`.
 - DRY code via Templates.
 
 
