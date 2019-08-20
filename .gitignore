@@ -2,5 +2,6 @@
 *.h
 *.o
 *.log
-src/pypi
+src/plz
 .vscode/
+src/*.txt
