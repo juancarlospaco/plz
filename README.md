@@ -2,7 +2,7 @@
 
 - PLZ [Python PIP](https://pypi.org) alternative.
 
-![](python-wat.png "plz for Linux & Windows! (1 Mb, 1 file)")
+![](python-wat.png "plz for Linux, Windows, Mac! (1 Mb, 1 file)")
 
 
 # Use
@@ -13,8 +13,8 @@ $ plz uninstall pre-commit # Uninstall 1 or more packages
 $ plz reinstall pre-commit # Reinstall 1 or more packages
 $ plz download pre-commit  # Download 1 or more packages
 $ plz hash file.py         # Show SHA CheckSum of file/package
-$ plz open file.py         # Open a module in your default code editor (xdg-open).
-$ plz backup               # Compressed signed backup of file/package (GPG+SHA512)
+$ plz open file.py         # Open a module in your default code editor
+$ plz backup               # Compressed signed backup of file/package (GPG + SHA512)
 $ plz init                 # New Python project template (Interactive)
 $ plz stats                # PyPI official service status report.
 $ plz forceInstallPip      # Force install PIP on arbitrary folder (get-pip.py).
