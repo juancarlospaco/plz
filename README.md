@@ -23,6 +23,7 @@ $ plz lastjobs             # List all new Job Posts updated on Python recently
 $ plz userpackages         # List all existing Packages by User (Interactive)
 $ plz latestversion        # Show the Latest Version of a PYPI Package (SemVer)
 $ plz forceInstallPip      # Force install PIP on arbitrary folder (get-pip.py)
+$
 $ plz --enUsUtf8           # Force Encoding to UTF-8 and Language to English
 $ plz --nopyc              # Recursively remove all __pycache__ and *.pyc
 $ plz --debug              # Show Debug info (for Developers and Bug Reporting)
