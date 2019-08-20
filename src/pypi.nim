@@ -879,14 +879,15 @@ when isMainModule:  # https://pip.readthedocs.io/en/1.1/requirements.html
         putEnv(envy[0], envy[1])
       of "nopyc":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pyc in walkFiles("./*.pyc"): info $tryRemoveFile(pyc) & "\t" & pyc
-        for pyc in walkDirs("__pycache__"): info $tryRemoveFile(pyc) & "\t" & pyc
+        for pyc in walkFiles(getCurrentDir() / "*.pyc"): info $tryRemoveFile(pyc) & "\t" & pyc
+        for pyc in walkDirs(getCurrentDir() / "__pycache__"): info $tryRemoveFile(pyc) & "\t" & pyc
       of "cleantemp":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for tmp in walkPattern(getTempDir()): info $tryRemoveFile(tmp) & "\t" & tmp
+        for tmp in walkPattern(getTempDir() / "**" / "*.*"): info $tryRemoveFile(tmp) & "\t" & tmp
+        for tmp in walkPattern(getTempDir() / "**" / "*"): info $tryRemoveFile(tmp) & "\t" & tmp
       of "nopypackages":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pyc in walkFiles("./__pypackages__/*.*"): info $tryRemoveFile(pyc) & "\t" & pyc
+        for pyc in walkFiles(getCurrentDir() / "__pypackages__"): info $tryRemoveFile(pyc) & "\t" & pyc
       of "cleanvirtualenvs", "cleanvirtualenv", "clearvirtualenvs", "clearvirtualenv":
         let files2delete = block:
           var x: seq[string]
