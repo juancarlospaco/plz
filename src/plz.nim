@@ -391,9 +391,8 @@ proc uninstall(this: PyPI, args) =
   styledEcho(fgGreen, bgBlack, "Uninstall " & $args.len & " Packages:\t" & $args)
   let recordFiles = block:
     var output: seq[string]
-    for argument in args:
-      for record in walkFiles(sitePackages / argument & "-*.dist-info" / "RECORD"):
-        output.add record # RECORD Metadata file (CSV without file extension).
+    for argument in args: # RECORD Metadata file (CSV without file extension).
+      for r in walkFiles(sitePackages / argument & "-*.dist-info" / "RECORD"): output.add r
     output
   assert recordFiles.len > 0, "RECORD Metadata CSV files not found."
   # echo "Found " & $recordFiles.len & " Metadata files: " & $recordFiles
