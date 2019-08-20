@@ -1,7 +1,6 @@
 # For compile time code executions, we dont care the optimization or how clunky
 # it looks because is done compile time only,worse case scenario it wont compile
 
-
 const
   pypiApiUrl = "https://pypi.org/"                              ## PyPI Base API URL.
   pypiXmlUrl = pypiApiUrl & "pypi"                              ## PyPI XML RPC API URL.
@@ -43,6 +42,7 @@ const
   cmdTar = "tar cafv "
   cmdVerify = "gpg --verify "
   cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag "  ## PIP Wont optimize Production binaries, they are left with all Debugging on!.
+
 
 const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
 Commands:
@@ -89,6 +89,7 @@ Options:
 ✅ This wont save any passwords, databases, keys, secrets to disk nor Internet.
 Learn more http://nim-lang.org/learn.html http://nim-lang.org/documentation.html
 http://nim-lang.github.io/Nim/lib.html http://nim-lang.org/docs/theindex.html"""
+
 
 const setupCfg = """# See: https://setuptools.readthedocs.io/en/latest/setuptools.html#metadata
 [metadata]
@@ -162,6 +163,7 @@ exclude-source-files = true
 # include = *.py, *.pyw
 # exclude = *.c, *.so, *.js, *.tests, *.tests.*, tests.*, tests """
 
+
 const testTemplate = """# -*- coding: utf-8 -*-
 '''Unittest.'''
 import unittest
@@ -213,6 +215,7 @@ class TestName(unittest.TestCase):
 if __name__ in "__main__":
     unittest.main() """
 
+
 const serviceTemplate = """[Unit]
 Description=Example Service
 Documentation=https://example.com/documentation
@@ -237,6 +240,7 @@ ExecStart=echo      # Execute your application command.
 
 [Install]
 WantedBy=multi-user.target """
+
 
 # http://github.com/pre-commit/pre-commit/blob/master/pre_commit/resources/hook-tmpl
 const precommitTemplate = """import distutils.spawn, os, subprocess, sys
@@ -402,6 +406,7 @@ def main():
 if __name__ == '__main__':
     exit(main()) """
 
+
 const dockerfileTemplate = """FROM alpine:latest
 RUN apk add --no-cache ca-certificates gnupg tar xz bzip2 coreutils dpkg findutils gcc libc-dev linux-headers make openssl readline sqlite zlib tk tcl ncurses gdbm
 ENV LANG C.UTF-8
@@ -409,6 +414,7 @@ ENV PYTHON_VERSION 3.7
 ENV PYTHON_PIP_VERSION 3.7
 ENV PATH /usr/local/bin:$PATH
 # Do your magic here. Download and Compile Python... """
+
 
 const licenseHint = """Licenses:
 💡 See https://tldrlegal.com/licenses/browse or https://choosealicense.com
@@ -421,9 +427,27 @@ Apache➡️Simple and explicitly grants Patents
 BSD   ➡️Simple and permissive,but your code can be closed/sold by 3rd party
 """
 
+
 const nimpyTemplate = """import os, strutils, nimpy
 
 proc function(a, b: int): auto {.exportpy.} =
   ## Documentation comment, Markdown/ReSTructuredText/PlainText, generates HTML.
   a + b  # Comment, ignored by compiler.       https://github.com/yglukhov/nimpy
 """
+
+
+##############################################################################
+
+
+hardenedBuild()  # Security Hardened mode.
+addHandler(newConsoleLogger(fmtStr = ""))
+addHandler(newRollingFileLogger(fmtStr = "$levelname, $datetime, $appname, "))
+setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
+
+var script: string
+
+let
+  py3 = findExe"python3"
+  headerJson = newHttpHeaders(hdrJson)
+  headerXml =  newHttpHeaders(hdrXml)
+  user = getEnv"USER"
