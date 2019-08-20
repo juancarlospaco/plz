@@ -8,3 +8,4 @@ bin           = @["plz"]
 
 requires "nim >= 0.20.2"
 requires "nimarchive"
+requires "contra"
