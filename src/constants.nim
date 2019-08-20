@@ -467,3 +467,5 @@ let
   headerJson = newHttpHeaders(hdrJson)
   headerXml =  newHttpHeaders(hdrXml)
   user = when defined(windows): getEnv"%username%" else: getEnv"USER"
+
+using projectName, projectVersion, packageName, user, releaseVersion, destDir: string
