@@ -5,8 +5,6 @@ type
     timeout: byte  ## Timeout Seconds for API Calls, byte type, 0~255.
     proxy: Proxy  ## Network IPv4 / IPv6 Proxy support, Proxy type.
 
-using projectName, projectVersion, packageName, user, releaseVersion, destDir: string
-
 template clientify(this: PyPI): untyped =
   ## Build & inject basic HTTP Client with Proxy and Timeout.
   var client {.inject.} = newHttpClient(
