@@ -65,21 +65,21 @@ proc listPackages(this: PyPI): seq[string] =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI. Server-side Slow.
   clientify(this)
   client.headers = headerXml
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = lppXml)).findAll("string"):
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = lppXml)).findAll"string":
     result.add tagy.innerText
 
 proc changelogLastSerial(this: PyPI): int =
   ## Return 1 XML XmlNode with the Last Serial number integer.
   clientify(this)
   client.headers = headerXml
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = clsXml)).findAll("int"):
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = clsXml)).findAll"int":
     result = tagy.innerText.parseInt
 
 proc listPackagesWithSerial(this: PyPI): seq[array[2, string]] =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with Serial number integer. Server-side Slow.
   clientify(this)
   client.headers = headerXml
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = lpsXml)).findAll("member"):
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = lpsXml)).findAll"member":
     result.add [tagy.child"name".innerText, tagy.child"value".child"int".innerText]
 
 proc packageLatestRelease(this: PyPI, packageName): string =
@@ -88,7 +88,7 @@ proc packageLatestRelease(this: PyPI, packageName): string =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_releases", xmlRpcParam.format(packageName))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("string"):
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll"string":
     result = tagy.innerText
 
 proc packageRoles(this: PyPI, packageName): seq[XmlNode] =
@@ -97,7 +97,7 @@ proc packageRoles(this: PyPI, packageName): seq[XmlNode] =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(packageName))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("data"):
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll"data":
     result.add tagy
 
 proc userPackages(this: PyPI, user = user): seq[XmlNode] =
@@ -106,7 +106,7 @@ proc userPackages(this: PyPI, user = user): seq[XmlNode] =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("data"):
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll"data":
     result.add tagy
 
 proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
@@ -116,15 +116,15 @@ proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
   client.headers = headerXml
   let bodi = xmlRpcBody.format("release_urls",
     xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll("string"):
-    if tagy.innerText.normalize.startsWith("https://"): result.add tagy.innerText
+  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll"string":
+    if tagy.innerText.normalize.startsWith"https://": result.add tagy.innerText
 
 proc downloadPackage(this: PyPI, packageName, releaseVersion,
   destDir = getTempDir(), generateScript): string =
   ## Download a URL for the given releaseVersion. Returns filename.
   preconditions packageName.len > 0, releaseVersion.len > 0, existsDir(destDir)
   let choosenUrl = this.releaseUrls(packageName, releaseVersion)[0]
-  assert choosenUrl.startsWith("https://"), "PyPI Download URL is not HTTPS SSL"
+  assert choosenUrl.startsWith"https://", "PyPI Download URL is not HTTPS SSL"
   let filename = destDir / choosenUrl.split("/")[^1]
   info "⬇️\t" & choosenUrl
   if generateScript: script &= "curl -LO " & choosenUrl & "\n"
@@ -165,7 +165,7 @@ proc install(this: PyPI, args) =
   var failed, suces: byte
   info("🐍\t" & $now() & ", PID is " & $getCurrentProcessId() & ", " &
     $args.len & " packages to download and install ➡️ " & $args)
-  let generateScript = readLineFromStdin("Generate Install Script? (y/N): ").normalize == "y"
+  let generateScript = readLineFromStdin"Generate Install Script? (y/N): ".normalize == "y"
   let time0 = now()
   for argument in args:
     let semver = $this.packageLatestRelease(argument)
@@ -182,7 +182,7 @@ proc download(this: PyPI, args) =
   ## Download a package to a local folder, dont decompress nor install.
   var dir: string
   while not existsDir(dir):
-    dir = readLineFromStdin("Download to where? (Full path to existing folder): ")
+    dir = readLineFromStdin"Download to where? (Full path to existing folder): "
   for pkg in args: echo this.downloadPackage(pkg, $this.packageLatestRelease(pkg), dir, false)
 
 proc releaseData(this: PyPI, packageName, releaseVersion): XmlNode =
@@ -222,8 +222,11 @@ proc upload(this: PyPI, name, version, license, summary, description, author,
   ## For some unknown reason intentionally undocumented (security by obscurity?)
   # https://warehouse.readthedocs.io/api-reference/legacy/#upload-api
   # github.com/python/cpython/blob/master/Lib/distutils/command/upload.py#L131-L135
-  preconditions(existsFile(filename), name.len > 0, version.len > 0, license.len > 0, summary.len > 0, description.len > 0, author.len > 0, downloadurl.len > 0,
-  authoremail.len > 0, maintainer.len > 0, maintaineremail.len > 0, homepage.len > 0, md5_digest.len > 0, username.len > 0, password.len > 0, keywords.len > 0)
+  preconditions(existsFile(filename), name.len > 0, version.len > 0,
+    license.len > 0, summary.len > 0, description.len > 0, author.len > 0,
+    downloadurl.len > 0, authoremail.len > 0, maintainer.len > 0,
+    maintaineremail.len > 0, homepage.len > 0, md5_digest.len > 0,
+    username.len > 0, password.len > 0, keywords.len > 0)
   let mime = newMimetypes().getMimetype(filename.splitFile.ext.toLowerAscii)
   # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
   let multipartData = block:
@@ -251,12 +254,13 @@ proc upload(this: PyPI, name, version, license, summary, description, author,
     output["content"] = (filename, mime, filename.readFile)
     output
   clientify(this) # TODO: Finish this and test against the test dev pypi server.
-  client.headers = newHttpHeaders({"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"})
+  client.headers = newHttpHeaders(
+    {"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"})
   result = client.postContent(pypiUploadUrl, multipart = multipartData)
 
 proc pySkeleton() =
   ## Creates the skeleton (folders and files) for a New Python project.
-  let pluginName = normalize(readLineFromStdin("New Python project name?: "))
+  let pluginName = readLineFromStdin"New Python project name?: ".normalize
   assert pluginName.len > 1, "Name must not be empty string: " & pluginName
   discard existsOrCreateDir(pluginName)
   discard existsOrCreateDir(pluginName / pluginName)
@@ -316,7 +320,7 @@ template enUsUtf8() =
 proc backup(): tuple[output: TaintedString, exitCode: int] =
   var folder: string
   while not(folder.len > 0 and existsDir(folder)):
-    folder = readLineFromStdin("Full path of 1 existing folder to Backup?: ").strip
+    folder = readLineFromStdin"Full path of 1 existing folder to Backup?: ".strip
   var files2backup: seq[string]
   for pythonfile in walkFiles(folder / "*.*"):
     files2backup.add pythonfile
