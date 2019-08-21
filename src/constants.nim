@@ -21,6 +21,16 @@ const
   commitHash = staticExec"git rev-parse --short HEAD"
   version = "0.1.0\n" & commitHash
   sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])" """ ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
+  virtualenvDir = r"~/.virtualenvs"
+  pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
+  pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user " & pipCommons
+  pipMaintenance = "pip3 install --upgrade --no-warn-script-location --user " &
+      pipCommons & " pip virtualenv setuptools wheel twine"
+  cmdChecksum = "sha256sum --tag " # I prefer SHA512,but PyPI uses SHA256 only?
+  cmdSign = "gpg --armor --detach-sign --yes --digest-algo sha512 "
+  cmdTar = "tar cafv "
+  cmdVerify = "gpg --verify "
+  cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag " ## PIP Wont optimize Production binaries, they are left with all Debugging on!.
   pipCacheDir =
     when defined(linux): r"~/.cache/pip"                    # PIP "standards"
     elif defined(macos): r"~/Library/Caches/pip"
@@ -34,16 +44,6 @@ const
     when defined(windows): ".cpython-*.dll"
     elif defined(macos): ".cpython-*.dynlib"
     else: ".cpython-*.so"
-  virtualenvDir = r"~/.virtualenvs"
-  pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
-  pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user " & pipCommons
-  pipMaintenance = "pip3 install --upgrade --no-warn-script-location --user " &
-      pipCommons & " pip virtualenv setuptools wheel twine"
-  cmdChecksum = "sha256sum --tag " # I prefer SHA512,but PyPI uses SHA256 only?
-  cmdSign = "gpg --armor --detach-sign --yes --digest-algo sha512 "
-  cmdTar = "tar cafv "
-  cmdVerify = "gpg --verify "
-  cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag " ## PIP Wont optimize Production binaries, they are left with all Debugging on!.
 
 
 # TODO:
