@@ -142,6 +142,10 @@ Yes.
 
 Yes.
 
+- This is a drop-in replacement of PIPEnv ?.
+
+No.
+
 - This requires Nim ?.
 
 No.
