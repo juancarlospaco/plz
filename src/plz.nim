@@ -11,6 +11,10 @@ template clientify(this: PyPI): untyped =
     timeout = when declared(this.timeout): this.timeout.int * 1_000 else: -1,
     proxy = when declared(this.proxy): this.proxy else: nil, userAgent = "")
 
+
+# ^ Types,Constants,Imports,Includes #################### v PyPI API procedures
+
+
 proc newPackages(this: PyPI): XmlNode =
   ## Return an RSS XML XmlNode type with the Newest Packages uploaded to PyPI.
   clientify(this)
@@ -258,6 +262,10 @@ proc upload(this: PyPI, name, version, license, summary, description, author,
     {"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"})
   result = client.postContent(pypiUploadUrl, multipart = multipartData)
 
+
+# ^ End of PyPI API procedures ####################### v App related procedures
+
+
 proc pySkeleton() =
   ## Creates the skeleton (folders and files) for a New Python project.
   let pluginName = readLineFromStdin"New Python project name?: ".normalize
@@ -423,7 +431,7 @@ proc uninstall(this: PyPI, args) =
     for pythonfile in files2delete: info $tryRemoveFile(pythonfile) & "\t" & pythonfile
 
 
-###############################################################################
+# ^ End of App related procedures #################### v CLI related procedures
 
 
 when isMainModule:
