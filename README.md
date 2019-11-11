@@ -182,7 +182,7 @@ Quote from PIPEnv Project:
 > and we have about 15 dependencies which I personally maintain).
 
 
-![](pepehack.gif "Work in progress!")
+![](https://raw.githubusercontent.com/juancarlospaco/plz/master/pepehack.gif "Work in progress!")
 
 
 [  ⬆️  ⬆️  ⬆️  ⬆️  ](#plz "Go to top")
