@@ -386,10 +386,10 @@ when isMainModule:
       case clave.normalize
       of "version": quit(version, 0)
       of "license", "licencia": quit("PPL", 0)
-      of "nice20": discard nice(20.cint)
+      of "nice20": echo nice(20.cint)
       of "timeout": taimaout = valor.parseInt.byte
       of "enusutf8": enUsUtf8()
-      of "publicip": quit(newHttpClient(timeout = 9999).getContent("https://api.ipify.org").strip, 0)
+      of "publicip": echo newHttpClient(timeout = 9999).getContent("https://api.ipify.org")
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
