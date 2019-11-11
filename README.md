@@ -2,7 +2,7 @@
 
 - PLZ [Python PIP](https://pypi.org) alternative.
 
-![](python-wat.png "plz for Linux! (1 Mb, 1 file)")
+![](https://raw.githubusercontent.com/juancarlospaco/plz/master/python-wat.png "plz for Linux! (1 Mb, 1 file)")
 
 
 # Use
