@@ -42,6 +42,7 @@ $ plz --cleantemp          # Clean all temporary folder.
 $ plz --cleanpipcache      # Clean all PIP Cache folder.
 $ plz --cleanvenvs         # Clean Virtualenvs (interactive, asks y/n 1-by-1).
 $ plz --publicip           # Show your Public IP Address (Internet connectivity check).
+$ plz --backuplogs         # Compress old PLZ Logs at exit, to save disk resources.
 $ plz --suicide            # Deletes itself permanently and exit (single file binary).
 $ plz --debug              # Show Debug info (for Developers and Bug Reporting).
 $ plz --version            # Show Version
