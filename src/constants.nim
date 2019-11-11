@@ -460,8 +460,8 @@ proc function(a, b: int): auto {.exportpy.} =
 
 # hardenedBuild() # Security Hardened mode.
 addHandler(newConsoleLogger(fmtStr = ""))
-addHandler(newRollingFileLogger(fmtStr = "$levelname, $datetime, $appname, "))
-setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
+addHandler(newRollingFileLogger(fmtStr = verboseFmtStr))
+setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
 
 var script: string
 
@@ -469,7 +469,7 @@ let
   py3 = findExe"python3"
   headerJson = newHttpHeaders(hdrJson)
   headerXml = newHttpHeaders(hdrXml)
-  user = when defined(windows): getEnv"%username%" else: getEnv"USER"
+  user = getEnv"USER"
 
 using
   generateScript: bool
