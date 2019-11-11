@@ -387,23 +387,13 @@ when isMainModule:
       of "version": quit(version, 0)
       of "license", "licencia": quit("PPL", 0)
       of "nice20": echo nice(20.cint)
+      of "debug", "desbichar": echo debugMsg
       of "timeout": taimaout = valor.parseInt.byte
       of "enusutf8": enUsUtf8()
       of "publicip": echo newHttpClient(timeout = 9999).getContent("https://api.ipify.org")
       of "help", "ayuda", "fullhelp":
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
-      of "debug", "desbichar":
-        quit(pretty(%*{"CompileDate": CompileDate, "CompileTime": CompileTime,
-        "NimVersion": NimVersion, "hostCPU": hostCPU, "hostOS": hostOS,
-        "cpuEndian": cpuEndian, "tempDir": getTempDir(),
-        "currentDir": getCurrentDir(), "python3": py3, "ssl": defined(ssl),
-        "release": defined(release), "contracts": defined(release),
-        "hardened": defined(hardened), "sitePackages": sitePackages,
-        "pipCacheDir": pipCacheDir,
-        "currentCompilerExe": getCurrentCompilerExe(), "int.high": int.high,
-        "processorsCount": countProcessors(), "danger": defined(danger),
-        "currentProcessId": getCurrentProcessId(), "version": version}), 0)
       of "putenv":
         let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)

@@ -46,6 +46,11 @@ const
     when defined(windows): ".cpython-*.dll"
     elif defined(macos): ".cpython-*.dynlib"
     else: ".cpython-*.so"
+  debugMsg = pretty(%*{
+    "CompileDate": CompileDate, "CompileTime": CompileTime, "NimVersion": NimVersion, "hostCPU": hostCPU, "hostOS": hostOS, "cpuEndian": cpuEndian,
+    "tempDir": getTempDir(), "ssl": defined(ssl), "release": defined(release), "contracts": defined(release), "hardened": defined(hardened),
+    "sitePackages": sitePackages, "pipCacheDir": pipCacheDir, "currentCompilerExe": getCurrentCompilerExe(), "int.high": int.high, "danger": defined(danger), "version": version
+  })
 
 
 # TODO:
