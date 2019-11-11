@@ -65,7 +65,7 @@ proc listPackages(this: PyPI): seq[string] =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI. Server-side Slow.
   clientify(this)
   client.headers = headerXml
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = lppXml)).findAll"string": result.add tagy.innerText
+  for t in parseXml(client.postContent(pypiXmlUrl, body = lppXml)).findAll"string": result.add t.innerText
 
 proc changelogLastSerial(this: PyPI): int =
   ## Return 1 XML XmlNode with the Last Serial number integer.
@@ -85,21 +85,21 @@ proc packageLatestRelease(this: PyPI, packageName): string =
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_releases", xmlRpcParam.format(packageName))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll"string": result = tagy.innerText
+  for t in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll"string": result = t.innerText
 
 proc packageRoles(this: PyPI, packageName): seq[XmlNode] =
   ## Retrieve a list of role, user for a given packageName. Role is Maintainer or Owner.
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(packageName))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll"data": result.add tagy
+  for t in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll"data": result.add t
 
 proc userPackages(this: PyPI, user = user): seq[XmlNode] =
   ## Retrieve a list of role, packageName for a given user. Role is Maintainer or Owner.
   clientify(this)
   client.headers = headerXml
   let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
-  for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll"data": result.add tagy
+  for t in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll"data": result.add t
 
 proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
   ## Retrieve a list of download URLs for the given releaseVersion. Returns a list of dicts.
