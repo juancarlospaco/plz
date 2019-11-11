@@ -19,7 +19,8 @@ const
       "content-type": "application/json"}
   hdrXml = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
   commitHash = staticExec"git rev-parse --short HEAD"
-  version = "0.1.0\n" & commitHash
+  NimblePkgVersion {.strdefine.} = "1.0.0"
+  version = NimblePkgVersion & "\n" & commitHash
   sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])" """ ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
   virtualenvDir = r"~/.virtualenvs"
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
