@@ -170,6 +170,8 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 
 #### Notes
 
+<details>
+
 - http://tonsky.me/blog/disenchantment
 - https://chriswarrick.com/blog/2018/07/17/pipenv-promises-a-lot-delivers-very-little/
 - https://old.reddit.com/r/Python/comments/chkah3/is_pipenv_dead_why_has_the_project_stopped/
@@ -185,6 +187,7 @@ Quote from PIPEnv Project:
 > (pip broke, setuptools broke, then pip and setuptools both released breaking fixes,
 > and we have about 15 dependencies which I personally maintain).
 
+</details>
 
 ![](https://raw.githubusercontent.com/juancarlospaco/plz/master/pepehack.gif "Work in progress!")
 
