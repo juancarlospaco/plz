@@ -374,7 +374,7 @@ proc uninstall(this: PyPI, args) =
     for pythonfile in files2delete: info $tryRemoveFile(pythonfile) & "\t" & pythonfile
 
 proc backupOldLogs() {.noconv.} =
-  if execCmdEx(cmdTar & "logs-" & replace($now(), ":", "_") & ".tar.gz " & defaultFilename()).exitCode == 0: discard tryRemoveFile(defaultFilename())
+  if execCmdEx(cmdTar & "logs-" & replace($now(), ":", "_") & ".tar.gz " & logfile).exitCode == 0: discard tryRemoveFile(logfile)
 
 
 # ^ End of App related procedures #################### v CLI related procedures
@@ -392,6 +392,7 @@ when isMainModule:
       of "nice20": echo nice(20.cint)
       of "debug", "desbichar": echo debugMsg
       of "timeout": taimaout = valor.parseInt.byte
+      of "log": logfile = valor
       of "enusutf8": enUsUtf8()
       of "publicip": echo newHttpClient(timeout = 9999).getContent("https://api.ipify.org")
       of "help", "ayuda", "fullhelp":
@@ -434,7 +435,7 @@ when isMainModule:
       of "suicide": discard tryRemoveFile(currentSourcePath()[0..^5])
     of cmdArgument: args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
-
+  addHandler(newRollingFileLogger(filename= logfile, fmtStr = verboseFmtStr))
   let is1argOnly = args.len == 2 # command + arg == 2 ("install foo")
   if args.len > 0:
     let cliente = PyPI(timeout: taimaout)
