@@ -408,7 +408,7 @@ when isMainModule:
         let envy = valor.split"="
         styledEcho(fgMagenta, bgBlack, $envy)
         putEnv(envy[0], envy[1])
-      of "nopyc":
+      of "cleanpyc":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pyc in walkFiles(getCurrentDir() / "*.pyc"): info $tryRemoveFile(pyc) & "\t" & pyc
         for pyc in walkDirs(getCurrentDir() / "__pycache__"): info $tryRemoveFile(pyc) & "\t" & pyc
@@ -416,7 +416,7 @@ when isMainModule:
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for tmp in walkPattern(getTempDir() / "**" / "*.*"): info $tryRemoveFile(tmp) & "\t" & tmp
         for tmp in walkPattern(getTempDir() / "**" / "*"): info $tryRemoveFile(tmp) & "\t" & tmp
-      of "nopypackages":
+      of "cleanpypackages":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pyc in walkFiles(getCurrentDir() / "__pypackages__"): info $tryRemoveFile(pyc) & "\t" & pyc
       of "cleanvenvs", "cleanvirtualenvs", "cleanvirtualenv", "clearvirtualenvs", "clearvirtualenv":
