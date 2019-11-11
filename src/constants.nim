@@ -31,6 +31,7 @@ const
   cmdTar = "tar cafv "
   cmdVerify = "gpg --verify "
   cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag " ## PIP Wont optimize Production binaries, they are left with all Debugging on!.
+  cmdBsdtar = "bsdtar -xvf "
   pipCacheDir =
     when defined(linux): r"~/.cache/pip"                    # PIP "standards"
     elif defined(macos): r"~/Library/Caches/pip"
@@ -457,7 +458,7 @@ proc function(a, b: int): auto {.exportpy.} =
 ##############################################################################
 
 
-hardenedBuild() # Security Hardened mode.
+# hardenedBuild() # Security Hardened mode.
 addHandler(newConsoleLogger(fmtStr = ""))
 addHandler(newRollingFileLogger(fmtStr = "$levelname, $datetime, $appname, "))
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed,shutting down,Bye! "))
