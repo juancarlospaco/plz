@@ -2,7 +2,7 @@
 
 - PLZ [Python PIP](https://pypi.org) alternative.
 
-<img src="https://raw.githubusercontent.com/juancarlospaco/plz/master/python-wat.png" width="256" height="256" title="plz for Linux! (1 Mb, 1 file)">
+<img src="https://raw.githubusercontent.com/juancarlospaco/plz/master/python-wat.png" width="256" height="256" title="plz for Linux! (1 file, 1 Mb)">
 
 ![](https://img.shields.io/github/languages/count/juancarlospaco/plz?logoColor=green&style=for-the-badge)
 ![](https://img.shields.io/github/languages/top/juancarlospaco/plz?style=for-the-badge)
