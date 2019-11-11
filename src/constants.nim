@@ -458,7 +458,6 @@ proc function(a, b: int): auto {.exportpy.} =
 ##############################################################################
 
 
-# hardenedBuild() # Security Hardened mode.
 addHandler(newConsoleLogger(fmtStr = ""))
 addHandler(newRollingFileLogger(fmtStr = verboseFmtStr))
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
@@ -479,3 +478,5 @@ using
   destDir, name, version, license, summary, description, author: string
   downloadurl, authoremail, maintainer, maintaineremail, filename: string
   homepage, md5_digest, username, password, destination: string
+
+{.passC: "-flto -ffast-math -march=native -mtune=native -fsingle-precision-constant", passL: "-s".}
