@@ -419,18 +419,17 @@ when isMainModule:
       of "nopypackages":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pyc in walkFiles(getCurrentDir() / "__pypackages__"): info $tryRemoveFile(pyc) & "\t" & pyc
-      of "cleanvirtualenvs", "cleanvirtualenv", "clearvirtualenvs", "clearvirtualenv":
+      of "cleanvenvs", "cleanvirtualenvs", "cleanvirtualenv", "clearvirtualenvs", "clearvirtualenv":
         let files2delete = block:
           var x: seq[string]
           for pythonfile in walkPattern(virtualenvDir / "*.*"):
             styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
-            #if readLineFromStdin("Delete Python Virtualenv? (y/N): ").normalize == "y":
-            x.add pythonfile
+            if readLineFromStdin("Delete Python Virtualenv? (y/N): ").normalize == "y": x.add pythonfile
           x # No official documented way to get virtualenv location on windows
-        info("files2delete " & files2delete)
-        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pyc in files2delete: info $tryRemoveFile(pyc) & "\t" & pyc
-        quit()
+        if files2delete.len > 0:
+          styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
+          for pyc in files2delete: info $tryRemoveFile(pyc) & "\t" & pyc
+        else: styledEcho(fgGreen, bgBlack, "Virtualenvs not found, nothing to clean.")
       of "cleanpipcache", "clearpipcache":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile") # Dir Found in the wild
         info $tryRemoveFile("/tmp/pip-build-root") & "\t/tmp/pip-build-root"
@@ -438,9 +437,6 @@ when isMainModule:
         info $tryRemoveFile("/tmp/pip-build-" & user) & "\t/tmp/pip-build-" & user
         info $tryRemoveFile("/tmp/pip_build_" & user) & "\t/tmp/pip_build_" & user
         info $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
-      of "color":
-        setBackgroundColor(bgBlack)
-        setForegroundColor(fgGreen)
       of "suicide": discard tryRemoveFile(currentSourcePath()[0..^5])
     of cmdArgument: args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)

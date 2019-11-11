@@ -88,6 +88,7 @@ Options:
   --nopypackages   Recursively remove all __pypackages__
   --cleantemp      Remove all files and folders from the OS Temporary folder.
   --cleanpipcache  Remove all files and folders from the PIP Cache folder.
+  --cleanvenvs     Remove Virtualenvs (interactive, asks y/n 1-by-1).
   --nice20         Runs with "nice = 20" (CPU Priority, smooth priority).
   --publicip       Show your Public IP Address (Internet connectivity check).
   --suicide        Deletes itself permanently and exit (single file binary).
