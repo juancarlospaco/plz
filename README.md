@@ -37,8 +37,14 @@ $ plz latestversion        # Show the Latest Version of a PYPI Package (SemVer)
 $ plz forceInstallPip      # Force install PIP on arbitrary folder (get-pip.py)
 $
 $ plz --enUsUtf8           # Force Encoding to UTF-8 and Language to English
-$ plz --nopyc              # Recursively remove all __pycache__ and *.pyc
-$ plz --debug              # Show Debug info (for Developers and Bug Reporting)
+$ plz --cleanpyc           # Clean all __pycache__ and *.pyc
+$ plz --cleanpypackages    # Clean all __pypackages__
+$ plz --cleantemp          # Clean all temporary folder.
+$ plz --cleanpipcache      # Clean all PIP Cache folder.
+$ plz --cleanvenvs         # Clean Virtualenvs (interactive, asks y/n 1-by-1).
+$ plz --publicip           # Show your Public IP Address (Internet connectivity check).
+$ plz --suicide            # Deletes itself permanently and exit (single file binary).
+$ plz --debug              # Show Debug info (for Developers and Bug Reporting).
 $ plz --version            # Show Version
 $ plz --help               # Show Help
 ```
