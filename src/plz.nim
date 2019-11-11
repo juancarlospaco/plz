@@ -106,8 +106,7 @@ proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
   ## Retrieve a list of download URLs for the given releaseVersion. Returns a list of dicts.
   clientify(this)
   client.headers = headerXml
-  let bodi = xmlRpcBody.format("release_urls",
-    xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
+  let bodi = xmlRpcBody.format("release_urls", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
   for tagy in parseXml(client.postContent(pypiXmlUrl, body = bodi)).findAll"string":
     if tagy.innerText.normalize.startsWith"https://": result.add tagy.innerText
 
@@ -183,8 +182,7 @@ proc search(this: PyPI, query, operator = "and"): XmlNode =
   ## Search package database using indicated search spec. Returns 100 results max.
   clientify(this)
   client.headers = headerXml
-  result = parseXml(client.postContent(pypiXmlUrl, body = xmlRpcBody.format(
-    "search", xmlRpcParam.format(replace($query, "@", "")) & xmlRpcParam.format(operator))))
+  result = parseXml(client.postContent(pypiXmlUrl, body = xmlRpcBody.format("search", xmlRpcParam.format(replace($query, "@", "")) & xmlRpcParam.format(operator))))
 
 proc browse(this: PyPI, classifiers): XmlNode =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
