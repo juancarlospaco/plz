@@ -242,7 +242,7 @@ proc pySkeleton() =
   assert pluginName.len > 1, "Name must not be empty string: " & pluginName
   discard existsOrCreateDir(pluginName)
   discard existsOrCreateDir(pluginName / pluginName)
-  writeFile(pluginName / pluginName / "__init__.py", r"print((lambda r:'\n'.join('.'.join('█' if(y<r and((x-r)**2+(y-r)**2<=r**2or(x-3*r)**2+(y-r)**2<=r**2))or(y>=r and x+r>=y and x-r<=4*r-y)else '░' for x in range(4*r))for y in range(1,3*r,2)))(5))")
+  writeFile(pluginName / pluginName / "__init__.py", "print('Hello World')\n")
   writeFile(pluginName / pluginName / "__main__.py", "\nprint('Main Module')\n")
   writeFile(pluginName / pluginName / "__version__.py", "__version__ = '0.0.1'\n")
   writeFile(pluginName / pluginName / "main.nim", nimpyTemplate)
@@ -313,40 +313,25 @@ proc ask2User(): auto =
   var username, password, name, version, license, summary, description, homepage: string
   var author, downloadurl, authoremail, maintainer, maintaineremail, iPwd2: string
   var keywords: seq[string]
-  while not(author.len > 2 and author.len < 99):
-    author = readLineFromStdin("\nType Author (Real Name): ").strip
-  while not(username.len > 2 and username.len < 99):
-    username = readLineFromStdin("Type Username (PyPI Username): ").strip
-  while not(maintainer.len > 2 and maintainer.len < 99):
-    maintainer = readLineFromStdin("Type Package Maintainer (Real Name): ").strip
+  while not(author.len > 2 and author.len < 99): author = readLineFromStdin("\nType Author (Real Name): ").strip
+  while not(username.len > 2 and username.len < 99): username = readLineFromStdin("Type Username (PyPI Username): ").strip
+  while not(maintainer.len > 2 and maintainer.len < 99): maintainer = readLineFromStdin("Type Package Maintainer (Real Name): ").strip
   while not(password.len > 4 and password.len < 999 and password == iPwd2):
     password = readLineFromStdin("Type Password: ").strip # Type it Twice.
     iPwd2 = readLineFromStdin("Confirm Password (Repeat it again): ").strip
-  while not(authoremail.len > 5 and authoremail.len < 255 and "@" in authoremail):
-    authoremail = readLineFromStdin("Type Author Email (Lowercase): ").strip.toLowerAscii
-  while not(maintaineremail.len > 5 and maintaineremail.len < 255 and "@" in maintaineremail):
-    maintaineremail = readLineFromStdin("Type Maintainer Email (Lowercase): ").strip.toLowerAscii
-  while not(name.len > 0 and name.len < 99):
-    name = readLineFromStdin("Type Package Name: ").strip.toLowerAscii
-  while not(version.len > 4 and version.len < 99 and "." in version):
-    version = readLineFromStdin("Type Package Version (SemVer): ").normalize
+  while not(authoremail.len > 5 and authoremail.len < 255 and "@" in authoremail): authoremail = readLineFromStdin("Type Author Email (Lowercase): ").strip.toLowerAscii
+  while not(maintaineremail.len > 5 and maintaineremail.len < 255 and "@" in maintaineremail): maintaineremail = readLineFromStdin("Type Maintainer Email (Lowercase): ").strip.toLowerAscii
+  while not(name.len > 0 and name.len < 99): name = readLineFromStdin("Type Package Name: ").strip.toLowerAscii
+  while not(version.len > 4 and version.len < 99 and "." in version): version = readLineFromStdin("Type Package Version (SemVer): ").normalize
   info licenseHint
-  while not(license.len > 2 and license.len < 99):
-    license = readLineFromStdin("Type Package License: ").normalize
-  while not(summary.len > 0 and summary.len < 999):
-    summary = readLineFromStdin("Type Package Summary (Short Description): ").strip
-  while not(description.len > 0 and description.len < 999):
-    description = readLineFromStdin("Type Package Description (Long Description): ").strip
-  while not(homepage.len > 5 and homepage.len < 999 and homepage.startsWith"http"):
-    homepage = readLineFromStdin("Type Package Web Homepage URL (HTTP/HTTPS): ").strip.toLowerAscii
-  while not(downloadurl.len > 5 and downloadurl.len < 999 and downloadurl.startsWith"http"):
-    downloadurl = readLineFromStdin("Type Package Web Download URL (HTTP/HTTPS): ").strip.toLowerAscii
-  while not(keywords.len > 1 and keywords.len < 99):
-    keywords = readLineFromStdin("Type Package Keywords,separated by commas,without spaces,at least 2 (CSV): ").normalize.split(",")
-  result = (username: username, password: password, name: name, author: author,
-    version: version, license: license, summary: summary, homepage: homepage,
-    description: description, downloadurl: downloadurl, maintainer: maintainer,
-    authoremail: authoremail, maintaineremail: maintaineremail, keywords: keywords)
+  while not(license.len > 2 and license.len < 99): license = readLineFromStdin("Type Package License: ").normalize
+  while not(summary.len > 0 and summary.len < 999): summary = readLineFromStdin("Type Package Summary (Short Description): ").strip
+  while not(description.len > 0 and description.len < 999): description = readLineFromStdin("Type Package Description (Long Description): ").strip
+  while not(homepage.len > 5 and homepage.len < 999 and homepage.startsWith"http"): homepage = readLineFromStdin("Type Package Web Homepage URL (HTTP/HTTPS): ").strip.toLowerAscii
+  while not(downloadurl.len > 5 and downloadurl.len < 999 and downloadurl.startsWith"http"): downloadurl = readLineFromStdin("Type Package Web Download URL (HTTP/HTTPS): ").strip.toLowerAscii
+  while not(keywords.len > 1 and keywords.len < 99): keywords = readLineFromStdin("Type Package Keywords,separated by commas,without spaces,at least 2 (CSV): ").normalize.split(",")
+  result = (username: username, password: password, name: name, author: author, version: version, license: license, summary: summary, homepage: homepage,
+    description: description, downloadurl: downloadurl, maintainer: maintainer, authoremail: authoremail, maintaineremail: maintaineremail, keywords: keywords)
 
 proc forceInstallPip(destination): tuple[output: TaintedString, exitCode: int] =
   newHttpClient(timeout = 9999).downloadFile(pipInstaller, destination) # Download
@@ -384,12 +369,7 @@ proc uninstall(this: PyPI, args) =
     output
   assert files2delete.len > 0, "Files of a Python Package not found."
   if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
-    let sudo =
-      if readLineFromStdin("\nGenerate Uninstall Script for Admin/Root? (y/N): ").normalize == "y":
-        when defined(windows): "\nrunas /user:Administrator " else: "\nsudo "
-      else: "\n"
-    const cmd = when defined(windows): "del " else: "rm --verbose --force "
-    info(sudo & cmd & files2delete.join" " & "\n")
+    info((if readLineFromStdin("\nGenerate Uninstall Script for Admin/Root? (y/N): ").normalize == "y": "\nsudo " else: "\n") & "rm --verbose --force " & files2delete.join" " & "\n")
   for pyfile in files2delete: styledEcho(fgRed, bgBlack, "🗑\t" & pyfile)
   if readLineFromStdin("\nDelete " & $files2delete.len & " files? (y/N): ").normalize == "y":
     styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
