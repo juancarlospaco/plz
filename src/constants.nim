@@ -93,7 +93,7 @@ Options:
   --cleanpypackages Recursively remove all __pypackages__
   --cleantemp      Remove all files and folders from the OS Temporary folder.
   --cleanpipcache  Remove all files and folders from the PIP Cache folder.
-  --cleanvenvs     Remove Virtualenvs (interactive, asks y/n 1-by-1).
+  --cleanvenvs     Remove Virtualenvs (interactive, asks Y/N 1-by-1).
   --log=file.log   Full path to a verbose local log file.
   --backuplogs     Compress old PLZ Logs at exit to save disk resources.
   --nice20         Runs with "nice = 20" (CPU Priority, smooth priority).

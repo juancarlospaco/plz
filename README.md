@@ -40,7 +40,7 @@ $ plz --cleanpyc           # Clean all __pycache__ and *.pyc
 $ plz --cleanpypackages    # Clean all __pypackages__
 $ plz --cleantemp          # Clean all temporary folder.
 $ plz --cleanpipcache      # Clean all PIP Cache folder.
-$ plz --cleanvenvs         # Clean Virtualenvs (interactive, asks y/n 1-by-1).
+$ plz --cleanvenvs         # Clean Virtualenvs (interactive, asks Y/N 1-by-1).
 $ plz --publicip           # Show your Public IP Address (Internet connectivity check).
 $ plz --log=file.log       # Full path to a verbose local log file.
 $ plz --backuplogs         # Compress old PLZ Logs at exit, to save disk resources.
