@@ -4,6 +4,18 @@
 
 ![](https://raw.githubusercontent.com/juancarlospaco/plz/master/python-wat.png "plz for Linux! (1 Mb, 1 file)")
 
+![](https://img.shields.io/github/languages/count/juancarlospaco/plz?logoColor=green&style=for-the-badge) 
+![](https://img.shields.io/github/languages/top/juancarlospaco/plz?style=for-the-badge) 
+![](https://img.shields.io/github/stars/juancarlospaco/plz?style=for-the-badge) 
+![](https://img.shields.io/maintenance/yes/2019?style=for-the-badge)
+![](https://img.shields.io/github/languages/code-size/juancarlospaco/plz?style=for-the-badge) 
+![](https://img.shields.io/github/issues-raw/juancarlospaco/plz?style=for-the-badge) 
+![](https://img.shields.io/github/issues-pr-raw/juancarlospaco/plz?style=for-the-badge) 
+![](https://img.shields.io/github/commit-activity/y/juancarlospaco/plz?style=for-the-badge) 
+![](https://img.shields.io/github/last-commit/juancarlospaco/plz?style=for-the-badge) 
+![](https://img.shields.io/liberapay/patrons/juancarlospaco?style=for-the-badge) 
+![](https://img.shields.io/twitch/status/juancarlospaco?style=for-the-badge) 
+
 
 # Use
 
