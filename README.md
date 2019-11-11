@@ -2,7 +2,7 @@
 
 - PLZ [Python PIP](https://pypi.org) alternative.
 
-![](python-wat.png "plz for Linux, Windows, Mac! (1 Mb, 1 file)")
+![](python-wat.png "plz for Linux! (1 Mb, 1 file)")
 
 
 # Use
@@ -74,12 +74,6 @@ $ nim c plz/plz.nim
 # Platforms
 
 - ✅ Linux
-- ✅ Windows
-- ✅ Mac
-- ✅ Raspberry Pi
-- ✅ ARM
-- ✅ BSD
-- ✅ Anything that can compile C.
 
 
 # Features
@@ -122,10 +116,6 @@ $ nim c plz/plz.nim
 
 No.
 
-- This requires DotNet Frameworks on Windows ?.
-
-No.
-
 - This runs on Python2 ?.
 
 I dunno. (Not supported)
@@ -133,10 +123,6 @@ I dunno. (Not supported)
 - This runs on 32Bit ?.
 
 I dunno. (Not supported)
-
-- This works on Mac?.
-
-Yes.
 
 - This works with SSL ?.
 
