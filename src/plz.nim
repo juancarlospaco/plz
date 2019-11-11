@@ -1,3 +1,4 @@
+import httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables, parseopt, terminal, times, posix, logging, osproc, rdstdin, sequtils, md5, parsecsv, streams
 include constants
 
 type
