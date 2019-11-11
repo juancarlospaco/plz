@@ -153,7 +153,7 @@ No.
 No.
 
 
-# API Bugs
+# Python Bugs
 
 From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 
