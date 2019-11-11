@@ -79,7 +79,7 @@ $ nim c plz/plz.nim
 
 # Dependencies
 
-- It does NOT depend on `pip` (Not a `pip` wrapper), it can work with `pip` completely broken.
+- It does NOT depend on `pip` (Not a `pip` wrapper), it can work with `pip` completely broken and works on Alpine.
 
 
 # Platforms
