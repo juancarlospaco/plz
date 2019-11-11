@@ -291,9 +291,8 @@ proc pySkeleton() =
   quit("Created a new Python project skeleton, happy hacking, bye...\n", 0)
 
 template enUsUtf8() =
-  for envar in ["LC_CTYPE", "LC_NUMERIC", "LC_TIME", "LC_COLLATE", "LC_NAME",
-  "LC_MONETARY", "LC_MESSAGES", "LC_PAPER", "LC_ADDRESS", "LC_TELEPHONE", "LANG",
-  "LC_MEASUREMENT", "LC_IDENTIFICATION", "LC_ALL"]: putEnv(envar, "en_US.UTF-8")
+  for envar in ["LC_CTYPE", "LC_NUMERIC", "LC_TIME", "LC_COLLATE", "LC_NAME", "LC_MONETARY", "LC_MESSAGES", "LC_PAPER",
+    "LC_ADDRESS", "LC_TELEPHONE", "LANG", "LC_MEASUREMENT", "LC_IDENTIFICATION", "LC_ALL"]: putEnv(envar, "en_US.UTF-8")
 
 proc backup(): tuple[output: TaintedString, exitCode: int] =
   var folder: string
