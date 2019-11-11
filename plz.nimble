@@ -6,5 +6,3 @@ srcDir        = "src"
 bin           = @["plz"]
 
 requires "nim >= 1.0.2"
-requires "nimarchive"
-requires "contra"
