@@ -14,7 +14,6 @@
 ![](https://img.shields.io/github/commit-activity/y/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/github/last-commit/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/liberapay/patrons/juancarlospaco?style=for-the-badge)
-![](https://img.shields.io/twitch/status/juancarlospaco?style=for-the-badge)
 
 
 # Use
