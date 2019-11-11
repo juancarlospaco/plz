@@ -90,7 +90,7 @@ $ nim c plz/plz.nim
 
 # Platforms
 
-- ✅ Linux
+- ✅ Linux (Use Docker for Windows or Docker for Mac on ther OS).
 
 
 # Features
