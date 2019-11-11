@@ -154,9 +154,8 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 
 - `release_downloads`, `top_packages`, `updated_releases`, `changed_packages`.
 - Sometimes it returns Python Tracebacks as strings on the body of the response.
-- Its a big project, some features are not yet implemented as App,
-but source contains the functionanity whatsoever.
-
+- Its a big project, some features are not yet implemented as App, but source contains the functionanity whatsoever.
+- We tried to implement fully parallel install of packages, but because of the way Python packages work, they need to be installed sequentially whatsoever.
 
 
 ## Stars
