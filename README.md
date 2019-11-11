@@ -4,17 +4,17 @@
 
 ![](https://raw.githubusercontent.com/juancarlospaco/plz/master/python-wat.png "plz for Linux! (1 Mb, 1 file)")
 
-![](https://img.shields.io/github/languages/count/juancarlospaco/plz?logoColor=green&style=for-the-badge) 
-![](https://img.shields.io/github/languages/top/juancarlospaco/plz?style=for-the-badge) 
-![](https://img.shields.io/github/stars/juancarlospaco/plz?style=for-the-badge) 
+![](https://img.shields.io/github/languages/count/juancarlospaco/plz?logoColor=green&style=for-the-badge)
+![](https://img.shields.io/github/languages/top/juancarlospaco/plz?style=for-the-badge)
+![](https://img.shields.io/github/stars/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/maintenance/yes/2019?style=for-the-badge)
-![](https://img.shields.io/github/languages/code-size/juancarlospaco/plz?style=for-the-badge) 
-![](https://img.shields.io/github/issues-raw/juancarlospaco/plz?style=for-the-badge) 
-![](https://img.shields.io/github/issues-pr-raw/juancarlospaco/plz?style=for-the-badge) 
-![](https://img.shields.io/github/commit-activity/y/juancarlospaco/plz?style=for-the-badge) 
-![](https://img.shields.io/github/last-commit/juancarlospaco/plz?style=for-the-badge) 
-![](https://img.shields.io/liberapay/patrons/juancarlospaco?style=for-the-badge) 
-![](https://img.shields.io/twitch/status/juancarlospaco?style=for-the-badge) 
+![](https://img.shields.io/github/languages/code-size/juancarlospaco/plz?style=for-the-badge)
+![](https://img.shields.io/github/issues-raw/juancarlospaco/plz?style=for-the-badge)
+![](https://img.shields.io/github/issues-pr-raw/juancarlospaco/plz?style=for-the-badge)
+![](https://img.shields.io/github/commit-activity/y/juancarlospaco/plz?style=for-the-badge)
+![](https://img.shields.io/github/last-commit/juancarlospaco/plz?style=for-the-badge)
+![](https://img.shields.io/liberapay/patrons/juancarlospaco?style=for-the-badge)
+![](https://img.shields.io/twitch/status/juancarlospaco?style=for-the-badge)
 
 
 # Use
@@ -159,6 +159,12 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 but source contains the functionanity whatsoever.
 
 
+
+## Stars
+
+[![Stars over time](https://starchart.cc/juancarlospaco/plz.svg)](https://starchart.cc/ThomasTJdev/nim_websitecreator "Star PLZ on GitHub!")
+
+
 #### Notes
 
 - http://tonsky.me/blog/disenchantment
@@ -178,3 +184,6 @@ Quote from PIPEnv Project:
 
 
 ![](pepehack.gif "Work in progress!")
+
+
+[  ⬆️  ⬆️  ⬆️  ⬆️  ](#plz "Go to top")
