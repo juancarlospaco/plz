@@ -373,6 +373,9 @@ proc uninstall(this: PyPI, args) =
     styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
     for pythonfile in files2delete: info $tryRemoveFile(pythonfile) & "\t" & pythonfile
 
+proc backupOldLogs() {.noconv.} =
+  if execCmdEx(cmdTar & "logs-" & replace($now(), ":", "_") & ".tar.gz " & defaultFilename()).exitCode == 0: discard tryRemoveFile(defaultFilename())
+
 
 # ^ End of App related procedures #################### v CLI related procedures
 
@@ -427,6 +430,7 @@ when isMainModule:
         info $tryRemoveFile("/tmp/pip-build-" & user) & "\t/tmp/pip-build-" & user
         info $tryRemoveFile("/tmp/pip_build_" & user) & "\t/tmp/pip_build_" & user
         info $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
+      of "backuplogs": addQuitProc(backupOldLogs)
       of "suicide": discard tryRemoveFile(currentSourcePath()[0..^5])
     of cmdArgument: args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
