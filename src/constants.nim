@@ -63,6 +63,7 @@ const
 # cleanvirtualenv Delete local Virtualenv (Interactive,asks Y/N to user before).
 
 const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
+
 Commands:
   install         Install packages (Download, Decompress, Install packages).
   uninstall       Uninstall packages (Interactive, asks Y/N to user before).
@@ -148,7 +149,7 @@ classifiers =  # https://pypi.python.org/pypi?%3Aaction=list_classifiers
 [options]
 zip_safe = True
 include_package_data = True
-python_requires  = >=3.7
+python_requires  = >=3.8
 tests_require    = prospector ; pre-commit ; twine
 install_requires = pip
 setup_requires   = pip
@@ -437,8 +438,8 @@ const dockerfileTemplate = """
 FROM alpine:latest
 RUN apk add --no-cache ca-certificates gnupg tar xz bzip2 coreutils dpkg findutils gcc libc-dev linux-headers make openssl readline sqlite zlib tk tcl ncurses gdbm
 ENV LANG C.UTF-8
-ENV PYTHON_VERSION 3.7
-ENV PYTHON_PIP_VERSION 3.7
+ENV PYTHON_VERSION 3.8
+ENV PYTHON_PIP_VERSION 3.8
 ENV PATH /usr/local/bin:$PATH
 # Do your magic here. Download and Compile Python...
 """
