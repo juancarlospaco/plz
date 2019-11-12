@@ -1,4 +1,5 @@
 import httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables, parseopt, terminal, times, posix, logging, osproc, rdstdin, sequtils, md5, parsecsv, streams
+import requirementstxt
 include constants
 
 type
@@ -335,15 +336,6 @@ proc forceInstallPip(destination): tuple[output: TaintedString, exitCode: int] =
   newHttpClient(timeout = 9999).downloadFile(pipInstaller, destination) # Download
   assert existsFile(destination), "File not found: 'get-pip.py' " & destination
   result = execCmdEx(py3 & destination & " -I") # Installs PIP via get-pip.py
-
-proc parseRecord(filename): seq[seq[string]] =
-  ## Parse RECORD files from Python packages, they are Headerless CSV.
-  var parser: CsvParser
-  var stream = newFileStream(filename, fmRead)
-  assert stream != nil, "Failed to parse a CSV from file to string stream"
-  open(parser, stream, filename)
-  while readRow(parser): result.add parser.row
-  close(parser)
 
 proc uninstall(this: PyPI, args) =
   ## Uninstall a Python package, deletes the files, optional uninstall script.
