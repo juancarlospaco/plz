@@ -1,5 +1,5 @@
 import httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables, parseopt, terminal, times, posix, logging, osproc, rdstdin, sequtils, md5, parsecsv, streams
-import requirementstxt
+import requirementstxt, nimarchive
 include constants
 
 type
@@ -140,10 +140,12 @@ proc installPackage(this: PyPI, packageName, releaseVersion, generateScript): tu
   let oldDir = getCurrentDir()
   if unlikely(packageFile.endsWith".whl"):
     setCurrentDir(sitePackages)
-    doAssert execCmdEx(cmdBsdtar & packageFile).exitCode == 0, "Failed to extract Python Wheel"
+    # doAssert execCmdEx(cmdBsdtar & packageFile).exitCode == 0, "Failed to extract Python Wheel"
+    extract(packageFile, sitePackages)
   else:
     setCurrentDir(getTempDir())
-    doAssert execCmdEx(cmdBsdtar & packageFile).exitCode == 0, "Failed to extract Python Package"
+    # doAssert execCmdEx(cmdBsdtar & packageFile).exitCode == 0, "Failed to extract Python Package"
+    extract(packageFile, getTempDir())
     let path = packageFile[0..^5]
     if existsFile(path / "setup.py"):
       setCurrentDir(path)
