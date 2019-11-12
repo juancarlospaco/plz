@@ -6,3 +6,4 @@ srcDir        = "src"
 bin           = @["plz"]
 
 requires "nim >= 1.0.2"
+requires "requirementstxt >= 0.0.1"
