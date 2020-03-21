@@ -1,10 +1,10 @@
 import httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables, parseopt, terminal, times, posix, logging, osproc, rdstdin, sequtils, md5, parsecsv, streams
-import requirementstxt, nimarchive
+import requirementstxt, libarchibi
 include constants
 
 type
   PyPI = object   ## Base object.
-    timeout: byte ## Timeout Seconds for API Calls, byte type, 0~255.
+    timeout, maxRedirects: byte ## Timeout Seconds for API Calls, byte type, 0~255.
     proxy: Proxy  ## Network IPv4 / IPv6 Proxy support, Proxy type.
 
 template clientify(this: PyPI): untyped =
@@ -141,11 +141,11 @@ proc installPackage(this: PyPI, packageName, releaseVersion, generateScript): tu
   if unlikely(packageFile.endsWith".whl"):
     setCurrentDir(sitePackages)
     # doAssert execCmdEx(cmdBsdtar & packageFile).exitCode == 0, "Failed to extract Python Wheel"
-    extract(packageFile, sitePackages)
+    echo extract(packageFile, sitePackages)
   else:
     setCurrentDir(getTempDir())
     # doAssert execCmdEx(cmdBsdtar & packageFile).exitCode == 0, "Failed to extract Python Package"
-    extract(packageFile, getTempDir())
+    echo extract(packageFile, getTempDir())
     let path = packageFile[0..^5]
     if existsFile(path / "setup.py"):
       setCurrentDir(path)
@@ -274,9 +274,7 @@ proc pySkeleton() =
     writeFile(pluginName / ".gitattributes", "*.py linguist-language=Python\n*.nim linguist-language=Nim\n")
     writeFile(pluginName / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.egg-info\n*.egg\n*.log\n__pycache__\n*.c\n*.h\n*.o\n")
     writeFile(pluginName / ".coveragerc", "")
-  if readLineFromStdin("Generate Pre-Commit files (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / ".hooks")
-    writeFile(pluginName / ".hooks" / "pre-commit", precommitTemplate)
   if readLineFromStdin("Generate optional files (y/N): ").normalize == "y":
     writeFile(pluginName / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
     writeFile(pluginName / "requirements.txt", "")
@@ -376,6 +374,7 @@ proc backupOldLogs() {.noconv.} =
 
 when isMainModule:
   var taimaout = 99.byte
+  var redirects = 9.byte
   var args: seq[string]
   for tipoDeClave, clave, valor in getopt():
     case tipoDeClave
@@ -386,6 +385,7 @@ when isMainModule:
       of "nice20": echo nice(20.cint)
       of "debug", "desbichar": echo debugMsg
       of "timeout": taimaout = valor.parseInt.byte
+      of "maxredirects": redirects = valor.parseInt.byte
       of "log": logfile = valor
       of "enusutf8": enUsUtf8()
       of "publicip": echo newHttpClient(timeout = 9999).getContent("https://api.ipify.org")
@@ -432,7 +432,7 @@ when isMainModule:
   addHandler(newRollingFileLogger(filename= logfile, fmtStr = verboseFmtStr))
   let is1argOnly = args.len == 2 # command + arg == 2 ("install foo")
   if args.len > 0:
-    let cliente = PyPI(timeout: taimaout)
+    let cliente = PyPI(timeout: taimaout, maxRedirects: redirects)
     case args[0].normalize
     of "init": pySkeleton()
     of "backup": quit(backup().output, 0)
