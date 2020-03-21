@@ -7,7 +7,7 @@
 ![](https://img.shields.io/github/languages/count/juancarlospaco/plz?logoColor=green&style=for-the-badge)
 ![](https://img.shields.io/github/languages/top/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/github/stars/juancarlospaco/plz?style=for-the-badge)
-![](https://img.shields.io/maintenance/yes/2019?style=for-the-badge)
+![](https://img.shields.io/maintenance/yes/2020?style=for-the-badge)
 ![](https://img.shields.io/github/languages/code-size/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/github/issues-raw/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/github/issues-pr-raw/juancarlospaco/plz?style=for-the-badge)
