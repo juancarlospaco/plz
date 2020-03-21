@@ -175,6 +175,8 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 <details>
 
 - http://tonsky.me/blog/disenchantment
+- https://medium.com/telnyx-engineering/rip-pipenv-tried-too-hard-do-what-you-need-with-pip-tools-d500edc161d4
+- https://github.com/pypa/pipenv/issues/4058#issue-537298446
 - https://chriswarrick.com/blog/2018/07/17/pipenv-promises-a-lot-delivers-very-little/
 - https://old.reddit.com/r/Python/comments/chkah3/is_pipenv_dead_why_has_the_project_stopped/
 - https://np.reddit.com/r/Python/comments/8jd6aq/why_is_pipenv_the_recommended_packaging_tool_by/
