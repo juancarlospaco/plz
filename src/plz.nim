@@ -1,8 +1,7 @@
 import
   httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables,
   parseopt, terminal, times, posix, posix_utils, logging, osproc, rdstdin, md5,
-  sequtils, parsecsv, streams, std/sha1
-import requirementstxt, libarchibi
+  sequtils, parsecsv, streams, std/sha1, requirementstxt, libarchibi
 include constants
 
 type
