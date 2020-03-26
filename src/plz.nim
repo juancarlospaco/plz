@@ -302,7 +302,7 @@ proc ask2User(): auto =
   result = (username: username, password: password, name: name, author: author, version: version, license: license, summary: summary, homepage: homepage,
     description: description, downloadurl: downloadurl, maintainer: maintainer, authoremail: authoremail, maintaineremail: maintaineremail, keywords: keywords)
 
-proc forceInstallPip(destination): tuple[output: TaintedString, exitCode: int] =
+proc forceInstallPip(destination): tuple[output: TaintedString, exitCode: int] {.inline.} =
   newHttpClient(timeout = 9999).downloadFile(pipInstaller, destination) # Download
   assert existsFile(destination), "File not found: 'get-pip.py' " & destination
   result = execCmdEx(py3 & destination & " -I") # Installs PIP via get-pip.py
