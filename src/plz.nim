@@ -459,7 +459,7 @@ when isMainModule:
         info $tryRemoveFile("/tmp/pip_build_" & user) & "\t/tmp/pip_build_" & user
         info $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
       of "backuplogs": addQuitProc(backupOldLogs)
-      of "suicide": discard tryRemoveFile(currentSourcePath()[0..^5])
+      of "suicide": echo tryRemoveFile(currentSourcePath()[0..^5])
     of cmdArgument: args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
   addHandler(newRollingFileLogger(filename= logfile, fmtStr = verboseFmtStr))
@@ -486,11 +486,10 @@ when isMainModule:
       quit($cliente.packageLatestRelease(args[1]), 0)
     of "open":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
-      discard execCmdEx(osOpen & args[1])
+      quit(execCmdEx(osOpen & args[1]).output, 0)
     of "strip":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
-      let (output, exitCode) = execCmdEx(cmdStrip & args[1])
-      quit(output, exitCode)
+      quit(execCmdEx(cmdStrip & args[1]).output, 0)
     of "search":
       quit("Not implemented yet (PyPI API is Buggy)")
       # info args[1]
@@ -498,9 +497,9 @@ when isMainModule:
     of "hash":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       if findExe"sha256sum".len > 0:
-        let sha512sum = execCmdEx(cmdChecksum & args[1]).output.strip
-        info sha512sum
-        info "--hash=sha256:" & sha512sum.split(" ")[^1]
+        let sha256sum = execCmdEx(cmdChecksum & args[1]).output.strip
+        info sha256sum
+        info "--hash=sha256:" & sha256sum.split(" ")[^1]
     of "upload":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       doAssert existsFile(args[1]), "File not found: " & args[1]
