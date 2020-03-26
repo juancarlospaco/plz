@@ -2,6 +2,9 @@
 # it looks because is done compile time only,worse case scenario it wont compile
 
 const
+  NimblePkgVersion {.strdefine.} = "1.0.0"
+  timeouts {.intdefine.}: Positive = 9999
+  maxRedirects {.intdefine.}: Positive = 9
   pypiApiUrl = "https://pypi.org/"                          ## PyPI Base API URL.
   pypiXmlUrl = pypiApiUrl & "pypi"                          ## PyPI XML RPC API URL.
   pypiPackagesXml = "https://pypi.org/rss/packages.xml"     ## PyPI XML API URL.
@@ -17,7 +20,6 @@ const
   xmlRpcBody = "<?xml version='1.0'?><methodCall><methodName>$1</methodName><params>$2</params></methodCall>"
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
-  NimblePkgVersion {.strdefine.} = "1.0.0"
   sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])" """ ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
   virtualenvDir = r"~/.virtualenvs"
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
@@ -76,7 +78,6 @@ Options:
   --license        Show License and quit.
   --dump           Show system info JSON and quit (for Developers and Bug Reporting).
   --enUsUtf8       Force Encoding to UTF-8 and Language to English (en_US.UTF-8)
-  --timeout=42     Set the default timeout on seconds (for HTTPS Downloads).
   --putenv:key=val Set an environment variable "KEY=Value", can be repeated.
   --cleanpyc       Recursively remove all __pycache__ and *.pyc
   --cleanpypackages Recursively remove all __pypackages__
