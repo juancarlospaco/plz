@@ -259,7 +259,7 @@ proc pySkeleton() =
     writeFile(pluginName / "examples" / "example.py", "# -*- coding: utf-8 -*-\n\nprint('Example')\n")
   if readLineFromStdin("Generate optional DevOps on ./devops (y/N): ").normalize == "y":
     discard existsOrCreateDir(pluginName / "devops")
-    writeFile(pluginName / "devops" / "Dockerfile", dockerfileTemplate)
+    writeFile(pluginName / "devops" / "Dockerfile", "")
     writeFile(pluginName / "devops" / pluginName & ".service", serviceTemplate)
     writeFile(pluginName / "devops" / "build_package.sh", "python3 setup.py sdist --formats=zip\n")
     writeFile(pluginName / "devops" / "upload_package.sh", "twine upload .\n")

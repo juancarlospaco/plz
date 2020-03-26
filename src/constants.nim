@@ -261,17 +261,6 @@ WantedBy=multi-user.target
 """
 
 
-const dockerfileTemplate = """
-FROM alpine:latest
-RUN apk add --no-cache ca-certificates gnupg tar xz bzip2 coreutils dpkg findutils gcc libc-dev linux-headers make openssl readline sqlite zlib tk tcl ncurses gdbm
-ENV LANG C.UTF-8
-ENV PYTHON_VERSION 3.8
-ENV PYTHON_PIP_VERSION 3.8
-ENV PATH /usr/local/bin:$PATH
-# Do your magic here. Download and Compile Python...
-"""
-
-
 const licenseHint = """Licenses:
 💡 See https://tldrlegal.com/licenses/browse or https://choosealicense.com
 💡 No License = Proprietary,WTFPL/Unlicense = Proprietary, Dont invent your own
