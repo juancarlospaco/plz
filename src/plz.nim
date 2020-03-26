@@ -1,4 +1,4 @@
-import httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables, parseopt, terminal, times, posix, logging, osproc, rdstdin, sequtils, md5, parsecsv, streams
+import httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables, parseopt, terminal, times, posix, posix_utils, logging, osproc, rdstdin, sequtils, md5, parsecsv, streams
 import requirementstxt, libarchibi
 include constants
 
@@ -368,6 +368,39 @@ proc uninstall(this: PyPI, args) =
 proc backupOldLogs() {.noconv.} =
   if execCmdEx(cmdTar & "logs-" & replace($now(), ":", "_") & ".tar.gz " & logfile).exitCode == 0: discard tryRemoveFile(logfile)
 
+template isSsd(): bool =
+  when defined(linux): # Returns `true` if main disk is SSD (Solid). Linux only
+    try: readFile("/sys/block/sda/queue/rotational") == "0\n" except: false
+
+proc getSystemInfo(): JsonNode =
+  result = %*{
+    "compiled": CompileDate & "T" & CompileTime,
+    "NimVersion": NimVersion,
+    "hostCPU": hostCPU,
+    "hostOS": hostOS,
+    "cpuEndian": cpuEndian,
+    "getTempDir": getTempDir(),
+    "now": $now(),
+    "getFreeMem": getFreeMem(),
+    "getTotalMem": getTotalMem(),
+    "getOccupiedMem": getOccupiedMem(),
+    "countProcessors": countProcessors(),
+    "arch": uname().machine,
+    "FileSystemCaseSensitive": FileSystemCaseSensitive,
+    "currentCompilerExe": getCurrentCompilerExe(),
+    "nimpretty": execCmdEx("nimpretty --version").output.strip,
+    "nimble": execCmdEx("nimble --noColor --version").output.strip,
+    "nimgrep": execCmdEx("nimgrep --nocolor --version").output.strip,
+    "nimsuggest": execCmdEx("nimsuggest --version").output.strip,
+    "choosenim": if findExe"choosenim".len > 0: execCmdEx("choosenim --noColor --version").output.strip else: "",
+    "gcc": if findExe"gcc".len > 0: execCmdEx("gcc --version").output.splitLines()[0].strip else: "",
+    "clang": if findExe"clang".len > 0: execCmdEx("clang --version").output.splitLines()[0].strip else: "",
+    "git": if findExe"git".len > 0: execCmdEx("git --version").output.replace("git version", "").strip else: "",
+    "node": if findExe"node".len > 0: execCmdEx("node --version").output.strip else: "",
+    "python": if findExe"python".len > 0: execCmdEx("python --version").output.replace("Python", "").strip else: "",
+    "ssd": isSsd()
+  }
+
 
 # ^ End of App related procedures #################### v CLI related procedures
 
@@ -382,8 +415,8 @@ when isMainModule:
       case clave.normalize
       of "version": quit(version, 0)
       of "license", "licencia": quit("PPL", 0)
+      of "dump": quit(getSystemInfo().pretty, 0)
       of "nice20": echo nice(20.cint)
-      of "debug", "desbichar": echo debugMsg
       of "timeout": taimaout = valor.parseInt.byte
       of "maxredirects": redirects = valor.parseInt.byte
       of "log": logfile = valor

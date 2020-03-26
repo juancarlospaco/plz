@@ -46,12 +46,6 @@ const
     when defined(windows): ".cpython-*.dll"
     elif defined(macos): ".cpython-*.dynlib"
     else: ".cpython-*.so"
-  debugMsg = pretty(%*{
-    "CompileDate": CompileDate, "CompileTime": CompileTime, "NimVersion": NimVersion, "hostCPU": hostCPU, "hostOS": hostOS, "cpuEndian": cpuEndian,
-    "tempDir": getTempDir(), "ssl": defined(ssl), "release": defined(release), "contracts": defined(release), "hardened": defined(hardened),
-    "sitePackages": sitePackages, "pipCacheDir": pipCacheDir, "currentCompilerExe": getCurrentCompilerExe(), "int.high": int.high, "danger": defined(danger), "version": version
-  })
-
 
 # TODO:
 # upload          Mimics "twine upload" (Interactive,asks user,wont need Twine).
@@ -86,8 +80,8 @@ Options:
   --help           Show Help and quit.
   --version        Show Version and quit.
   --license        Show License and quit.
+  --dump           Show system info JSON and quit (for Developers and Bug Reporting).
   --enUsUtf8       Force Encoding to UTF-8 and Language to English (en_US.UTF-8)
-  --debug          Show Debug info and quit (for Developers and Bug Reporting).
   --timeout=42     Set the default timeout on seconds (for HTTPS Downloads).
   --putenv:key=val Set an environment variable "KEY=Value", can be repeated.
   --cleanpyc       Recursively remove all __pycache__ and *.pyc
