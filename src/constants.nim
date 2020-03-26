@@ -176,7 +176,6 @@ exclude-source-files = true
 
 
 const testTemplate = """# -*- coding: utf-8 -*-
-
 '''Unittest.'''
 
 import unittest
@@ -184,7 +183,6 @@ from random import randint
 
 # Random order for tests runs. (Original is: -1 if x<y, 0 if x==y, 1 if x>y).
 unittest.TestLoader.sortTestMethodsUsing = lambda _, x, y: randint(-1, 1)
-
 
 def setUpModule():
     pass
@@ -304,5 +302,3 @@ using
   destDir, name, version, license, summary, description, author: string
   downloadurl, authoremail, maintainer, maintaineremail, filename: string
   homepage, md5_digest, username, password, destination: string
-
-{.passC: "-flto -ffast-math -march=native -mtune=native -fsingle-precision-constant", passL: "-s".}

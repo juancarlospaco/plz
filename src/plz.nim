@@ -422,7 +422,7 @@ when isMainModule:
       of "log": logfile = valor
       of "enusutf8": enUsUtf8()
       of "publicip": echo newHttpClient(timeout = 9999).getContent("https://api.ipify.org")
-      of "help", "ayuda", "fullhelp":
+      of "help", "ayuda", "fullhelp", "h":
         styledEcho(fgGreen, bgBlack, helpy)
         quit()
       of "putenv":
