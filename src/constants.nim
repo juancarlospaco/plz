@@ -26,7 +26,6 @@ const
   pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user " & pipCommons
   pipMaintenance = "pip3 install --upgrade --no-warn-script-location --user " & pipCommons & " pip virtualenv setuptools wheel twine"
   cmdChecksum = "sha256sum --tag " # I prefer SHA512,but PyPI uses SHA256 only?
-  cmdTar = "tar cafv "
   cmdVerify = "gpg --verify "
   cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag " ## PIP Wont optimize Production binaries, they are left with all Debugging on!.
   pipCacheDir =

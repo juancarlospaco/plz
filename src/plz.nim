@@ -274,7 +274,7 @@ proc backup(): tuple[output: TaintedString, exitCode: int] =
     files2backup.add pythonfile
     styledEcho(fgGreen, bgBlack, pythonfile)
   if likely(files2backup.len > 0 and findExe"tar".len > 0):
-    result = execCmdEx(cmdTar & folder & ".tar.gz " & files2backup.join" ")
+    result = compress(Action.create, Algo.gzip, folder & ".tar.gz", files2backup.join" ", verbose = true)
     if result.exitCode == 0 and readLineFromStdin("SHA1 CheckSum Backup? (y/N): ").normalize == "y":
       writeFile(folder & ".tar.gz.sha1", $secureHashFile(folder & ".tar.gz"))
 
@@ -335,7 +335,7 @@ proc uninstall(this: PyPI, args) {.inline.} =
     for pythonfile in files2delete: info $tryRemoveFile(pythonfile) & "\t" & pythonfile
 
 proc backupOldLogs() {.noconv.} =
-  if execCmdEx(cmdTar & "logs-" & replace($now(), ":", "_") & ".tar.gz " & logfile).exitCode == 0: discard tryRemoveFile(logfile)
+  if compress(Action.create, Algo.gzip, "logs-" & replace($now(), ":", "_") & ".tar.gz", logfile, verbose = true).exitCode == 0: discard tryRemoveFile(logfile)
 
 template isSsd(): bool =
   when defined(linux): # Returns `true` if main disk is SSD (Solid). Linux only
