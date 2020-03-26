@@ -143,11 +143,9 @@ proc installPackage(this: PyPI, packageName, releaseVersion, generateScript): tu
   let oldDir = getCurrentDir()
   if unlikely(packageFile.endsWith".whl"):
     setCurrentDir(sitePackages)
-    # doAssert execCmdEx(cmdBsdtar & packageFile).exitCode == 0, "Failed to extract Python Wheel"
-    echo extract(packageFile, sitePackages)
+    echo extract(packageFile, sitePackages).output
   else:
     setCurrentDir(getTempDir())
-    # doAssert execCmdEx(cmdBsdtar & packageFile).exitCode == 0, "Failed to extract Python Package"
     echo extract(packageFile, getTempDir()).output
     let path = packageFile[0..^5]
     if existsFile(path / "setup.py"):
