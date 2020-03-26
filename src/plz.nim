@@ -1,4 +1,7 @@
-import httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables, parseopt, terminal, times, posix, posix_utils, logging, osproc, rdstdin, sequtils, md5, parsecsv, streams
+import
+  httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables,
+  parseopt, terminal, times, posix, posix_utils, logging, osproc, rdstdin, md5,
+  sequtils, parsecsv, streams, std/sha1
 import requirementstxt, libarchibi
 include constants
 
@@ -145,7 +148,7 @@ proc installPackage(this: PyPI, packageName, releaseVersion, generateScript): tu
   else:
     setCurrentDir(getTempDir())
     # doAssert execCmdEx(cmdBsdtar & packageFile).exitCode == 0, "Failed to extract Python Package"
-    echo extract(packageFile, getTempDir())
+    echo extract(packageFile, getTempDir()).output
     let path = packageFile[0..^5]
     if existsFile(path / "setup.py"):
       setCurrentDir(path)
@@ -300,13 +303,11 @@ proc backup(): tuple[output: TaintedString, exitCode: int] =
   var files2backup: seq[string]
   for pythonfile in walkFiles(folder / "*.*"):
     files2backup.add pythonfile
-    styledEcho(fgGreen, bgBlack, "🗜\t" & pythonfile)
+    styledEcho(fgGreen, bgBlack, pythonfile)
   if likely(files2backup.len > 0 and findExe"tar".len > 0):
     result = execCmdEx(cmdTar & folder & ".tar.gz " & files2backup.join" ")
-    if result.exitCode == 0 and findExe"sha256sum".len > 0 and readLineFromStdin("SHA256 CheckSum Backup? (y/N): ").normalize == "y":
-      result = execCmdEx(cmdChecksum & folder & ".tar.gz > " & folder & ".tar.gz.sha256")
-    if result.exitCode == 0 and findExe"gpg".len > 0 and readLineFromStdin("GPG Sign Backup? (y/N): ").normalize == "y":
-      result = execCmdEx(cmdSign & folder & ".tar.gz")
+    if result.exitCode == 0 and readLineFromStdin("SHA1 CheckSum Backup? (y/N): ").normalize == "y":
+      writeFile(folder & ".tar.gz.sha1", $secureHashFile(folder & ".tar.gz"))
 
 proc ask2User(): auto =
   var username, password, name, version, license, summary, description, homepage: string
