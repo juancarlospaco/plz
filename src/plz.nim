@@ -462,7 +462,7 @@ when isMainModule:
       of "suicide": echo tryRemoveFile(currentSourcePath()[0..^5])
     of cmdArgument: args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
-  addHandler(newRollingFileLogger(filename= logfile, fmtStr = verboseFmtStr))
+  addHandler(newRollingFileLogger(filename = logfile, fmtStr = verboseFmtStr))
   let is1argOnly = args.len == 2 # command + arg == 2 ("install foo")
   if args.len > 0:
     let cliente = PyPI(timeout: taimaout, maxRedirects: redirects)
