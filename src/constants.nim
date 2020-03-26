@@ -15,18 +15,14 @@ const
   lpsXml = "<methodName>list_packages_with_serial</methodName>" ## XML RPC Command.
   xmlRpcParam = "<param><value><string>$1</string></value></param>"
   xmlRpcBody = "<?xml version='1.0'?><methodCall><methodName>$1</methodName><params>$2</params></methodCall>"
-  hdrJson = {"dnt": "1", "accept": "application/json",
-      "content-type": "application/json"}
+  hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
-  commitHash = staticExec"git rev-parse --short HEAD"
   NimblePkgVersion {.strdefine.} = "1.0.0"
-  version = NimblePkgVersion & "\n" & commitHash
   sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])" """ ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
   virtualenvDir = r"~/.virtualenvs"
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
   pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user " & pipCommons
-  pipMaintenance = "pip3 install --upgrade --no-warn-script-location --user " &
-      pipCommons & " pip virtualenv setuptools wheel twine"
+  pipMaintenance = "pip3 install --upgrade --no-warn-script-location --user " & pipCommons & " pip virtualenv setuptools wheel twine"
   cmdChecksum = "sha256sum --tag " # I prefer SHA512,but PyPI uses SHA256 only?
   cmdTar = "tar cafv "
   cmdVerify = "gpg --verify "
@@ -108,7 +104,7 @@ url              = https://github.com/example/example
 download_url     = https://github.com/example/example
 author           = Deborah Melltrozzo
 author_email     = example@example.com
-maintainer       = Deborah Melltrozzo
+maintainer       = User
 maintainer_email = example@example.com
 keywords         = python, exampletag, sometag
 license          = MIT

@@ -410,7 +410,7 @@ when isMainModule:
     case tipoDeClave
     of cmdShortOption, cmdLongOption:
       case clave.normalize
-      of "version": quit(version, 0)
+      of "version": quit(static(NimblePkgVersion & "\n" & staticExec"git rev-parse --short HEAD"), 0)
       of "license", "licencia": quit("PPL", 0)
       of "dump": quit(getSystemInfo().pretty, 0)
       of "nice20": echo nice(20.cint)
