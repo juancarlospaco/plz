@@ -155,23 +155,23 @@ proc installPackage(this: PyPI, packageName, releaseVersion, generateScript): tu
       result = execCmdEx(py3 & " " & path / "setup.py install --user")
   setCurrentDir(oldDir)
 
-proc install(this: PyPI, args) =
+proc install(this: PyPI, args) {.inline.} =
   ## Install a Python package, download & decompress files, runs python setup.py
   var failed, suces: byte
-  info("🐍\t" & $now() & ", PID is " & $getCurrentProcessId() & ", " & $args.len & " packages to download and install ➡️ " & $args)
+  info($now() & ", PID is " & $getCurrentProcessId() & ", " & $args.len & " packages to download and install " & $args)
   let generateScript = readLineFromStdin"Generate Install Script? (y/N): ".normalize == "y"
   let time0 = now()
   for argument in args:
     let semver = $this.packageLatestRelease(argument)
-    info "🌎\tPyPI ➡️ " & argument & " " & semver
+    info "\tPyPI " & argument & " " & semver
     let resultados = this.installPackage(argument, semver, generateScript)
-    info (if resultados.exitCode == 0: "✅\t" else: "❌\t") & resultados.output
+    info "\t" & resultados.output
     if resultados.exitCode == 0: inc suces else: inc failed
   if generateScript: info "\n" & script
-  info((if failed == 0: "✅\t" else: "❌\t") & $now() & " " & $failed & " Failed, " & $suces &
-    " Success on " & $(now() - time0) & " to download/install " & $args.len & " packages")
+  info($now() & " " & $failed & " Failed, " & $suces &
+    " Success on " & $(now() - time0) & " to download+install " & $args.len & " packages")
 
-proc download(this: PyPI, args) =
+proc download(this: PyPI, args) {.inline.} =
   ## Download a package to a local folder, dont decompress nor install.
   var dir: string
   while not existsDir(dir): dir = readLineFromStdin"Download to where? (Full path to existing folder): "
