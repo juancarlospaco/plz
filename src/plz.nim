@@ -338,8 +338,7 @@ proc forceInstallPip(destination): tuple[output: TaintedString, exitCode: int] =
   assert existsFile(destination), "File not found: 'get-pip.py' " & destination
   result = execCmdEx(py3 & destination & " -I") # Installs PIP via get-pip.py
 
-proc uninstall(this: PyPI, args) =
-  ## Uninstall a Python package, deletes the files, optional uninstall script.
+proc uninstall(this: PyPI, args) {.inline.} =
   # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD is a CSV
   styledEcho(fgGreen, bgBlack, "Uninstall " & $args.len & " Packages:\t" & $args)
   let recordFiles = block:
@@ -361,7 +360,7 @@ proc uninstall(this: PyPI, args) =
   assert files2delete.len > 0, "Files of a Python Package not found."
   if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
     info((if readLineFromStdin("\nGenerate Uninstall Script for Admin/Root? (y/N): ").normalize == "y": "\nsudo " else: "\n") & "rm --verbose --force " & files2delete.join" " & "\n")
-  for pyfile in files2delete: styledEcho(fgRed, bgBlack, "🗑\t" & pyfile)
+  for pyfile in files2delete: styledEcho(fgRed, bgBlack, pyfile)
   if readLineFromStdin("\nDelete " & $files2delete.len & " files? (y/N): ").normalize == "y":
     styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
     for pythonfile in files2delete: info $tryRemoveFile(pythonfile) & "\t" & pythonfile
@@ -445,7 +444,7 @@ when isMainModule:
         let files2delete = block:
           var x: seq[string]
           for pythonfile in walkPattern(virtualenvDir / "*.*"):
-            styledEcho(fgRed, bgBlack, "🗑\t" & pythonfile)
+            styledEcho(fgRed, bgBlack, pythonfile)
             if readLineFromStdin("Delete Python Virtualenv? (y/N): ").normalize == "y": x.add pythonfile
           x # No official documented way to get virtualenv location on windows
         if files2delete.len > 0:
