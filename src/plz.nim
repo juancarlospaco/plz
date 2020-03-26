@@ -1,7 +1,7 @@
 import
   httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables,
   parseopt, terminal, times, posix, posix_utils, logging, osproc, rdstdin, md5,
- std/sha1, requirementstxt, libarchibi
+  std/sha1, requirementstxt, libarchibi
 include constants
 
 type PyPI = HttpClient
