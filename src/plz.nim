@@ -477,7 +477,5 @@ when isMainModule:
         description = description, author = author, downloadurl = downloadurl,
         authoremail = authoremail, maintainer = maintainer, keywords = keywords,
         maintaineremail = maintaineremail, homepage = homepage, filename = args[1],
-        md5_digest = getMD5(readFile(args[1])),
-      )
-
+        md5_digest = getMD5(readFile(args[1])))
   else: quit("Wrong Parameters, please see Help with: --help", 1)
