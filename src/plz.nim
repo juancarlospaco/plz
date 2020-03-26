@@ -119,22 +119,22 @@ proc downloadPackage(this: PyPI, packageName, releaseVersion, destDir = getTempD
   let choosenUrl = this.releaseUrls(packageName, releaseVersion)[0]
   assert choosenUrl.startsWith"https://", "PyPI Download URL is not HTTPS SSL"
   let filename = destDir / choosenUrl.split("/")[^1]
-  info "⬇️\t" & choosenUrl
+  info "\t" & choosenUrl
   if generateScript: script &= "curl -LO " & choosenUrl & "\n"
   clientify(this)
   client.downloadFile(choosenUrl, filename)
   assert existsFile(filename), "file failed to download"
-  info "🗜\t" & $getFileSize(filename) & " Bytes total (compressed)"
-  if likely(findExe"sha256sum".len > 0): info "🔐\t" & execCmdEx(cmdChecksum & filename).output.strip
+  info "\t" & $getFileSize(filename) & " Bytes total (compressed)"
+  if likely(findExe"sha256sum".len > 0): info "\t" & execCmdEx(cmdChecksum & filename).output.strip
   try:
-    info "⬇️\t" & choosenUrl & ".asc"
+    info "\t" & choosenUrl & ".asc"
     client.downloadFile(choosenUrl & ".asc", filename & ".asc")
     if generateScript: script &= "curl -LO " & choosenUrl & ".asc" & "\n"
     if unlikely(findExe"gpg".len > 0 and existsFile(filename & ".asc")):
-      info "🔐\t" & execCmdEx(cmdVerify & filename & ".asc").output.strip
+      info "\t" & execCmdEx(cmdVerify & filename & ".asc").output.strip
       if generateScript: script &= cmdVerify & filename.replace(destDir, "") & ".asc\n"
   except:
-    warn "💩\tHTTP-404? ➡️ " & choosenUrl & ".asc (Package without PGP Signature)"
+    warn "\tHTTP-404? " & choosenUrl & ".asc (Package without PGP Signature)"
   if generateScript: script &= pipInstallCmd & filename.replace(destDir, "") & "\n"
   result = filename
 
