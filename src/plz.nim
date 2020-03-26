@@ -179,7 +179,7 @@ proc upload(this: PyPI, name, version, license, summary, description, author, do
   # github.com/python/cpython/blob/master/Lib/distutils/command/upload.py#L131-L135
   let mime = newMimetypes().getMimetype(filename.splitFile.ext.toLowerAscii)
   # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
-  let multipartData = block:
+  let multipartData = block: # TODO: Finish this and test against the test dev pypi server.
     var output = newMultipartData()
     output["protocol_version"] = "1"
     output[":action"] = "file_upload"
@@ -203,7 +203,6 @@ proc upload(this: PyPI, name, version, license, summary, description, author, do
     output["maintainer"] = if maintainer == "": author else: maintainer
     output["content"] = (filename, mime, filename.readFile)
     output
-  # TODO: Finish this and test against the test dev pypi server.
   this.headers = newHttpHeaders({"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"})
   result = this.postContent(pypiUploadUrl, multipart = multipartData)
 
