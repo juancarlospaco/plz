@@ -28,19 +28,13 @@ const
   cmdChecksum = "sha256sum --tag " # I prefer SHA512,but PyPI uses SHA256 only?
   cmdVerify = "gpg --verify "
   cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag " ## PIP Wont optimize Production binaries, they are left with all Debugging on!.
+  osOpen = when defined(macos): "open " elif defined(windows): "start " else: "xdg-open "
+  pyExtPattern = when defined(windows): ".cpython-*.dll" elif defined(macos): ".cpython-*.dynlib" else: ".cpython-*.so"
   pipCacheDir =
     when defined(linux): r"~/.cache/pip"                    # PIP "standards"
     elif defined(macos): r"~/Library/Caches/pip"
     elif defined(windows): r"%LocalAppData%\pip\Cache"
     else: getEnv"PIP_DOWNLOAD_CACHE"
-  osOpen =
-    when defined(macos): "open "
-    elif defined(windows): "start "
-    else: "xdg-open "
-  pyExtPattern =
-    when defined(windows): ".cpython-*.dll"
-    elif defined(macos): ".cpython-*.dynlib"
-    else: ".cpython-*.so"
 
 # TODO:
 # upload          Mimics "twine upload" (Interactive,asks user,wont need Twine).
