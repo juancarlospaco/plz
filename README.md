@@ -91,36 +91,29 @@ $ nim c plz/plz.nim
 
 # Dependencies
 
-- It does NOT depend on `pip` (Not a `pip` wrapper), it can work with `pip` completely broken, works on Alpine.
-
-
-# Platforms
-
-- ✅ Linux (Use Docker for Windows or Docker for Mac on ther OS).
+- It does NOT depend on `pip` (Not a `pip` wrapper), it can work with `pip` completely broken.
 
 
 # Features
 
 - 1 Megabyte, 1 file, 0 Dependencies.
-- Install, uninstall, reinstall, upload to PyPI.
+- Install, uninstall, reinstall, upload to PyPI, etc.
+- Real Inferred Strong Static Typing.
+- No Garbage Collector memory management.
+- Immutable programming, No Global Mutable State.
 - The only PIP alternative in the world that just works even with PIP/Python/Virtualenv completely broken.
-- Works fully independently self-contained standalone application.
 - Compiled machine code performance, as fast as optimized hand crafted C.
 - High performance with low resources (RPi, VPS, cloud, old pc, etc).
-- Immutable programming, No Global Mutable State.
 - Single file binary, it can even delete itself after use.
 - No Installs, no setups, just copy & paste and run (even on Alpine).
-- New Python project skeleton creator (supports GitHub, Pre-Commit, etc).
-- Self-Linting, Self-Documented.
-- Real Inferred Strong Static Typing.
 - Colored output on the Terminal.
 - Project skeleton creator to create your own new Python projects.
 - Wont save any passwords, databases, keys, secrets, to disk nor Internet.
 - No temporary folders nor files.
-- Optimize Python native module binary (PIP Wont optimize binaries).
 - Not meant as a drop-in replacement for anything pre-existing.
 - Tiny single file source code.
-- Self-Documentation Generator.
+- Self-Documentation Generator outputs HTML, PDF, JSON.
+- Works fully independently self-contained standalone application.
 
 
 # FAQ
@@ -145,10 +138,6 @@ Yes.
 
 No.
 
-- This requires Nim ?.
-
-No.
-
 
 # Python Bugs
 
@@ -156,7 +145,6 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 
 - `release_downloads`, `top_packages`, `updated_releases`, `changed_packages`.
 - Sometimes PYPI returns Python Tracebacks as strings on the body of the response.
-- Its a big project, some features are not yet implemented as App, but source contains the functionanity whatsoever.
 - We tried to implement fully parallel install of packages, but because of the way Python packages work, they need to be installed sequentially whatsoever.
 
 
