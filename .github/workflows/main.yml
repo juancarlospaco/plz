@@ -51,9 +51,4 @@ jobs:
         src/plz --version
         src/plz --license
         src/plz --dump
-        src/plz --cleanpyc
-        src/plz --cleanpypackages
-        src/plz --cleantemp
-        src/plz --cleanpipcache
-        src/plz --cleanvenvs
         src/plz --suicide
