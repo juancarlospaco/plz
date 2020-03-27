@@ -24,7 +24,7 @@ $ plz reinstall pre-commit # Reinstall 1 or more packages
 $ plz download pre-commit  # Download 1 or more packages
 $ plz hash file.py         # Show SHA CheckSum of file/package
 $ plz open file.py         # Open a module in your default code editor
-$ plz backup               # Compressed signed backup of file/package (GPG+SHA512)
+$ plz backup /folder/      # Compressed signed backup of file/package (GPG+SHA512)
 $ plz init                 # New Python project template (Interactive)
 $ plz stats                # PyPI official service status report
 $ plz newpackages          # List all the new Packages uploaded to PyPI recently
@@ -33,6 +33,9 @@ $ plz lastjobs             # List all new Job Posts updated on Python recently
 $ plz userpackages         # List all existing Packages by User (Interactive)
 $ plz latestversion        # Show the Latest Version of a PYPI Package (SemVer)
 $ plz forceInstallPip      # Force install PIP on arbitrary folder (get-pip.py)
+$ plz doc file.md          # Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
+$ plz doc2latex file.md    # Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
+$ plz doc2json file.md     # Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
 $
 $ plz --enUsUtf8           # Force Encoding to UTF-8 and Language to English
 $ plz --cleanpyc           # Clean all __pycache__ and *.pyc
@@ -43,8 +46,10 @@ $ plz --cleanvenvs         # Clean Virtualenvs (interactive, asks Y/N 1-by-1).
 $ plz --publicip           # Show your Public IP Address (Internet connectivity check).
 $ plz --log=file.log       # Full path to a verbose local log file.
 $ plz --backuplogs         # Compress old PLZ Logs at exit, to save disk resources.
+$ plz --putenv:key=val     # Set an environment variable "KEY=Value", can be repeated.
+$ plz --nice20             # Runs with "nice = 20" (CPU Priority, smooth priority).
 $ plz --suicide            # Deletes itself permanently and exit (single file binary).
-$ plz --debug              # Show Debug info (for Developers and Bug Reporting).
+$ plz --dump               # Show system info JSON and quit (for Developers and Bug Reporting).
 $ plz --version            # Show Version
 $ plz --help               # Show Help
 ```
