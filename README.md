@@ -82,7 +82,8 @@ $ plz --help               # Show Help
 ![](https://raw.githubusercontent.com/juancarlospaco/plz/master/pepehack.gif "Work in progress!")
 
 The only thing missing to fully replace PIP is to parse versions of each package,
-currently it only installs the latest version of each package, the rest is working.
+currently it only installs the latest version of each package,
+the feature works but is not finished, rest is working.
 
 
 # Install
