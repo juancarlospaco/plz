@@ -5,33 +5,33 @@ const
   NimblePkgVersion {.strdefine.} = "1.0.0"
   timeouts {.intdefine.}: Positive = 9999
   maxRedirects {.intdefine.}: Positive = 9
-  pypiApiUrl = "https://pypi.org/"                          ## PyPI Base API URL.
-  pypiXmlUrl = pypiApiUrl & "pypi"                          ## PyPI XML RPC API URL.
-  pypiPackagesXml = "https://pypi.org/rss/packages.xml"     ## PyPI XML API URL.
-  pypiUpdatesXml = "https://pypi.org/rss/updates.xml"       ## PyPI XML API URL.
-  pypiUploadUrl = "https://test.pypi.org/legacy/"           ## PyPI Upload POST URL
-  pypiJobUrl = "https://www.python.org/jobs/feed/rss/"      ## Python Jobs URL
-  pypiStatus = "https://status.python.org/history.rss"      ## PyPI Status XML API URL.
-  pipInstaller = "https://bootstrap.pypa.io/get-pip.py"     ## get-pip URL
-  lppXml = "<methodName>list_packages</methodName>"         ## XML RPC Command.
-  clsXml = "<methodName>changelog_last_serial</methodName>" ## XML RPC Command.
-  lpsXml = "<methodName>list_packages_with_serial</methodName>" ## XML RPC Command.
+  pypiApiUrl = "https://pypi.org/"                                                                                                                                                            ## PyPI Base API URL.
+  pypiXmlUrl = pypiApiUrl & "pypi"                                                                                                                                                            ## PyPI XML RPC API URL.
+  pypiPackagesXml = "https://pypi.org/rss/packages.xml"                                                                                                                                       ## PyPI XML API URL.
+  pypiUpdatesXml = "https://pypi.org/rss/updates.xml"                                                                                                                                         ## PyPI XML API URL.
+  pypiUploadUrl = "https://test.pypi.org/legacy/"                                                                                                                                             ## PyPI Upload POST URL
+  pypiJobUrl = "https://www.python.org/jobs/feed/rss/"                                                                                                                                        ## Python Jobs URL
+  pypiStatus = "https://status.python.org/history.rss"                                                                                                                                        ## PyPI Status XML API URL.
+  pipInstaller = "https://bootstrap.pypa.io/get-pip.py"                                                                                                                                       ## get-pip URL
+  lppXml = "<methodName>list_packages</methodName>"                                                                                                                                           ## XML RPC Command.
+  clsXml = "<methodName>changelog_last_serial</methodName>"                                                                                                                                   ## XML RPC Command.
+  lpsXml = "<methodName>list_packages_with_serial</methodName>"                                                                                                                               ## XML RPC Command.
   xmlRpcParam = "<param><value><string>$1</string></value></param>"
   xmlRpcBody = "<?xml version='1.0'?><methodCall><methodName>$1</methodName><params>$2</params></methodCall>"
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
-  sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])" """ ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
+  sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])" """                                                                                                 ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
   virtualenvDir = r"~/.virtualenvs"
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
   pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user " & pipCommons
   pipMaintenance = "pip3 install --upgrade --no-warn-script-location --user " & pipCommons & " pip virtualenv setuptools wheel twine"
-  cmdChecksum = "sha256sum --tag " # I prefer SHA512,but PyPI uses SHA256 only?
+  cmdChecksum = "sha256sum --tag "                                                                                                                                                            # I prefer SHA512,but PyPI uses SHA256 only?
   cmdVerify = "gpg --verify "
   cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag " ## PIP Wont optimize Production binaries, they are left with all Debugging on!.
   osOpen = when defined(macos): "open " elif defined(windows): "start " else: "xdg-open "
   pyExtPattern = when defined(windows): ".cpython-*.dll" elif defined(macos): ".cpython-*.dynlib" else: ".cpython-*.so"
   pipCacheDir =
-    when defined(linux): r"~/.cache/pip"                    # PIP "standards"
+    when defined(linux): r"~/.cache/pip"                                                                                                                                                      # PIP "standards"
     elif defined(macos): r"~/Library/Caches/pip"
     elif defined(windows): r"%LocalAppData%\pip\Cache"
     else: getEnv"PIP_DOWNLOAD_CACHE"
