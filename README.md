@@ -92,27 +92,6 @@ the feature works but is not connected with the CLI arguments, the rest is worki
 - [**Download it!.**](https://github.com/juancarlospaco/plz/releases)
 
 
-#### Compile
-
-<details>
-
-<summary> Manually compiling is usually not needed, but if you want to do it </summary>
-
-```console
-$ nimble install https://github.com/juancarlospaco/plz.git
-```
-
-Or even more manual:
-
-```console
-$ git clone https://github.com/juancarlospaco/plz.git
-$ cd plz
-$ nim c plz/plz.nim
-```
-
-</details>
-
-
 # Uninstall
 
 - Delete it.
