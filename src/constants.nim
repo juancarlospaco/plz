@@ -36,7 +36,7 @@ const
     elif defined(windows): r"%LocalAppData%\pip\Cache"
     else: getEnv"PIP_DOWNLOAD_CACHE"
 
-# TODO: search    Search PyPI for packages (PyPI API is Buggy, is still WIP).
+# TODO: search    Search PyPI for packages (PyPI API is Buggy???).
 const helpy = """ 👑 PIP Fast Single-File Compiled Alternative 👑
 https://nim-lang.org
 Commands:

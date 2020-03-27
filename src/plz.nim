@@ -157,11 +157,6 @@ proc releaseData(this: PyPI, packageName, releaseVersion): XmlNode {.inline.} =
   let bodi = xmlRpcBody.format("release_data", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
   result = parseXml(this.postContent(pypiXmlUrl, body = bodi))
 
-proc search(this: PyPI, query, operator = "and"): XmlNode {.inline.} =
-  ## Search package database using indicated search spec. Returns 100 results max.
-  this.headers = headerXml
-  result = parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("search", xmlRpcParam.format(replace($query, "@", "")) & xmlRpcParam.format(operator))))
-
 proc browse(this: PyPI, classifiers): XmlNode {.inline.} =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
   ## Classifiers must be a list of standard Trove classifier strings. Returns 100 results max.
@@ -478,10 +473,6 @@ when isMainModule:
     of "strip":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       quit(execCmdEx(cmdStrip & args[1]).output, 0)
-    of "search":
-      quit("Not implemented yet (PyPI API is Buggy)")
-      # info args[1]
-      # info client.search({"name": @[args[1]]}.toTable)
     of "hash":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       if findExe"sha256sum".len > 0:
