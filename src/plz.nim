@@ -452,8 +452,8 @@ when isMainModule:
     of "install": client.install(args[1..^1])
     of "download": client.download(args[1..^1])
     of "doc":
-        if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
-        quit(doc2html(args[1]), 0)
+      if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
+      quit(doc2html(args[1]), 0)
     of "doc2latex":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       quit(doc2latex(args[1]), 0)
