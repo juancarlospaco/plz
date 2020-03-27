@@ -58,6 +58,7 @@ $ plz --help               # Show Help
 
 # Features
 
+- Designed for Docker or Alpine usage.
 - 1 Megabyte, 1 file, 0 Dependencies, ~500 Lines of code.
 - Install, uninstall, reinstall, download, upload to PyPI, etc.
 - Real Inferred Strong Static Typing with [Z3 Theorem Prover](https://en.wikipedia.org/wiki/Z3_Theorem_Prover).
