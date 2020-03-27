@@ -26,3 +26,31 @@ jobs:
       uses: jiro4989/setup-nim-action@v1.0.2
       with:
         nim-version: devel  # optional, default is stable
+
+    - name: Cache nimble
+      id: cache-nimble
+      uses: actions/cache@v1
+      with:
+        path: ~/.nimble
+        key: ${{ runner.os }}-nimble-$CHOOSENIM_CHOOSE_VERSION
+
+    - name: Nimble Refresh
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nimble -y refresh
+
+    - name: Nimble Install dependencies
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nimble -y install requirementstxt libarchibi
+
+    - name: Compile RELEASE Mode
+      run: |
+        export PATH=$HOME/.nimble/bin:$PATH
+        nim c src/plz.nim
+
+    - name: Strip Binary
+      run: strip --strip-all src/plz
+
+    - name: Dump
+      run: src/plz --dump
