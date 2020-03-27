@@ -73,7 +73,7 @@ $ plz --help               # Show Help
 - Wont save any passwords, databases, keys, secrets, to disk nor Internet.
 - No temporary folders nor files.
 - Not meant as a drop-in replacement for anything pre-existing.
-- Tiny single file source code.
+- Tiny single file source code (not counting string static constants).
 - Self-Documentation Generator outputs HTML, PDF, JSON.
 - Works fully independently self-contained standalone application.
 
