@@ -36,10 +36,7 @@ const
     elif defined(windows): r"%LocalAppData%\pip\Cache"
     else: getEnv"PIP_DOWNLOAD_CACHE"
 
-# TODO:
-# upload          Mimics "twine upload" (Interactive,asks user,wont need Twine).
-# search          Search PyPI for packages (PyPI API is Buggy, is still WIP).
-
+# TODO: search    Search PyPI for packages (PyPI API is Buggy, is still WIP).
 const helpy = """ 👑 PIP Fast Single-File Compiled Alternative 👑
 https://nim-lang.org
 Commands:
@@ -62,6 +59,7 @@ Commands:
   doc             Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
   doc2latex       Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
   doc2json        Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
+  upload          Similar to "twine upload" (Interactive,asks user,wont need Twine).
 
 Options:
   --help           Show Help and quit.

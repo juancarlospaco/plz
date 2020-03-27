@@ -173,29 +173,26 @@ proc browse(this: PyPI, classifiers): XmlNode {.inline.} =
 proc upload(this: PyPI, name, version, license, summary, description, author, downloadurl, authoremail, maintainer, maintaineremail, homepage, filename,
   md5_digest, username, password: string, keywords: seq[string], requirespython = ">=3", filetype = "sdist", pyversion = "source",
   description_content_type = "text/markdown; charset=UTF-8; variant=GFM"): string =
-  ## Upload 1 new version of 1 registered package to PyPI from a local filename.
-  ## PyPI Upload is HTTP POST with MultipartData with HTTP Basic Auth Base64.
-  ## For some unknown reason intentionally undocumented (security by obscurity?)
   # https://warehouse.readthedocs.io/api-reference/legacy/#upload-api
   # github.com/python/cpython/blob/master/Lib/distutils/command/upload.py#L131-L135
   let mime = newMimetypes().getMimetype(filename.splitFile.ext.toLowerAscii)
-  # doAssert fext in ["whl", "egg", "zip"], "file extension must be 1 of .whl or .egg or .zip"
-  let multipartData = block: # TODO: Finish this and test against the test dev pypi server.
+  assert filename.splitFile.ext.toLowerAscii in ["whl", "egg", "zip"], "File extension must be 1 of whl or egg or zip"
+  let multipartData = block:
     var output = newMultipartData()
     output["protocol_version"] = "1"
     output[":action"] = "file_upload"
     output["metadata_version"] = "2.1"
     output["author"] = author
-    output["name"] = name.normalize
+    output["name"] = name
     output["md5_digest"] = md5_digest # md5 hash of file in urlsafe base64
-    output["summary"] = summary.normalize
+    output["summary"] = summary
     output["version"] = version.toLowerAscii
     output["license"] = license.toLowerAscii
     output["pyversion"] = pyversion.normalize
     output["requires_python"] = requirespython
     output["homepage"] = homepage.toLowerAscii
     output["filetype"] = filetype.toLowerAscii
-    output["description"] = description.normalize
+    output["description"] = description
     output["keywords"] = keywords.join(" ").normalize
     output["download_url"] = downloadurl.toLowerAscii
     output["author_email"] = authoremail.toLowerAscii
@@ -205,6 +202,7 @@ proc upload(this: PyPI, name, version, license, summary, description, author, do
     output["content"] = (filename, mime, filename.readFile)
     output
   this.headers = newHttpHeaders({"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"})
+  echo "Uploading..."
   result = this.postContent(pypiUploadUrl, multipart = multipartData)
 
 
@@ -496,6 +494,8 @@ when isMainModule:
       let (username, password, name, author, version, license, summary, homepage,
         description, downloadurl, maintainer, authoremail, maintaineremail, keywords
       ) = ask2User()
+      echo (username, name, author, version, license, summary, homepage,
+        description, downloadurl, maintainer, authoremail, maintaineremail, keywords)
       info client.upload(
         username = username, password = password, name = name,
         version = version, license = license, summary = summary,

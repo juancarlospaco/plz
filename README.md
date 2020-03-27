@@ -36,6 +36,7 @@ $ plz forceInstallPip      # Force install PIP on arbitrary folder (get-pip.py)
 $ plz doc file.md          # Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
 $ plz doc2latex file.md    # Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
 $ plz doc2json file.md     # Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
+$ upload PyPackage-1.0.zip # Similar to "twine upload" (Interactive,asks user,wont need Twine).
 $
 $ plz --enUsUtf8           # Force Encoding to UTF-8 and Language to English
 $ plz --cleanpyc           # Clean all __pycache__ and *.pyc
