@@ -263,7 +263,6 @@ proc function(a, b: int): auto {.exportpy.} =
 
 ##############################################################################
 
-
 addHandler(newConsoleLogger(fmtStr = ""))
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
 
