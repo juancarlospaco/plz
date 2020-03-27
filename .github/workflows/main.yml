@@ -51,4 +51,3 @@ jobs:
         src/plz --version
         src/plz --license
         src/plz --dump
-        src/plz --suicide
