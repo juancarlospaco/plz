@@ -55,7 +55,32 @@ $ plz --version            # Show Version
 $ plz --help               # Show Help
 ```
 
-- For more info see the Help.
+
+# Features
+
+- 1 Megabyte, 1 file, 0 Dependencies.
+- Install, uninstall, reinstall, download, upload to PyPI, etc.
+- Real Inferred Strong Static Typing.
+- No Garbage Collector memory management.
+- Immutable programming, No Global Mutable State.
+- The only PIP alternative in the world that just works even with PIP/Python/Virtualenv completely broken.
+- Compiled machine code performance, as fast as optimized hand crafted C.
+- High performance with low resources (RPi, VPS, cloud, old pc, etc).
+- Single file binary, it can even delete itself after use.
+- No Installs, no setups, just copy & paste and run (even on Alpine).
+- Colored output on the Terminal.
+- Project skeleton creator to create your own new Python projects.
+- Wont save any passwords, databases, keys, secrets, to disk nor Internet.
+- No temporary folders nor files.
+- Not meant as a drop-in replacement for anything pre-existing.
+- Tiny single file source code.
+- Self-Documentation Generator outputs HTML, PDF, JSON.
+- Works fully independently self-contained standalone application.
+
+**TODO, WIP:**
+![](https://raw.githubusercontent.com/juancarlospaco/plz/master/pepehack.gif "Work in progress!")
+The only thing missing to fully replace PIP is to parse versions of each package,
+currently it only installs the latest version of each package, the rest is working.
 
 
 # Install
@@ -94,26 +119,10 @@ $ nim c plz/plz.nim
 - It does NOT depend on `pip` (Not a `pip` wrapper), it can work with `pip` completely broken.
 
 
-# Features
+# Requisites
 
-- 1 Megabyte, 1 file, 0 Dependencies.
-- Install, uninstall, reinstall, upload to PyPI, etc.
-- Real Inferred Strong Static Typing.
-- No Garbage Collector memory management.
-- Immutable programming, No Global Mutable State.
-- The only PIP alternative in the world that just works even with PIP/Python/Virtualenv completely broken.
-- Compiled machine code performance, as fast as optimized hand crafted C.
-- High performance with low resources (RPi, VPS, cloud, old pc, etc).
-- Single file binary, it can even delete itself after use.
-- No Installs, no setups, just copy & paste and run (even on Alpine).
-- Colored output on the Terminal.
-- Project skeleton creator to create your own new Python projects.
-- Wont save any passwords, databases, keys, secrets, to disk nor Internet.
-- No temporary folders nor files.
-- Not meant as a drop-in replacement for anything pre-existing.
-- Tiny single file source code.
-- Self-Documentation Generator outputs HTML, PDF, JSON.
-- Works fully independently self-contained standalone application.
+- Python 3.
+- 64 Bit.
 
 
 # FAQ
@@ -175,8 +184,6 @@ Quote from PIPEnv Project:
 > and we have about 15 dependencies which I personally maintain).
 
 </details>
-
-![](https://raw.githubusercontent.com/juancarlospaco/plz/master/pepehack.gif "Work in progress!")
 
 
 [  ⬆️  ⬆️  ⬆️  ⬆️  ](#plz "Go to top")
