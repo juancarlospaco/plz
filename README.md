@@ -83,7 +83,7 @@ $ plz --help               # Show Help
 
 The only thing missing to fully replace PIP is to parse versions of each package,
 currently it only installs the latest version of each package,
-the feature works but is not finished, the rest is working.
+the feature works but is not connected with the CLI arguments, the rest is working.
 
 
 # Install
