@@ -58,10 +58,10 @@ $ plz --help               # Show Help
 
 # Features
 
-- 1 Megabyte, 1 file, 0 Dependencies.
+- 1 Megabyte, 1 file, 0 Dependencies, ~500 Lines of code.
 - Install, uninstall, reinstall, download, upload to PyPI, etc.
 - Real Inferred Strong Static Typing.
-- No Garbage Collector memory management.
+- No Garbage Collector (Rust-like memory management).
 - Immutable programming, No Global Mutable State.
 - The only PIP alternative in the world that just works even with PIP/Python/Virtualenv completely broken.
 - Compiled machine code performance, as fast as optimized hand crafted C.
@@ -83,13 +83,13 @@ $ plz --help               # Show Help
 
 The only thing missing to fully replace PIP is to parse versions of each package,
 currently it only installs the latest version of each package,
-the feature works but is not finished, rest is working.
+the feature works but is not finished, the rest is working.
 
 
 # Install
 
 - [**Download it!.**](https://github.com/juancarlospaco/plz/releases)
-- ~`1` MegaByte single-file standalone native binary executable, no install required, just copy it and run it.
+
 
 #### Compile
 
