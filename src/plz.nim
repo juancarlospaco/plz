@@ -273,8 +273,8 @@ proc backup(): tuple[output: TaintedString, exitCode: int] =
   for pythonfile in walkFiles(folder / "*.*"):
     files2backup.add pythonfile
     styledEcho(fgGreen, bgBlack, pythonfile)
-  if likely(files2backup.len > 0 and findExe"tar".len > 0):
-    result = compress(Action.create, Algo.gzip, folder & ".tar.gz", files2backup.join" ", verbose = true)
+  if likely(files2backup.len > 0):
+    result = compress(Action.create, Algo.gzip, folder, files2backup.join" ", verbose = true)
     if result.exitCode == 0 and readLineFromStdin("SHA1 CheckSum Backup? (y/N): ").normalize == "y":
       writeFile(folder & ".tar.gz.sha1", $secureHashFile(folder & ".tar.gz"))
 
@@ -386,7 +386,7 @@ when isMainModule:
       of "nice20": echo nice(20.cint)
       of "log": logfile = valor
       of "enusutf8": enUsUtf8()
-      of "publicip": echo newHttpClient(timeout = 9999).getContent("https://api.ipify.org")
+      of "publicip": quit(newHttpClient(timeout = 9999).getContent("https://api.ipify.org"), 0)
       of "help", "ayuda", "fullhelp", "h":
         styledEcho(fgGreen, bgBlack, helpy)
         quit()

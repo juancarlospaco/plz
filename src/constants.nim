@@ -45,8 +45,8 @@ const
 # extract         Extract a valid compressed file of any format (LibArchive).
 # cleanvirtualenv Delete local Virtualenv (Interactive,asks Y/N to user before).
 
-const helpy = """ 👑 PIP Fast Single-File Hardened Compiled Alternative 👑
-
+const helpy = """ 👑 PIP Fast Single-File Compiled Alternative 👑
+https://nim-lang.org
 Commands:
   install         Install packages (Download, Decompress, Install packages).
   uninstall       Uninstall packages (Interactive, asks Y/N to user before).
@@ -82,8 +82,6 @@ Options:
   --nice20         Runs with "nice = 20" (CPU Priority, smooth priority).
   --publicip       Show your Public IP Address (Internet connectivity check).
   --suicide        Deletes itself permanently and exit (single file binary).
-
-http://nim-lang.org http://github.com/juancarlospaco http://github.com/yglukhov/nimpy
 """
 
 
