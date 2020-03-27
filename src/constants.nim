@@ -39,11 +39,6 @@ const
 # TODO:
 # upload          Mimics "twine upload" (Interactive,asks user,wont need Twine).
 # search          Search PyPI for packages (PyPI API is Buggy, is still WIP).
-# doc             Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
-# doc2latex       Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
-# doc2json        Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
-# extract         Extract a valid compressed file of any format (LibArchive).
-# cleanvirtualenv Delete local Virtualenv (Interactive,asks Y/N to user before).
 
 const helpy = """ 👑 PIP Fast Single-File Compiled Alternative 👑
 https://nim-lang.org
@@ -64,6 +59,9 @@ Commands:
   latestversion   Show the Latest Version release of a PYPI Package (SemVer).
   open            Open a given module in your default code editor (xdg-open).
   forceInstallPip Force install PIP on a given location directory (get-pip.py).
+  doc             Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
+  doc2latex       Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
+  doc2json        Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
 
 Options:
   --help           Show Help and quit.

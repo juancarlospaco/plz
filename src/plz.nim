@@ -1,7 +1,8 @@
 import
   httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables,
   parseopt, terminal, times, posix, posix_utils, logging, osproc, rdstdin, md5,
-  std/sha1, requirementstxt, libarchibi
+  packages/docutils/rst, packages/docutils/rstgen, packages/docutils/rstast,
+  strtabs, std/sha1, requirementstxt, libarchibi
 include constants
 
 type PyPI = HttpClient
@@ -370,6 +371,22 @@ proc getSystemInfo(): JsonNode =
     "ssd": isSsd()
   }
 
+proc doc2html(filename: string): string {.inline.} =
+  result = rstToHtml(readFile(filename), {}, newStringTable(modeStyleInsensitive))
+  writeFile(filename & ".html", result)
+
+proc doc2latex(filename: string): string {.inline.} =
+  var option: bool
+  var rst2latex: RstGenerator
+  rst2latex.initRstGenerator(outLatex, defaultConfig(), "", {})
+  rst2latex.renderRstToOut(rstParse(readFile(filename), "", 1, 1, option, {}), result)
+  writeFile(filename & ".tex", result)
+
+proc doc2json(filename: string): string {.inline.} =
+  var option: bool
+  result = renderRstToJson(rstParse(readFile(filename), "", 1, 1, option, {}))
+  writeFile(filename & ".json", result)
+
 
 # ^ End of App related procedures #################### v CLI related procedures
 
@@ -441,6 +458,15 @@ when isMainModule:
     of "uninstall": client.uninstall(args[1..^1])
     of "install": client.install(args[1..^1])
     of "download": client.download(args[1..^1])
+    of "doc":
+        if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
+        quit(doc2html(args[1]), 0)
+    of "doc2latex":
+      if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
+      quit(doc2latex(args[1]), 0)
+    of "doc2json":
+      if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
+      quit(doc2json(args[1]), 0)
     of "reinstall":
       let packages = args[1..^1]
       client.uninstall(packages)
