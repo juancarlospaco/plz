@@ -32,7 +32,7 @@ jobs:
         export PATH=$HOME/.nimble/bin:$PATH
         nimble -y refresh
 
-    - name: Nimble Install dependencies
+    - name: Nimble Install DEV dependencies
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
         nimble -y install requirementstxt libarchibi
@@ -43,7 +43,9 @@ jobs:
         nim c src/plz.nim
 
     - name: Strip Binary
-      run: strip --strip-all src/plz
+      run:
+        strip --strip-all src/plz
+        du -h src/plz
 
     - name: Run
       run: |
