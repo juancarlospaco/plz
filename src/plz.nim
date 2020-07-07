@@ -1,6 +1,6 @@
 import
   httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables,
-  parseopt, terminal, times, posix, posix_utils, logging, osproc, rdstdin, md5,
+  parseopt, terminal, times, posix, logging, osproc, rdstdin, md5,
   strtabs, std/sha1, requirementstxt, libarchibi
 include plz/constants, plz/docgen, plz/pypiapi, plz/pypinteract, plz/projectgen, plz/sysinfo, plz/utils
 
@@ -51,10 +51,9 @@ when isMainModule:
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile") # Dir Found in the wild
         info $tryRemoveFile("/tmp/pip-build-root") & "\t/tmp/pip-build-root"
         info $tryRemoveFile("/tmp/pip_build_root") & "\t/tmp/pip_build_root"
-        info $tryRemoveFile("/tmp/pip-build-" & user) & "\t/tmp/pip-build-" & user
-        info $tryRemoveFile("/tmp/pip_build_" & user) & "\t/tmp/pip_build_" & user
+        info $tryRemoveFile("/tmp/pip-build-" & getEnv"USER") & "\t/tmp/pip-build-" & getEnv"USER"
+        info $tryRemoveFile("/tmp/pip_build_" & getEnv"USER") & "\t/tmp/pip_build_" & getEnv"USER"
         info $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
-      of "backuplogs": addQuitProc(backupOldLogs)
       of "suicide": echo tryRemoveFile(currentSourcePath()[0..^5])
     of cmdArgument: args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
