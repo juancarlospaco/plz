@@ -1,7 +1,4 @@
-import
-  httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables,
-  parseopt, terminal, times, posix, logging, osproc, rdstdin, md5,
-  strtabs, std/sha1, requirementstxt, libarchibi
+import strutils, os, parseopt, terminal, logging, osproc, rdstdin, requirementstxt, libarchibi
 include plz/constants, plz/docgen, plz/pypiapi, plz/pypinteract, plz/projectgen, plz/sysinfo, plz/utils
 
 addHandler(newConsoleLogger(fmtStr = ""))
