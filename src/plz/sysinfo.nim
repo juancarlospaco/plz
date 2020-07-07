@@ -19,10 +19,10 @@ proc getSystemInfo(): JsonNode =
     "countProcessors":         countProcessors(),
     "FileSystemCaseSensitive": FileSystemCaseSensitive,
     "currentCompilerExe":      getCurrentCompilerExe(),
-    "gcc":                     if findExe"gcc".len > 0: execCmdEx("gcc --version").output.splitLines()[0].strip else: "",
-    "clang":                   if findExe"clang".len > 0: execCmdEx("clang --version").output.splitLines()[0].strip else: "",
-    "git":                     if findExe"git".len > 0: execCmdEx("git --version").output.replace("git version", "").strip else: "",
-    "node":                    if findExe"node".len > 0: execCmdEx("node --version").output.strip else: "",
+    "gcc":                     if findExe"gcc".len > 0:    execCmdEx("gcc --version").output.splitLines()[0].strip else: "",
+    "clang":                   if findExe"clang".len > 0:  execCmdEx("clang --version").output.splitLines()[0].strip else: "",
+    "git":                     if findExe"git".len > 0:    execCmdEx("git --version").output.replace("git version", "").strip else: "",
+    "node":                    if findExe"node".len > 0:   execCmdEx("node --version").output.strip else: "",
     "python":                  if findExe"python".len > 0: execCmdEx("python --version").output.replace("Python", "").strip else: "",
     "ssd":                     isSsd()
   }
