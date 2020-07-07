@@ -4,6 +4,11 @@ import
   strtabs, std/sha1, requirementstxt, libarchibi
 include plz/constants, plz/docgen, plz/pypiapi, plz/pypinteract, plz/projectgen, plz/sysinfo, plz/utils
 
+addHandler(newConsoleLogger(fmtStr = ""))
+setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
+
+var logfile = defaultFilename()
+
 
 when isMainModule:
   var args: seq[string]
