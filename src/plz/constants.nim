@@ -287,13 +287,10 @@ proc function(a, b: int): auto {.exportpy.} =
 addHandler(newConsoleLogger(fmtStr = ""))
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
 
-var script: string
 var logfile = defaultFilename()
 
 let
   py3 = findExe"python3"
-  headerJson = newHttpHeaders(hdrJson)
-  headerXml = newHttpHeaders(hdrXml)
   user = getEnv"USER"
 
 using
