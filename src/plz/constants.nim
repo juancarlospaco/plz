@@ -12,7 +12,6 @@ const
   pypiUploadUrl = "https://test.pypi.org/legacy/"           ## PyPI Upload POST URL
   pypiJobUrl = "https://www.python.org/jobs/feed/rss/"      ## Python Jobs URL
   pypiStatus = "https://status.python.org/history.rss"      ## PyPI Status XML API URL.
-  pipInstaller = "https://bootstrap.pypa.io/get-pip.py"     ## get-pip URL
   lppXml = "<methodName>list_packages</methodName>"         ## XML RPC Command.
   clsXml = "<methodName>changelog_last_serial</methodName>" ## XML RPC Command.
   lpsXml = "<methodName>list_packages_with_serial</methodName>" ## XML RPC Command.
