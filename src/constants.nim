@@ -2,7 +2,7 @@
 # it looks because is done compile time only,worse case scenario it wont compile
 
 const
-  NimblePkgVersion {.strdefine.} = "1.0.0"
+  NimblePkgVersion {.strdefine.} = CompileDate.replace("-", ".")
   timeouts {.intdefine.}: Positive = 9999
   maxRedirects {.intdefine.}: Positive = 9
   pypiApiUrl = "https://pypi.org/"                          ## PyPI Base API URL.
