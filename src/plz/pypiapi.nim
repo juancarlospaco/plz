@@ -62,26 +62,22 @@ proc listPackagesWithSerial(this: PyPI): seq[array[2, string]] {.inline.} =
 proc packageLatestRelease(this: PyPI, packageName: string): string {.inline.} =
   ## Return the latest release registered for the given packageName.
   this.headers = newHttpHeaders(hdrXml)
-  let bodi = xmlRpcBody.format("package_releases", xmlRpcParam.format(packageName))
-  for t in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"string": result = t.innerText
+  for t in parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("package_releases", xmlRpcParam.format(packageName)))).findAll"string": result = t.innerText
 
 proc packageRoles(this: PyPI, packageName: string): seq[XmlNode] {.inline.} =
   ## Retrieve a list of role, user for a given packageName. Role is Maintainer or Owner.
   this.headers = newHttpHeaders(hdrXml)
-  let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(packageName))
-  for t in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"data": result.add t
+  for t in parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("package_roles", xmlRpcParam.format(packageName)))).findAll"data": result.add t
 
 proc userPackages(this: PyPI, user: string): seq[XmlNode] =
   ## Retrieve a list of role, packageName for a given user. Role is Maintainer or Owner.
   this.headers = newHttpHeaders(hdrXml)
-  let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
-  for t in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"data": result.add t
+  for t in parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("user_packages", xmlRpcParam.format(user)))).findAll"data": result.add t
 
 proc releaseUrls(this: PyPI, packageName: string, releaseVersion: string): seq[string] =
   ## Retrieve a list of download URLs for the given releaseVersion. Returns a list of dicts.
   this.headers = newHttpHeaders(hdrXml)
-  let bodi = xmlRpcBody.format("release_urls", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
-  for tagy in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"string":
+  for tagy in parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("release_urls", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion)))).findAll"string":
     if tagy.innerText.normalize.startsWith"https://": result.add tagy.innerText
 
 proc downloadPackage(this: PyPI, packageName: string, releaseVersion: string, destDir = getTempDir(), generateScript: bool): string =
@@ -147,8 +143,7 @@ proc download(this: PyPI, args: seq[string]) =
 proc releaseData(this: PyPI, packageName: string, releaseVersion: string): XmlNode {.inline.} =
   ## Retrieve metadata describing a specific releaseVersion. Returns a dict.
   this.headers = newHttpHeaders(hdrXml)
-  let bodi = xmlRpcBody.format("release_data", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
-  result = parseXml(this.postContent(pypiXmlUrl, body = bodi))
+  result = parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("release_data", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))))
 
 proc browse(this: PyPI, classifiers: seq[string]): XmlNode {.inline.} =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
