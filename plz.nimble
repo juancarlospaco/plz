@@ -1,4 +1,4 @@
-version     = "1.0.0"
+version     = CompileDate.replace("-", ".")
 author      = "Juan Carlos"
 description = "PLZ Python PIP alternative"
 license     = "MIT"
