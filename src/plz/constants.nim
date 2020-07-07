@@ -278,12 +278,3 @@ proc function(a, b: int): auto {.exportpy.} =
   ## Documentation comment, Markdown/ReSTructuredText/PlainText, generates HTML.
   a + b  # Comment, ignored by compiler.       https://github.com/yglukhov/nimpy
 """
-
-
-##############################################################################
-
-
-addHandler(newConsoleLogger(fmtStr = ""))
-setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
-
-var logfile = defaultFilename()
