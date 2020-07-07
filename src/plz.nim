@@ -99,14 +99,14 @@ proc downloadPackage(this: PyPI, packageName, releaseVersion, destDir = getTempD
   info "\t" & choosenUrl
   if generateScript: script &= "curl -LO " & choosenUrl & "\n"
   this.downloadFile(choosenUrl, filename)
-  assert existsFile(filename), "file failed to download"
+  assert fileExists(filename), "file failed to download"
   info "\t" & $getFileSize(filename) & " Bytes total (compressed)"
   if likely(findExe"sha256sum".len > 0): info "\t" & execCmdEx(cmdChecksum & filename).output.strip
   try:
     info "\t" & choosenUrl & ".asc"
     this.downloadFile(choosenUrl & ".asc", filename & ".asc")
     if generateScript: script &= "curl -LO " & choosenUrl & ".asc" & "\n"
-    if unlikely(findExe"gpg".len > 0 and existsFile(filename & ".asc")):
+    if unlikely(findExe"gpg".len > 0 and fileExists(filename & ".asc")):
       info "\t" & execCmdEx(cmdVerify & filename & ".asc").output.strip
       if generateScript: script &= cmdVerify & filename.replace(destDir, "") & ".asc\n"
   except:
@@ -124,7 +124,7 @@ proc installPackage(this: PyPI, packageName, releaseVersion, generateScript): tu
     setCurrentDir(getTempDir())
     echo extract(packageFile, getTempDir()).output
     let path = packageFile[0..^5]
-    if existsFile(path / "setup.py"):
+    if fileExists(path / "setup.py"):
       setCurrentDir(path)
       result = execCmdEx(py3 & " " & path / "setup.py install --user")
   setCurrentDir(oldDir)
@@ -148,7 +148,7 @@ proc install(this: PyPI, args) =
 proc download(this: PyPI, args) =
   ## Download a package to a local folder, dont decompress nor install.
   var dir: string
-  while not existsDir(dir): dir = readLineFromStdin"Download to where? (Full path to existing folder): "
+  while not dirExists(dir): dir = readLineFromStdin"Download to where? (Full path to existing folder): "
   for pkg in args: echo this.downloadPackage(pkg, $this.packageLatestRelease(pkg), dir, false)
 
 proc releaseData(this: PyPI, packageName, releaseVersion): XmlNode {.inline.} =
@@ -262,7 +262,7 @@ template enUsUtf8() =
 
 proc backup(): tuple[output: TaintedString, exitCode: int] =
   var folder: string
-  while not(folder.len > 0 and existsDir(folder)): folder = readLineFromStdin"Full path of 1 existing folder to Backup?: ".strip
+  while not(folder.len > 0 and dirExists(folder)): folder = readLineFromStdin"Full path of 1 existing folder to Backup?: ".strip
   var files2backup: seq[string]
   for pythonfile in walkFiles(folder / "*.*"):
     files2backup.add pythonfile
@@ -298,7 +298,7 @@ proc ask2User(): auto =
 
 proc forceInstallPip(destination): tuple[output: TaintedString, exitCode: int] {.inline.} =
   newHttpClient(timeout = 9999).downloadFile(pipInstaller, destination) # Download
-  assert existsFile(destination), "File not found: 'get-pip.py' " & destination
+  assert fileExists(destination), "File not found: 'get-pip.py' " & destination
   result = execCmdEx(py3 & destination & " -I") # Installs PIP via get-pip.py
 
 proc uninstall(this: PyPI, args) {.inline.} =
@@ -481,7 +481,7 @@ when isMainModule:
         info "--hash=sha256:" & sha256sum.split(" ")[^1]
     of "upload":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
-      doAssert existsFile(args[1]), "File not found: " & args[1]
+      doAssert fileExists(args[1]), "File not found: " & args[1]
       let (username, password, name, author, version, license, summary, homepage,
         description, downloadurl, maintainer, authoremail, maintaineremail, keywords
       ) = ask2User()
