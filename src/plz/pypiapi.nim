@@ -4,31 +4,31 @@ import
   strtabs, std/sha1, requirementstxt, libarchibi
 
 type PyPI = HttpClient
-let client: PyPI = newHttpClient(maxRedirects = maxRedirects, timeout = timeouts, headers = headerJson)
+let client: PyPI = newHttpClient(maxRedirects = maxRedirects, timeout = timeouts, headers = newHttpHeaders(hdrJson))
 
 proc newPackages(this: PyPI): XmlNode {.inline.} =
   ## Return an RSS XML XmlNode type with the Newest Packages uploaded to PyPI.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   result = parseXml(this.getContent(pypiPackagesXml))
 
 proc lastUpdates(this: PyPI): XmlNode {.inline.} =
   ## Return an RSS XML XmlNode type with the Latest Updates uploaded to PyPI.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   result = parseXml(this.getContent(pypiUpdatesXml))
 
 proc lastJobs(this: PyPI): XmlNode {.inline.} =
   ## Return an RSS XML XmlNode type with the Latest Jobs posted to PyPI.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   result = parseXml(this.getContent(pypiJobUrl))
 
 proc project(this: PyPI, projectName): JsonNode {.inline.} =
   ## Return all JSON JsonNode type data for projectName from PyPI.
-  this.headers = headerJson
+  this.headers = newHttpHeaders(hdrJson)
   result = parseJson(this.getContent(pypiApiUrl & "pypi/" & projectName & "/json"))
 
 proc release(this: PyPI, projectName, projectVersion): JsonNode {.inline.} =
   ## Return all JSON data for projectName of an specific version from PyPI.
-  this.headers = headerJson
+  this.headers = newHttpHeaders(hdrJson)
   result = parseJson(this.getContent(pypiApiUrl & "pypi/" & projectName & "/" & projectVersion & "/json"))
 
 proc htmlAllPackages(this: PyPI): string {.inline.} =
@@ -41,52 +41,53 @@ proc htmlPackage(this: PyPI, projectName): string {.inline.} =
 
 proc stats(this: PyPI): XmlNode {.inline.} =
   ## Return all JSON stats data for projectName of an specific version from PyPI.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   result = parseXml(this.getContent(url = pypiStatus))
 
 proc listPackages(this: PyPI): seq[string] {.inline.} =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI. Server-side Slow.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   for t in parseXml(this.postContent(pypiXmlUrl, body = lppXml)).findAll"string": result.add t.innerText
 
 proc changelogLastSerial(this: PyPI): int {.inline.} =
   ## Return 1 XML XmlNode with the Last Serial number integer.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   for tagy in parseXml(this.postContent(pypiXmlUrl, body = clsXml)).findAll"int": result = tagy.innerText.parseInt
 
 proc listPackagesWithSerial(this: PyPI): seq[array[2, string]] {.inline.} =
   ## Return 1 XML XmlNode of **ALL** the Packages on PyPI with Serial number integer. Server-side Slow.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   for tagy in parseXml(this.postContent(pypiXmlUrl, body = lpsXml)).findAll"member":
     result.add [tagy.child"name".innerText, tagy.child"value".child"int".innerText]
 
 proc packageLatestRelease(this: PyPI, packageName): string {.inline.} =
   ## Return the latest release registered for the given packageName.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   let bodi = xmlRpcBody.format("package_releases", xmlRpcParam.format(packageName))
   for t in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"string": result = t.innerText
 
 proc packageRoles(this: PyPI, packageName): seq[XmlNode] {.inline.} =
   ## Retrieve a list of role, user for a given packageName. Role is Maintainer or Owner.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(packageName))
   for t in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"data": result.add t
 
 proc userPackages(this: PyPI, user = user): seq[XmlNode] =
   ## Retrieve a list of role, packageName for a given user. Role is Maintainer or Owner.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
   for t in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"data": result.add t
 
 proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
   ## Retrieve a list of download URLs for the given releaseVersion. Returns a list of dicts.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   let bodi = xmlRpcBody.format("release_urls", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
   for tagy in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"string":
     if tagy.innerText.normalize.startsWith"https://": result.add tagy.innerText
 
 proc downloadPackage(this: PyPI, packageName, releaseVersion, destDir = getTempDir(), generateScript): string =
   ## Download a URL for the given releaseVersion. Returns filename.
+  var script: string
   let choosenUrl = this.releaseUrls(packageName, releaseVersion)[0]
   assert choosenUrl.startsWith"https://", "PyPI Download URL is not HTTPS SSL"
   let filename = destDir / choosenUrl.split("/")[^1]
@@ -135,7 +136,6 @@ proc install(this: PyPI, args) =
     let resultados = this.installPackage(argument, semver, generateScript)
     info "\t" & resultados.output
     if resultados.exitCode == 0: inc suces else: inc failed
-  if generateScript: info "\n" & script
   info($now() & " " & $failed & " Failed, " & $suces &
     " Success on " & $(now() - time0) & " to download+install " & $args.len & " packages")
 
@@ -147,14 +147,14 @@ proc download(this: PyPI, args) =
 
 proc releaseData(this: PyPI, packageName, releaseVersion): XmlNode {.inline.} =
   ## Retrieve metadata describing a specific releaseVersion. Returns a dict.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   let bodi = xmlRpcBody.format("release_data", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
   result = parseXml(this.postContent(pypiXmlUrl, body = bodi))
 
 proc browse(this: PyPI, classifiers): XmlNode {.inline.} =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
   ## Classifiers must be a list of standard Trove classifier strings. Returns 100 results max.
-  this.headers = headerXml
+  this.headers = newHttpHeaders(hdrXml)
   var s: string
   for item in classifiers: s &= xmlRpcParam.format(item)
   result = parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("browse", s)))
