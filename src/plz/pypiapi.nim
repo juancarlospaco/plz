@@ -1,10 +1,22 @@
 import
   httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables,
-  parseopt, terminal, times, posix, posix_utils, logging, osproc, rdstdin, md5,
+  parseopt, terminal, times, posix, logging, osproc, rdstdin, md5,
   strtabs, std/sha1, requirementstxt, libarchibi
 
 type PyPI = HttpClient
 let client: PyPI = newHttpClient(maxRedirects = maxRedirects, timeout = timeouts, headers = newHttpHeaders(hdrJson))
+
+
+
+using
+  generateScript: bool
+  query: Table[string, seq[string]]
+  args, classifiers, keywords: seq[string]
+  projectName, projectVersion, packageName, user, releaseVersion: string
+  destDir, name, version, license, summary, description, author: string
+  downloadurl, authoremail, maintainer, maintaineremail, filename: string
+  homepage, md5_digest, username, password, destination: string
+
 
 proc newPackages(this: PyPI): XmlNode {.inline.} =
   ## Return an RSS XML XmlNode type with the Newest Packages uploaded to PyPI.
@@ -72,7 +84,7 @@ proc packageRoles(this: PyPI, packageName): seq[XmlNode] {.inline.} =
   let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(packageName))
   for t in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"data": result.add t
 
-proc userPackages(this: PyPI, user = user): seq[XmlNode] =
+proc userPackages(this: PyPI, user: string): seq[XmlNode] =
   ## Retrieve a list of role, packageName for a given user. Role is Maintainer or Owner.
   this.headers = newHttpHeaders(hdrXml)
   let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
@@ -121,7 +133,7 @@ proc installPackage(this: PyPI, packageName, releaseVersion, generateScript): tu
     let path = packageFile[0..^5]
     if fileExists(path / "setup.py"):
       setCurrentDir(path)
-      result = execCmdEx(py3 & " " & path / "setup.py install --user")
+      result = execCmdEx(findExe"python3" & " " & path / "setup.py install --user")
   setCurrentDir(oldDir)
 
 proc install(this: PyPI, args) =
