@@ -6,18 +6,6 @@ import
 type PyPI = HttpClient
 let client: PyPI = newHttpClient(maxRedirects = maxRedirects, timeout = timeouts, headers = newHttpHeaders(hdrJson))
 
-
-
-using
-  generateScript: bool
-  query: Table[string, seq[string]]
-  args, classifiers, keywords: seq[string]
-  projectName, projectVersion, packageName, user, releaseVersion: string
-  destDir, name, version, license, summary, description, author: string
-  downloadurl, authoremail, maintainer, maintaineremail, filename: string
-  homepage, md5_digest, username, password, destination: string
-
-
 proc newPackages(this: PyPI): XmlNode {.inline.} =
   ## Return an RSS XML XmlNode type with the Newest Packages uploaded to PyPI.
   this.headers = newHttpHeaders(hdrXml)
@@ -33,12 +21,12 @@ proc lastJobs(this: PyPI): XmlNode {.inline.} =
   this.headers = newHttpHeaders(hdrXml)
   result = parseXml(this.getContent(pypiJobUrl))
 
-proc project(this: PyPI, projectName): JsonNode {.inline.} =
+proc project(this: PyPI, projectName: string): JsonNode {.inline.} =
   ## Return all JSON JsonNode type data for projectName from PyPI.
   this.headers = newHttpHeaders(hdrJson)
   result = parseJson(this.getContent(pypiApiUrl & "pypi/" & projectName & "/json"))
 
-proc release(this: PyPI, projectName, projectVersion): JsonNode {.inline.} =
+proc release(this: PyPI, projectName: string, projectVersion: string): JsonNode {.inline.} =
   ## Return all JSON data for projectName of an specific version from PyPI.
   this.headers = newHttpHeaders(hdrJson)
   result = parseJson(this.getContent(pypiApiUrl & "pypi/" & projectName & "/" & projectVersion & "/json"))
@@ -47,7 +35,7 @@ proc htmlAllPackages(this: PyPI): string {.inline.} =
   ## Return all projects registered on PyPI as HTML string,Legacy Endpoint,Slow.
   result = this.getContent(url = pypiApiUrl & "simple")
 
-proc htmlPackage(this: PyPI, projectName): string {.inline.} =
+proc htmlPackage(this: PyPI, projectName: string): string {.inline.} =
   ## Return a project registered on PyPI as HTML string, Legacy Endpoint, Slow.
   result = this.getContent(url = pypiApiUrl & "simple/" & projectName)
 
@@ -72,13 +60,13 @@ proc listPackagesWithSerial(this: PyPI): seq[array[2, string]] {.inline.} =
   for tagy in parseXml(this.postContent(pypiXmlUrl, body = lpsXml)).findAll"member":
     result.add [tagy.child"name".innerText, tagy.child"value".child"int".innerText]
 
-proc packageLatestRelease(this: PyPI, packageName): string {.inline.} =
+proc packageLatestRelease(this: PyPI, packageName: string): string {.inline.} =
   ## Return the latest release registered for the given packageName.
   this.headers = newHttpHeaders(hdrXml)
   let bodi = xmlRpcBody.format("package_releases", xmlRpcParam.format(packageName))
   for t in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"string": result = t.innerText
 
-proc packageRoles(this: PyPI, packageName): seq[XmlNode] {.inline.} =
+proc packageRoles(this: PyPI, packageName: string): seq[XmlNode] {.inline.} =
   ## Retrieve a list of role, user for a given packageName. Role is Maintainer or Owner.
   this.headers = newHttpHeaders(hdrXml)
   let bodi = xmlRpcBody.format("package_roles", xmlRpcParam.format(packageName))
@@ -90,14 +78,14 @@ proc userPackages(this: PyPI, user: string): seq[XmlNode] =
   let bodi = xmlRpcBody.format("user_packages", xmlRpcParam.format(user))
   for t in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"data": result.add t
 
-proc releaseUrls(this: PyPI, packageName, releaseVersion): seq[string] =
+proc releaseUrls(this: PyPI, packageName: string, releaseVersion: string): seq[string] =
   ## Retrieve a list of download URLs for the given releaseVersion. Returns a list of dicts.
   this.headers = newHttpHeaders(hdrXml)
   let bodi = xmlRpcBody.format("release_urls", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
   for tagy in parseXml(this.postContent(pypiXmlUrl, body = bodi)).findAll"string":
     if tagy.innerText.normalize.startsWith"https://": result.add tagy.innerText
 
-proc downloadPackage(this: PyPI, packageName, releaseVersion, destDir = getTempDir(), generateScript): string =
+proc downloadPackage(this: PyPI, packageName: string, releaseVersion: string, destDir = getTempDir(), generateScript: bool): string =
   ## Download a URL for the given releaseVersion. Returns filename.
   var script: string
   let choosenUrl = this.releaseUrls(packageName, releaseVersion)[0]
@@ -121,7 +109,7 @@ proc downloadPackage(this: PyPI, packageName, releaseVersion, destDir = getTempD
   if generateScript: script &= pipInstallCmd & filename.replace(destDir, "") & "\n"
   result = filename
 
-proc installPackage(this: PyPI, packageName, releaseVersion, generateScript): tuple[output: TaintedString, exitCode: int] =
+proc installPackage(this: PyPI, packageName: string, releaseVersion: string, generateScript: bool): tuple[output: TaintedString, exitCode: int] =
   let packageFile = this.downloadPackage(packageName, releaseVersion, generateScript = generateScript)
   let oldDir = getCurrentDir()
   if unlikely(packageFile.endsWith".whl"):
@@ -136,7 +124,7 @@ proc installPackage(this: PyPI, packageName, releaseVersion, generateScript): tu
       result = execCmdEx(findExe"python3" & " " & path / "setup.py install --user")
   setCurrentDir(oldDir)
 
-proc install(this: PyPI, args) =
+proc install(this: PyPI, args: seq[string]) =
   ## Install a Python package, download & decompress files, runs python setup.py
   var failed, suces: byte
   info($now() & ", PID is " & $getCurrentProcessId() & ", " & $args.len & " packages to download and install " & $args)
@@ -151,19 +139,19 @@ proc install(this: PyPI, args) =
   info($now() & " " & $failed & " Failed, " & $suces &
     " Success on " & $(now() - time0) & " to download+install " & $args.len & " packages")
 
-proc download(this: PyPI, args) =
+proc download(this: PyPI, args: seq[string]) =
   ## Download a package to a local folder, dont decompress nor install.
   var dir: string
   while not dirExists(dir): dir = readLineFromStdin"Download to where? (Full path to existing folder): "
   for pkg in args: echo this.downloadPackage(pkg, $this.packageLatestRelease(pkg), dir, false)
 
-proc releaseData(this: PyPI, packageName, releaseVersion): XmlNode {.inline.} =
+proc releaseData(this: PyPI, packageName: string, releaseVersion: string): XmlNode {.inline.} =
   ## Retrieve metadata describing a specific releaseVersion. Returns a dict.
   this.headers = newHttpHeaders(hdrXml)
   let bodi = xmlRpcBody.format("release_data", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))
   result = parseXml(this.postContent(pypiXmlUrl, body = bodi))
 
-proc browse(this: PyPI, classifiers): XmlNode {.inline.} =
+proc browse(this: PyPI, classifiers: seq[string]): XmlNode {.inline.} =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
   ## Classifiers must be a list of standard Trove classifier strings. Returns 100 results max.
   this.headers = newHttpHeaders(hdrXml)
@@ -171,7 +159,7 @@ proc browse(this: PyPI, classifiers): XmlNode {.inline.} =
   for item in classifiers: s &= xmlRpcParam.format(item)
   result = parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("browse", s)))
 
-proc uninstall(this: PyPI, args) {.inline.} =
+proc uninstall(this: PyPI, args: seq[string]) {.inline.} =
   # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD is a CSV
   styledEcho(fgGreen, bgBlack, "Uninstall " & $args.len & " Packages:\t" & $args)
   let recordFiles = block:
