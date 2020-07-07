@@ -72,7 +72,6 @@ Options:
   --cleanpipcache  Remove all files and folders from the PIP Cache folder.
   --cleanvenvs     Remove Virtualenvs (interactive, asks Y/N 1-by-1).
   --log=file.log   Full path to a verbose local log file.
-  --backuplogs     Compress old PLZ Logs at exit to save disk resources.
   --nice20         Runs with "nice = 20" (CPU Priority, smooth priority).
   --publicip       Show your Public IP Address (Internet connectivity check).
   --suicide        Deletes itself permanently and exit (single file binary).
@@ -288,16 +287,3 @@ addHandler(newConsoleLogger(fmtStr = ""))
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
 
 var logfile = defaultFilename()
-
-let
-  py3 = findExe"python3"
-  user = getEnv"USER"
-
-using
-  generateScript: bool
-  query: Table[string, seq[string]]
-  args, classifiers, keywords: seq[string]
-  projectName, projectVersion, packageName, user, releaseVersion: string
-  destDir, name, version, license, summary, description, author: string
-  downloadurl, authoremail, maintainer, maintaineremail, filename: string
-  homepage, md5_digest, username, password, destination: string
