@@ -42,8 +42,8 @@ proc ask2User(): auto =
   while not(password[].len > 4 and password[].len < 999 and password[] == iPwd2[]):
     password[] = readLineFromStdin("Type Password: ").strip # Type it Twice.
     iPwd2[] = readLineFromStdin("Confirm Password (Repeat it again): ").strip
-  result = (username: username, password: password, name: name, author: author, version: version, license: license, summary: summary, homepage: homepage,
-    description: description, downloadurl: downloadurl, maintainer: maintainer, authoremail: authoremail, maintaineremail: maintaineremail, keywords: keywords)
+  result = (username: username[], password: password[], name: name[], author: author[], version: version[], license: license[], summary: summary[], homepage: homepage[],
+    description: description[], downloadurl: downloadurl[], maintainer: maintainer[], authoremail: authoremail[], maintaineremail: maintaineremail[], keywords: keywords[])
   zeroMem(password, sizeOf password)
   zeroMem(iPwd2, sizeOf iPwd2)
   dealloc password

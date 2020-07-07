@@ -5,7 +5,7 @@ template pySkeleton() =
   ## Creates the skeleton (folders and files) for a New Python project.
   let namex = create(string, sizeOf string)
   namex[] = readLineFromStdin"New Python project name?: ".normalize.strip
-  assert namex.len > 1, "Name must not be empty string"
+  assert namex[].len > 1, "Name must not be empty string"
   discard existsOrCreateDir(namex[])
   discard existsOrCreateDir(namex[] / namex[])
   discard existsOrCreateDir(namex[] / namex[] / "dist")

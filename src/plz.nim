@@ -2,7 +2,7 @@ import
   httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables,
   parseopt, terminal, times, posix, posix_utils, logging, osproc, rdstdin, md5,
   strtabs, std/sha1, requirementstxt, libarchibi
-include plz/constants, plz/docgen, plz/pypiapi, plz/appcommands, plz/projectgen
+include plz/constants, plz/docgen, plz/pypiapi, plz/pypinteract, plz/projectgen, plz/sysinfo, plz/utils
 
 
 when isMainModule:
