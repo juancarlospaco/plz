@@ -185,32 +185,31 @@ proc upload(this: PyPI, name, version, license, summary, description, author, do
   description_content_type = "text/markdown; charset=UTF-8; variant=GFM"): string =
   # https://warehouse.readthedocs.io/api-reference/legacy/#upload-api
   # github.com/python/cpython/blob/master/Lib/distutils/command/upload.py#L131-L135
-  let mime = newMimetypes().getMimetype(filename.splitFile.ext.toLowerAscii)
   assert filename.splitFile.ext.toLowerAscii in ["whl", "egg", "zip"], "File extension must be 1 of whl or egg or zip"
-  let multipartData = block:
-    var output = newMultipartData()
-    output["protocol_version"] = "1"
-    output[":action"] = "file_upload"
-    output["metadata_version"] = "2.1"
-    output["author"] = author
-    output["name"] = name
-    output["md5_digest"] = md5_digest # md5 hash of file in urlsafe base64
-    output["summary"] = summary
-    output["version"] = version.toLowerAscii
-    output["license"] = license.toLowerAscii
-    output["pyversion"] = pyversion.normalize
-    output["requires_python"] = requirespython
-    output["homepage"] = homepage.toLowerAscii
-    output["filetype"] = filetype.toLowerAscii
-    output["description"] = description
-    output["keywords"] = keywords.join(" ").normalize
-    output["download_url"] = downloadurl.toLowerAscii
-    output["author_email"] = authoremail.toLowerAscii
-    output["maintainer_email"] = maintaineremail.toLowerAscii
-    output["description_content_type"] = description_content_type.strip
-    output["maintainer"] = if maintainer == "": author else: maintainer
-    output["content"] = (filename, mime, filename.readFile)
-    output
+  var multipartData = create(MultipartData, sizeOf MultipartData)
+  multipartData[] = newMultipartData()
+  multipartData[]["protocol_version"] = "1"
+  multipartData[][":action"] = "file_upload"
+  multipartData[]["metadata_version"] = "2.1"
+  multipartData[]["author"] = author
+  multipartData[]["name"] = name
+  multipartData[]["md5_digest"] = md5_digest # md5 hash of file in urlsafe base64
+  multipartData[]["summary"] = summary
+  multipartData[]["version"] = version.toLowerAscii
+  multipartData[]["license"] = license.toLowerAscii
+  multipartData[]["pyversion"] = pyversion.normalize
+  multipartData[]["requires_python"] = requirespython
+  multipartData[]["homepage"] = homepage.toLowerAscii
+  multipartData[]["filetype"] = filetype.toLowerAscii
+  multipartData[]["description"] = description
+  multipartData[]["keywords"] = keywords.join(" ").normalize
+  multipartData[]["download_url"] = downloadurl.toLowerAscii
+  multipartData[]["author_email"] = authoremail.toLowerAscii
+  multipartData[]["maintainer_email"] = maintaineremail.toLowerAscii
+  multipartData[]["description_content_type"] = description_content_type.strip
+  multipartData[]["maintainer"] = if maintainer == "": author else: maintainer
+  multipartData[]["content"] = (filename, newMimetypes().getMimetype(filename.splitFile.ext.toLowerAscii), filename.readFile)
   this.headers = newHttpHeaders({"Authorization": "Basic " & encode(username & ":" & password), "dnt": "1"})
   echo "Uploading..."
-  result = this.postContent(pypiUploadUrl, multipart = multipartData)
+  result = this.postContent(pypiUploadUrl, multipart = multipartData[])
+  dealloc multipartData
