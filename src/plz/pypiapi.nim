@@ -1,7 +1,6 @@
 import
-  httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, tables,
-  parseopt, terminal, times, posix, logging, osproc, rdstdin, md5,
-  strtabs, std/sha1, requirementstxt, libarchibi
+  httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, terminal,
+  times, logging, osproc, rdstdin, md5, std/sha1, requirementstxt, libarchibi
 
 type PyPI = HttpClient
 let client: PyPI = newHttpClient(maxRedirects = maxRedirects, timeout = timeouts, headers = newHttpHeaders(hdrJson))
