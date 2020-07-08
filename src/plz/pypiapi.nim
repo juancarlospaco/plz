@@ -133,17 +133,18 @@ proc installPackage(this: PyPI, packageName: string, releaseVersion: string, gen
 proc install(this: PyPI, args: seq[string]) =
   ## Install a Python package, download & decompress files, runs python setup.py
   var failed, suces: byte
-  info($now() & ", PID is " & $getCurrentProcessId() & ", " & $args.len & " packages to download and install " & $args)
-  let generateScript = readLineFromStdin"Generate Install Script? (y/N): ".normalize == "y"
-  let time0 = now()
+  echo($now() & ", PID is " & $getCurrentProcessId() & ", " & $args.len & " packages to download and install " & $args)
+  let time0 = create(DateTime, sizeOf DateTime)
+  time0[] = now()
   for argument in args:
     let semver = $this.packageLatestRelease(argument)
     info "\t" & argument & "\t" & semver
-    let resultados = this.installPackage(argument, semver, generateScript)
+    let resultados = this.installPackage(argument, semver, readLineFromStdin"Generate Install Script? (y/N): " == "y")
     info "\t" & resultados.output
     if resultados.exitCode == 0: inc suces else: inc failed
   info($now() & " " & $failed & " Failed, " & $suces &
-    " Success on " & $(now() - time0) & " to download+install " & $args.len & " packages")
+    " Success on " & $(now() - time0[]) & " to download+install " & $args.len & " packages")
+  dealloc time0
 
 proc download(this: PyPI, args: seq[string]) =
   ## Download a package to a local folder, dont decompress nor install.
