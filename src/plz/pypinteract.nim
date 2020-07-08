@@ -17,6 +17,7 @@ proc ask2User(): auto =
   let maintaineremail = create(string, sizeOf string)
   let iPwd2 = create(string, sizeOf string)
   let keywords = create(seq[string], sizeOf seq[string])
+  echo "The following questions are required by Python PYPI API, answers must not be empty string!."
   while not(author[].len > 2 and author[].len < 99): author[] = readLineFromStdin("\nType Author (Real Name): ").strip
   while not(username[].len > 2 and username[].len < 99): username[] = readLineFromStdin("Type Username (PyPI Username): ").strip
   while not(maintainer[].len > 2 and maintainer[].len < 99): maintainer[] = readLineFromStdin("Type Package Maintainer (Real Name): ").strip
