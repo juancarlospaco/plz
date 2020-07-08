@@ -24,5 +24,6 @@ proc getSystemInfo(): JsonNode =
     "git":                     if findExe"git".len > 0:    execCmdEx("git --version").output.replace("git version", "").strip else: "",
     "node":                    if findExe"node".len > 0:   execCmdEx("node --version").output.strip else: "",
     "python":                  if findExe"python".len > 0: execCmdEx("python --version").output.replace("Python", "").strip else: "",
+    "pip":                     if findExe"pip".len > 0:    execCmdEx("pip --version").output.strip else: "",
     "ssd":                     isSsd()
   }
