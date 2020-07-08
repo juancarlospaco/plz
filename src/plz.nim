@@ -1,4 +1,4 @@
-import strutils, os, parseopt, terminal, logging, osproc, rdstdin, requirementstxt, libarchibi
+import strutils, os, parseopt, terminal, logging, osproc, rdstdin, requirementstxt
 include plz/constants, plz/utils, plz/docgen, plz/pypiapi, plz/pypinteract, plz/projectgen, plz/sysinfo
 
 addHandler(newConsoleLogger(fmtStr = ""))
