@@ -10,6 +10,7 @@ template pySkeleton() =
   writeFile(namex[] / namex[] / "__init__.py", "print('Hello World')\n")
   writeFile(namex[] / namex[] / "__main__.py", "\nprint('Main Module')\n")
   writeFile(namex[] / namex[] / "__version__.py", "__version__ = '0.0.1'\n")
+  writeFile(namex[] / namex[] / namex[] & ".py", "\nprint('Hello World')\n")
   writeFile(namex[] / namex[] / "main.nim", nimpyTemplate)
   if readLineFromStdin("Generate helper scripts and dist? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / namex[] / "dist")
@@ -69,7 +70,7 @@ template pySkeleton() =
     dealloc ext
   setCurrentDir namex[]
   dealloc namex
-  if readLineFromStdin("Run 'git init .' on the project folder? (y/N): ") == "y":
+  if findExe"git".len > 0 and readLineFromStdin("Run 'git init .' on the project folder? (y/N): ") == "y":
     if execShellCmd("git init .") == 0:
       if readLineFromStdin("Run 'git add .' on the project folder? (y/N): ") == "y":
         if execShellCmd("git add .") == 0:
