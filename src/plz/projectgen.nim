@@ -36,6 +36,7 @@ template pySkeleton() =
     writeFile(namex[] / "devops" / namex[] & ".service", serviceTemplate)
     writeFile(namex[] / "devops" / "build_package.sh", "python3 setup.py sdist --formats=zip\n")
     writeFile(namex[] / "devops" / "upload_package.sh", "twine upload .\n")
+    writeFile(namex[] / "devops" / "pyc_clean.sh", "rm --verbose --force --recursive *.pyc\n")
   if readLineFromStdin("Generate GitHub files including GitHub Actions on ./github/ ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / ".github")
     discard existsOrCreateDir(namex[] / ".github" / "workflows")
