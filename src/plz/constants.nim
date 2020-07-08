@@ -39,26 +39,27 @@ const
 const helpy = """ 👑 PIP Fast Single-File Compiled Alternative 👑
 https://nim-lang.org
 Commands:
-  install         Install packages (Download, Decompress, Install packages).
-  uninstall       Uninstall packages (Interactive, asks Y/N to user before).
-  reinstall       Uninstall & Install packages (Interactive, asks Y/N to user).
-  download        Download packages (Interactive,no decompress,asks destination)
-  hash            Compute hashes of package archives (SHA256 Checksum file).
-  init            New Python project template (Interactive, asks Y/N to user).
-  strip           Optimize size of Python native binary module (PIP wont strip).
-  newpackages     List all the new Packages uploaded to PyPI recently (RSS).
-  lastupdates     List all existing Packages updated on PyPI recently (RSS).
-  lastjobs        List all new Job Posts updated on Python recently (RSS).
-  stats           PyPI service status report from official statuspage (RSS).
-  userpackages    List all existing Packages by User (Interactive, asks user).
-  latestversion   Show the Latest Version release of a PYPI Package (SemVer).
-  open            Open a given module in your default code editor (xdg-open).
-  forceInstallPip Force install PIP on a given location directory (get-pip.py).
-  doc             Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
-  doc2latex       Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
-  doc2json        Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
-  upload          Similar to "twine upload" (Interactive,asks user,wont need Twine).
-  completion      A helper command used for command completion.
+  install           Install packages (Download, Decompress, Install packages).
+  uninstall         Uninstall packages (Interactive, asks Y/N to user before).
+  reinstall         Uninstall & Install packages (Interactive, asks Y/N to user).
+  download          Download packages (Interactive,no decompress,asks destination)
+  hash              Compute hashes of package archives (SHA256 Checksum file).
+  init              New Python project template (Interactive, asks Y/N to user).
+  strip             Optimize size of Python native binary module (PIP wont strip).
+  newpackages       List all the new Packages uploaded to PyPI recently (RSS).
+  lastupdates       List all existing Packages updated on PyPI recently (RSS).
+  lastjobs          List all new Job Posts updated on Python recently (RSS).
+  stats             PyPI service status report from official statuspage (RSS).
+  userpackages      List all existing Packages by User (Interactive, asks user).
+  latestversion     Show the Latest Version release of a PYPI Package (SemVer).
+  open              Open a given module in your default code editor (xdg-open).
+  forceInstallPip   Force install PIP on a given location directory (get-pip.py).
+  doc               Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
+  doc2latex         Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
+  doc2json          Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
+  upload            Similar to "twine upload" (Interactive,asks user,wont need Twine).
+  completion        A helper command used for command completion.
+  parserequirements Parse a requirements file and print it to stdout (Linter, Debug).
 
 Options:
   --help           Show Help and quit.
