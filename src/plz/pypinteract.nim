@@ -1,4 +1,3 @@
-
 import strutils, rdstdin
 
 proc ask2User(): auto =
