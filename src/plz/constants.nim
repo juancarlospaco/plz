@@ -58,12 +58,13 @@ Commands:
   doc2latex       Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
   doc2json        Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
   upload          Similar to "twine upload" (Interactive,asks user,wont need Twine).
+  completion      A helper command used for command completion.
 
 Options:
   --help           Show Help and quit.
   --version        Show Version and quit.
   --license        Show License and quit.
-  --dump           Show system info JSON and quit (for Developers and Bug Reporting).
+  --dump           Show information useful for debugging. Show system info JSON.
   --enUsUtf8       Force Encoding to UTF-8 and Language to English (en_US.UTF-8)
   --putenv:key=val Set an environment variable "KEY=Value", can be repeated.
   --cleanpyc       Recursively remove all __pycache__ and *.pyc
@@ -277,4 +278,44 @@ const nimpyTemplate = """import os, strutils, nimpy
 proc function(a, b: int): auto {.exportpy.} =
   ## Documentation comment, Markdown/ReSTructuredText/PlainText, generates HTML.
   a + b  # Comment, ignored by compiler.       https://github.com/yglukhov/nimpy
+"""
+
+const completionsTemplate = """
+# pip bash completion start
+_pip_completion()
+{
+    COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
+                   COMP_CWORD=$COMP_CWORD \
+                   PIP_AUTO_COMPLETE=1 $1 2>/dev/null ) )
+}
+complete -o default -F _pip_completion pip
+# pip bash completion end
+
+
+
+# pip fish completion start
+function __fish_complete_pip
+    set -lx COMP_WORDS (commandline -o) ""
+    set -lx COMP_CWORD ( \
+        math (contains -i -- (commandline -t) $COMP_WORDS)-1 \
+    )
+    set -lx PIP_AUTO_COMPLETE 1
+    string split \  -- (eval $COMP_WORDS[1])
+end
+complete -fa "(__fish_complete_pip)" -c pip
+# pip fish completion end
+
+
+
+# pip zsh completion start
+function _pip_completion {
+  local words cword
+  read -Ac words
+  read -cn cword
+  reply=( $( COMP_WORDS="$words[*]" \
+             COMP_CWORD=$(( cword-1 )) \
+             PIP_AUTO_COMPLETE=1 $words[1] 2>/dev/null ))
+}
+compctl -K _pip_completion pip
+# pip zsh completion end
 """
