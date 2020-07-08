@@ -164,13 +164,13 @@ proc download(this: PyPI, args: seq[string]) =
   for pkg in args: echo this.downloadPackage(pkg, $this.packageLatestRelease(pkg), dir[], false)
   dealloc dir
 
-proc releaseData(this: PyPI, packageName: string, releaseVersion: string): XmlNode {.inline.} =
+proc releaseData(this: PyPI, packageName: string, releaseVersion: string): XmlNode =
   ## Retrieve metadata describing a specific releaseVersion. Returns a dict.
   assert packageName.len > 0, "packageName must not be empty string"
   this.headers = newHttpHeaders(hdrXml)
   result = parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("release_data", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))))
 
-proc browse(this: PyPI, classifiers: seq[string]): XmlNode {.inline.} =
+proc browse(this: PyPI, classifiers: seq[string]): XmlNode =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
   ## Classifiers must be a list of standard Trove classifier strings. Returns 100 results max.
   assert classifiers.len > 0, "classifiers must not be empty seq"
@@ -180,33 +180,31 @@ proc browse(this: PyPI, classifiers: seq[string]): XmlNode {.inline.} =
   result = parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("browse", s[])))
   dealloc s
 
-proc uninstall(this: PyPI, args: seq[string]) {.inline.} =
+proc uninstall(this: PyPI, args: seq[string]) =
   # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD is a CSV
   assert args.len > 0
-  styledEcho(fgGreen, bgBlack, "Uninstall " & $args.len & " Packages:\t" & $args)
-  let recordFiles = block:
-    var output: seq[string]
-    for argument in args: # RECORD Metadata file (CSV without file extension).
-      for r in walkFiles(sitePackages / argument & "-*.dist-info" / "RECORD"): output.add r
-    output
-  assert recordFiles.len > 0, "RECORD Metadata CSV files not found."
-  let files2delete = block:
-    var output: seq[string]
-    var size: int
-    for record in recordFiles:
-      for recordfile in parseRecord(record):
-        output.add sitePackages / recordfile[0]
-        if recordfile.len == 3 and recordfile[2].len > 0: size += parseInt(recordfile[2])
-    styledEcho(fgGreen, bgBlack, "Total disk space freed:\t" &
-      formatSize(size.int64, prefix = bpColloquial, includeSpace = true))
-    output
-  assert files2delete.len > 0, "Files of a Python Package not found."
-  if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ").normalize == "y":
-    info((if readLineFromStdin("\nGenerate Uninstall Script for Admin/Root? (y/N): ").normalize == "y": "\nsudo " else: "\n") & "rm --verbose --force " & files2delete.join" " & "\n")
-  for pyfile in files2delete: styledEcho(fgRed, bgBlack, pyfile)
-  if readLineFromStdin("\nDelete " & $files2delete.len & " files? (y/N): ").normalize == "y":
-    styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-    for pythonfile in files2delete: info $tryRemoveFile(pythonfile) & "\t" & pythonfile
+  echo("Uninstall " & $args.len & " Packages:\t" & $args)
+  let recordFiles = create(seq[string], sizeOf seq[string])
+  for a in args: # RECORD Metadata file (CSV without file extension).
+    for r in walkFiles(sitePackages / a & "-*.dist-info" / "RECORD"): recordFiles[].add r
+  assert recordFiles[].len > 0, "RECORD Metadata CSV files not found."
+  let size = create(int, sizeOf int)
+  let files2delete = create(seq[string], sizeOf seq[string])
+  for record in recordFiles[]:
+    for recordfile in parseRecord(record):
+      files2delete[].add sitePackages / recordfile[0]
+      if recordfile.len == 3 and recordfile[2].len > 0: size[] += parseInt(recordfile[2])
+  echo("Total disk space freed:\t" & formatSize(size[].int64, prefix = bpColloquial, includeSpace = true))
+  dealloc recordFiles
+  dealloc size
+  assert files2delete[].len > 0, "Files of a Python Package not found."
+  if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ") == "y":
+    echo((if readLineFromStdin("\nGenerate Uninstall Script for Admin/Root? (y/N): ") == "y": "\nsudo " else: "\n") & "rm --verbose --force " & files2delete[].join" " & "\n")
+  for pyfile in files2delete[]: echo(pyfile)
+  if readLineFromStdin("\nDelete " & $files2delete[].len & " files? (y/N): ") == "y":
+    echo("\n\nDeleted?\tFile")
+    for pythonfile in files2delete[]: echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
+  dealloc files2delete
 
 proc upload(this: PyPI, name, version, license, summary, description, author, downloadurl, authoremail, maintainer, maintaineremail, homepage, filename,
   md5_digest, username, password: string, keywords: seq[string], requirespython = ">=3", filetype = "sdist", pyversion = "source",
