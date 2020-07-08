@@ -3,8 +3,8 @@ import os, times, rdstdin, strutils
 
 template pySkeleton() =
   ## Creates the skeleton (folders and files) for a New Python project.
-  let namex = create(string, sizeOf string)
-  namex[] = readLineFromStdin"New Python project name?: ".normalize.strip
+  var namex = create(string, sizeOf string)
+  namex[] = readLineFromStdin"New Python project name?: ".strip.normalize
   assert namex[].len > 1, "Name must not be empty string"
   discard existsOrCreateDir(namex[])
   discard existsOrCreateDir(namex[] / namex[])
