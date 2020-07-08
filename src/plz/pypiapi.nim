@@ -144,11 +144,11 @@ proc install(this: PyPI, args: seq[string]) =
   scrpt[] = readLineFromStdin"Generate Install Script? (y/N): " == "y"
   for argument in args:
     semver[] = $this.packageLatestRelease(argument)
-    info "\t" & argument & "\t" & semver[]
+    echo "\t" & argument & "\t" & semver[]
     let resultados = this.installPackage(argument, semver[], scrpt[])
-    info "\t" & resultados.output
+    echo "\t" & resultados.output
     if resultados.exitCode == 0: inc suces[] else: inc failed[]
-  info($now() & " " & $failed[] & " Failed, " & $suces[] &
+  echo($now() & " " & $failed[] & " Failed, " & $suces[] &
     " Success on " & $(now() - time0[]) & " to download+install " & $args.len & " packages")
   dealloc scrpt
   dealloc semver
