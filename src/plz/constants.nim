@@ -59,7 +59,7 @@ Commands:
   doc2json          Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
   upload            Similar to "twine upload" (Interactive,asks user,wont need Twine).
   completion        A helper command used for command completion.
-  parserequirements Parse a requirements file and print it to stdout (Linter, Debug).
+  parserequirements Parse a requirements file, print it to stdout (Linter,Debug,etc).
 
 Options:
   --help           Show Help and quit.
