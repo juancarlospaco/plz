@@ -110,19 +110,25 @@ proc downloadPackage(this: PyPI, packageName: string, releaseVersion: string, de
   dealloc filename
 
 proc installPackage(this: PyPI, packageName: string, releaseVersion: string, generateScript: bool): tuple[output: TaintedString, exitCode: int] =
-  let packageFile = this.downloadPackage(packageName, releaseVersion, generateScript = generateScript)
-  let oldDir = getCurrentDir()
-  if unlikely(packageFile.endsWith".whl"):
+  let packageFile = create(string, sizeOf string)
+  packageFile[] = this.downloadPackage(packageName, releaseVersion, generateScript = generateScript)
+  let oldDir = create(string, sizeOf string)
+  oldDir[] = getCurrentDir()
+  if unlikely(packageFile[].endsWith".whl"):
     setCurrentDir(sitePackages)
-    echo extract(packageFile, sitePackages).output
+    echo extract(packageFile[], sitePackages).output
   else:
     setCurrentDir(getTempDir())
-    echo extract(packageFile, getTempDir()).output
-    let path = packageFile[0..^5]
-    if fileExists(path / "setup.py"):
-      setCurrentDir(path)
-      result = execCmdEx(findExe"python3" & " " & path / "setup.py install --user")
-  setCurrentDir(oldDir)
+    echo extract(packageFile[], getTempDir()).output
+    let path = create(string, sizeOf string)
+    path[] = packageFile[][0..^5]
+    if fileExists(path[] / "setup.py"):
+      setCurrentDir(path[])
+      result = execCmdEx(findExe"python3" & " " & path[] / "setup.py install --user")
+    dealloc path
+  setCurrentDir(oldDir[])
+  dealloc packageFile
+  dealloc oldDir
 
 proc install(this: PyPI, args: seq[string]) =
   ## Install a Python package, download & decompress files, runs python setup.py
