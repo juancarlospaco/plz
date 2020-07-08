@@ -82,27 +82,32 @@ proc releaseUrls(this: PyPI, packageName: string, releaseVersion: string): seq[s
 
 proc downloadPackage(this: PyPI, packageName: string, releaseVersion: string, destDir = getTempDir(), generateScript: bool): string =
   ## Download a URL for the given releaseVersion. Returns filename.
-  var script: string
-  let choosenUrl = this.releaseUrls(packageName, releaseVersion)[0]
-  assert choosenUrl.startsWith"https://", "PyPI Download URL is not HTTPS SSL"
-  let filename = destDir / choosenUrl.split("/")[^1]
-  info "\t" & choosenUrl
-  if generateScript: script &= "curl -LO " & choosenUrl & "\n"
-  this.downloadFile(choosenUrl, filename)
-  assert fileExists(filename), "file failed to download"
-  info "\t" & $getFileSize(filename) & " Bytes total (compressed)"
-  if likely(findExe"sha256sum".len > 0): info "\t" & execCmdEx(cmdChecksum & filename).output.strip
+  assert packageName.len > 0, "packageName must not be empty string"
+  assert releaseVersion.len > 0, "releaseVersion must not be empty string"
+  assert destDir.len > 0, "destDir must not be empty string"
+  let choosenUrl = create(string, sizeOf string)
+  let filename = create(string, sizeOf string)
+  choosenUrl[] = this.releaseUrls(packageName, releaseVersion)[0]
+  assert choosenUrl[].startsWith"https://", "PyPI Download URL is not HTTPS SSL"
+  filename[] = destDir / choosenUrl[].split("/")[^1]
+  echo choosenUrl[]
+  this.downloadFile(choosenUrl[], filename[])
+  assert fileExists(filename[]), "file failed to download"
+  echo "\t" & $getFileSize(filename[]) & " Bytes total (compressed)"
+  if likely(findExe"sha256sum".len > 0): info "\t" & execCmdEx(cmdChecksum & filename[]).output.strip
   try:
-    info "\t" & choosenUrl & ".asc"
-    this.downloadFile(choosenUrl & ".asc", filename & ".asc")
-    if generateScript: script &= "curl -LO " & choosenUrl & ".asc" & "\n"
-    if unlikely(findExe"gpg".len > 0 and fileExists(filename & ".asc")):
-      info "\t" & execCmdEx(cmdVerify & filename & ".asc").output.strip
-      if generateScript: script &= cmdVerify & filename.replace(destDir, "") & ".asc\n"
+    echo "\t" & choosenUrl[] & ".asc"
+    this.downloadFile(choosenUrl[] & ".asc", filename[] & ".asc")
+    if unlikely(findExe"gpg".len > 0 and fileExists(filename[] & ".asc")):
+      echo "\t" & execCmdEx(cmdVerify & filename[] & ".asc").output.strip
   except:
-    warn "\tHTTP-404? " & choosenUrl & ".asc (Package without PGP Signature)"
-  if generateScript: script &= pipInstallCmd & filename.replace(destDir, "") & "\n"
-  result = filename
+    echo "\tHTTP-404? " & choosenUrl[] & ".asc (Package without PGP Signature)"
+  if generateScript:
+    echo("curl -LO " & choosenUrl[] & "\ncurl -LO " & choosenUrl[] & ".asc\n" & cmdVerify &
+      filename[].replace(destDir, "") & ".asc\n" & pipInstallCmd & filename[].replace(destDir, ""))
+  result = filename[]
+  dealloc choosenUrl
+  dealloc filename
 
 proc installPackage(this: PyPI, packageName: string, releaseVersion: string, generateScript: bool): tuple[output: TaintedString, exitCode: int] =
   let packageFile = this.downloadPackage(packageName, releaseVersion, generateScript = generateScript)
