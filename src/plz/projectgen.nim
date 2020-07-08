@@ -1,4 +1,3 @@
-
 import os, times, rdstdin, strutils
 
 template pySkeleton() =
@@ -22,22 +21,22 @@ template pySkeleton() =
   writeFile(namex[] / namex[] / "__main__.py", "\nprint('Main Module')\n")
   writeFile(namex[] / namex[] / "__version__.py", "__version__ = '0.0.1'\n")
   writeFile(namex[] / namex[] / "main.nim", nimpyTemplate)
-  if readLineFromStdin("Generate optional Unitests on ./tests/ ? (y/N): ") == "y":
+  if readLineFromStdin("Generate Unitests files on ./tests/ ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / "tests")
     writeFile(namex[] / "tests" / "__init__.py", testTemplate)
-  if readLineFromStdin("Generate optional Documentation on ./docs/ ? (y/N): ") == "y":
+  if readLineFromStdin("Generate Documentation files on ./docs/ ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / "docs")
     writeFile(namex[] / "docs" / "documentation.md", "# " & namex[] & "\n\n")
-  if readLineFromStdin("Generate optional Examples on ./examples ? (y/N): ") == "y":
+  if readLineFromStdin("Generate Example files on ./examples ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / "examples")
     writeFile(namex[] / "examples" / "example.py", "# -*- coding: utf-8 -*-\n\nprint('Example')\n")
-  if readLineFromStdin("Generate optional DevOps on ./devops/ ? (y/N): ") == "y":
+  if readLineFromStdin("Generate DevOps files on ./devops/ ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / "devops")
     writeFile(namex[] / "devops" / "Dockerfile", "")
     writeFile(namex[] / "devops" / namex[] & ".service", serviceTemplate)
     writeFile(namex[] / "devops" / "build_package.sh", "python3 setup.py sdist --formats=zip\n")
     writeFile(namex[] / "devops" / "upload_package.sh", "twine upload .\n")
-  if readLineFromStdin("Generate optional GitHub files including GitHub Actions on ./github/ ? (y/N): ") == "y":
+  if readLineFromStdin("Generate GitHub files including GitHub Actions on ./github/ ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / ".github")
     discard existsOrCreateDir(namex[] / ".github" / "workflows")
     discard existsOrCreateDir(namex[] / ".github/ISSUE_TEMPLATE")
@@ -47,10 +46,11 @@ template pySkeleton() =
     writeFile(namex[] / ".github/FUNDING.yml", "")
     writeFile(namex[] / ".github" / "workflows" / "build.yml", "")
   if readLineFromStdin("Generate .gitignore file? (y/N): ") == "y":
-    writeFile(namex[] / ".gitattributes", "*.py linguist-language=Python\n*.nim linguist-language=Nim\n")
     writeFile(namex[] / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.egg-info\n*.egg\n*.log\n__pycache__\n*.c\n*.h\n*.o\n")
     writeFile(namex[] / ".coveragerc", "")
     discard existsOrCreateDir(namex[] / ".hooks")
+  if readLineFromStdin("Generate .gitattributes file? (y/N): ") == "y":
+    writeFile(namex[] / ".gitattributes", "*.py linguist-language=Python\n*.nim linguist-language=Nim\n")
   if readLineFromStdin("Generate optional files? (y/N): ") == "y":
     writeFile(namex[] / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
     writeFile(namex[] / "requirements.txt", "")
