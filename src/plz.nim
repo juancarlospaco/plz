@@ -5,15 +5,7 @@ addHandler(newConsoleLogger(fmtStr = ""))
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
 var logfile = defaultFilename()
 
-# proc main() =
-#   ## Main
-
-
-
-
-
-when isMainModule: #main()
-
+proc main() =
   var args: seq[string]
   for tipoDeClave, clave, valor in getopt():
     case tipoDeClave
@@ -122,3 +114,6 @@ when isMainModule: #main()
         maintaineremail = maintaineremail, homepage = homepage, filename = args[1],
         md5_digest = getMD5(readFile(args[1])))
   else: quit("Wrong Parameters, please see Help with: --help", 1)
+
+
+when isMainModule: main()
