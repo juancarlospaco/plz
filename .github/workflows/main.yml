@@ -40,16 +40,16 @@ jobs:
     - name: Compile RELEASE Mode
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
-        nim c src/plz.nim
+        nim c --out:plz src/plz.nim
 
     - name: Strip Binary
       run:
-        strip --strip-all src/plz
-        du -h src/plz
+        strip --strip-all plz
+        du -h plz
 
     - name: Run
       run: |
-        src/plz --help
-        src/plz --version
-        src/plz --license
-        src/plz --dump
+        plz --help
+        plz --version
+        plz --license
+        plz --dump
