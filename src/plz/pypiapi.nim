@@ -110,6 +110,7 @@ proc downloadPackage(this: PyPI, packageName: string, releaseVersion: string, de
   dealloc filename
 
 proc installPackage(this: PyPI, packageName: string, releaseVersion: string, generateScript: bool): tuple[output: TaintedString, exitCode: int] =
+  assert packageName.len > 0 and releaseVersion.len > 0, "packageName and releaseVersion must not be empty string"
   let packageFile = create(string, sizeOf string)
   packageFile[] = this.downloadPackage(packageName, releaseVersion, generateScript = generateScript)
   let oldDir = create(string, sizeOf string)
@@ -132,38 +133,52 @@ proc installPackage(this: PyPI, packageName: string, releaseVersion: string, gen
 
 proc install(this: PyPI, args: seq[string]) =
   ## Install a Python package, download & decompress files, runs python setup.py
-  var failed, suces: byte
-  echo($now() & ", PID is " & $getCurrentProcessId() & ", " & $args.len & " packages to download and install " & $args)
+  assert args.len > 0
+  let scrpt = create(bool, sizeOf bool)
+  let suces = create(byte, sizeOf byte)
+  let failed = create(byte, sizeOf byte)
+  let semver = create(string, sizeOf string)
   let time0 = create(DateTime, sizeOf DateTime)
   time0[] = now()
+  echo($now() & ", PID is " & $getCurrentProcessId() & ", " & $args.len & " packages to download and install " & $args)
+  scrpt[] = readLineFromStdin"Generate Install Script? (y/N): " == "y"
   for argument in args:
-    let semver = $this.packageLatestRelease(argument)
-    info "\t" & argument & "\t" & semver
-    let resultados = this.installPackage(argument, semver, readLineFromStdin"Generate Install Script? (y/N): " == "y")
+    semver[] = $this.packageLatestRelease(argument)
+    info "\t" & argument & "\t" & semver[]
+    let resultados = this.installPackage(argument, semver[], scrpt[])
     info "\t" & resultados.output
-    if resultados.exitCode == 0: inc suces else: inc failed
-  info($now() & " " & $failed & " Failed, " & $suces &
+    if resultados.exitCode == 0: inc suces[] else: inc failed[]
+  info($now() & " " & $failed[] & " Failed, " & $suces[] &
     " Success on " & $(now() - time0[]) & " to download+install " & $args.len & " packages")
+  dealloc scrpt
+  dealloc semver
   dealloc time0
+  dealloc suces
+  dealloc failed
 
 proc download(this: PyPI, args: seq[string]) =
   ## Download a package to a local folder, dont decompress nor install.
-  var dir: string
-  while not dirExists(dir): dir = readLineFromStdin"Download to where? (Full path to existing folder): "
-  for pkg in args: echo this.downloadPackage(pkg, $this.packageLatestRelease(pkg), dir, false)
+  assert args.len > 0
+  var dir = create(string, sizeOf string)
+  while not dirExists(dir[]): dir[] = readLineFromStdin"Download to where? (Full path to existing folder): "
+  for pkg in args: echo this.downloadPackage(pkg, $this.packageLatestRelease(pkg), dir[], false)
+  dealloc dir
 
 proc releaseData(this: PyPI, packageName: string, releaseVersion: string): XmlNode {.inline.} =
   ## Retrieve metadata describing a specific releaseVersion. Returns a dict.
+  assert packageName.len > 0, "packageName must not be empty string"
   this.headers = newHttpHeaders(hdrXml)
   result = parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("release_data", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion))))
 
 proc browse(this: PyPI, classifiers: seq[string]): XmlNode {.inline.} =
   ## Retrieve a list of name, version of all releases classified with all of given classifiers.
   ## Classifiers must be a list of standard Trove classifier strings. Returns 100 results max.
+  assert classifiers.len > 0, "classifiers must not be empty seq"
   this.headers = newHttpHeaders(hdrXml)
-  var s: string
-  for item in classifiers: s &= xmlRpcParam.format(item)
-  result = parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("browse", s)))
+  var s = create(string, sizeOf string)
+  for item in classifiers: s[].add xmlRpcParam.format(item)
+  result = parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("browse", s[])))
+  dealloc s
 
 proc uninstall(this: PyPI, args: seq[string]) {.inline.} =
   # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD is a CSV
