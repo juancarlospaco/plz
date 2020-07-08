@@ -1,13 +1,19 @@
 import strutils, os, parseopt, terminal, logging, osproc, rdstdin, requirementstxt, libarchibi
-include plz/constants, plz/docgen, plz/pypiapi, plz/pypinteract, plz/projectgen, plz/sysinfo, plz/utils
+include plz/constants, plz/utils, plz/docgen, plz/pypiapi, plz/pypinteract, plz/projectgen, plz/sysinfo
 
 addHandler(newConsoleLogger(fmtStr = ""))
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
-
 var logfile = defaultFilename()
 
+# proc main() =
+#   ## Main
 
-when isMainModule:
+
+
+
+
+when isMainModule: #main()
+
   var args: seq[string]
   for tipoDeClave, clave, valor in getopt():
     case tipoDeClave
