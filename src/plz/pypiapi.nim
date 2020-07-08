@@ -94,7 +94,7 @@ proc downloadPackage(this: PyPI, packageName: string, releaseVersion: string, de
   this.downloadFile(choosenUrl[], filename[])
   assert fileExists(filename[]), "file failed to download"
   echo "\t" & $getFileSize(filename[]) & " Bytes total (compressed)"
-  if likely(findExe"sha256sum".len > 0): info "\t" & execCmdEx(cmdChecksum & filename[]).output.strip
+  if likely(findExe"sha256sum".len > 0): echo "\t" & execCmdEx(cmdChecksum & filename[]).output.strip
   try:
     echo "\t" & choosenUrl[] & ".asc"
     this.downloadFile(choosenUrl[] & ".asc", filename[] & ".asc")
@@ -182,6 +182,7 @@ proc browse(this: PyPI, classifiers: seq[string]): XmlNode {.inline.} =
 
 proc uninstall(this: PyPI, args: seq[string]) {.inline.} =
   # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD is a CSV
+  assert args.len > 0
   styledEcho(fgGreen, bgBlack, "Uninstall " & $args.len & " Packages:\t" & $args)
   let recordFiles = block:
     var output: seq[string]
@@ -212,6 +213,10 @@ proc upload(this: PyPI, name, version, license, summary, description, author, do
   description_content_type = "text/markdown; charset=UTF-8; variant=GFM"): string =
   # https://warehouse.readthedocs.io/api-reference/legacy/#upload-api
   # github.com/python/cpython/blob/master/Lib/distutils/command/upload.py#L131-L135
+  assert name.len > 0 and version.len > 0 and  license.len > 0 and summary.len > 0 and  description.len > 0
+  assert author.len > 0 and downloadurl.len > 0 and authoremail.len > 0 and maintainer.len > 0 and maintaineremail.len > 0
+  assert homepage.len > 0 and filename.len > 0 and md5_digest.len > 0 and username.len > 0 and password.len > 0
+  assert keywords.len > 0 and requirespython.len > 0 and filetype.len > 0 and pyversion.len > 0 and description_content_type.len > 0
   assert filename.splitFile.ext.toLowerAscii in ["whl", "egg", "zip"], "File extension must be 1 of whl or egg or zip"
   var multipartData = create(MultipartData, sizeOf MultipartData)
   multipartData[] = newMultipartData()
