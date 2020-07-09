@@ -101,7 +101,7 @@ proc main() =
         info "--hash=sha256:" & sha256sum.split(" ")[^1]
     of "parserequirements":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
-      for item in requirements(args[1], [("*", "0")]): echo item
+      for item in requirements(readFile(args[1]), [("*", "0")]): echo item
     of "upload":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       doAssert fileExists(args[1]), "File not found: " & args[1]
