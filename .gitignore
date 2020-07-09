@@ -2,6 +2,5 @@
 *.h
 *.o
 *.log
-src/plz
 .vscode/
 src/*.txt

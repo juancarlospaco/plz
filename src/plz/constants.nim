@@ -12,7 +12,6 @@ const
   pypiUploadUrl = "https://test.pypi.org/legacy/"           ## PyPI Upload POST URL
   pypiJobUrl = "https://www.python.org/jobs/feed/rss/"      ## Python Jobs URL
   pypiStatus = "https://status.python.org/history.rss"      ## PyPI Status XML API URL.
-  pipInstaller = "https://bootstrap.pypa.io/get-pip.py"     ## get-pip URL
   lppXml = "<methodName>list_packages</methodName>"         ## XML RPC Command.
   clsXml = "<methodName>changelog_last_serial</methodName>" ## XML RPC Command.
   lpsXml = "<methodName>list_packages_with_serial</methodName>" ## XML RPC Command.
@@ -29,43 +28,44 @@ const
   cmdVerify = "gpg --verify "
   cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag " ## PIP Wont optimize Production binaries, they are left with all Debugging on!.
   osOpen = when defined(macos): "open " elif defined(windows): "start " else: "xdg-open "
-  pyExtPattern = when defined(windows): ".cpython-*.dll" elif defined(macos): ".cpython-*.dynlib" else: ".cpython-*.so"
   pipCacheDir =
     when defined(linux): r"~/.cache/pip"                    # PIP "standards"
     elif defined(macos): r"~/Library/Caches/pip"
     elif defined(windows): r"%LocalAppData%\pip\Cache"
     else: getEnv"PIP_DOWNLOAD_CACHE"
+  # pyExtPattern = when defined(windows): ".cpython-*.dll" elif defined(macos): ".cpython-*.dynlib" else: ".cpython-*.so"
 
 # TODO: search    Search PyPI for packages (PyPI API is Buggy???).
 const helpy = """ 👑 PIP Fast Single-File Compiled Alternative 👑
 https://nim-lang.org
 Commands:
-  install         Install packages (Download, Decompress, Install packages).
-  uninstall       Uninstall packages (Interactive, asks Y/N to user before).
-  reinstall       Uninstall & Install packages (Interactive, asks Y/N to user).
-  download        Download packages (Interactive,no decompress,asks destination)
-  hash            Compute hashes of package archives (SHA256 Checksum file).
-  init            New Python project template (Interactive, asks Y/N to user).
-  backup          Compressed signed backup of a file and quit (GPG + SHA512).
-  strip           Optimize size of Python native binary module (PIP wont strip).
-  newpackages     List all the new Packages uploaded to PyPI recently (RSS).
-  lastupdates     List all existing Packages updated on PyPI recently (RSS).
-  lastjobs        List all new Job Posts updated on Python recently (RSS).
-  stats           PyPI service status report from official statuspage (RSS).
-  userpackages    List all existing Packages by User (Interactive, asks user).
-  latestversion   Show the Latest Version release of a PYPI Package (SemVer).
-  open            Open a given module in your default code editor (xdg-open).
-  forceInstallPip Force install PIP on a given location directory (get-pip.py).
-  doc             Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
-  doc2latex       Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
-  doc2json        Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
-  upload          Similar to "twine upload" (Interactive,asks user,wont need Twine).
+  install           Install packages (Download, Decompress, Install packages).
+  uninstall         Uninstall packages (Interactive, asks Y/N to user before).
+  reinstall         Uninstall & Install packages (Interactive, asks Y/N to user).
+  download          Download packages (Interactive,no decompress,asks destination)
+  hash              Compute hashes of package archives (SHA256 Checksum file).
+  init              New Python project template (Interactive, asks Y/N to user).
+  strip             Optimize size of Python native binary module (PIP wont strip).
+  newpackages       List all the new Packages uploaded to PyPI recently (RSS).
+  lastupdates       List all existing Packages updated on PyPI recently (RSS).
+  lastjobs          List all new Job Posts updated on Python recently (RSS).
+  stats             PyPI service status report from official statuspage (RSS).
+  userpackages      List all existing Packages by User (Interactive, asks user).
+  latestversion     Show the Latest Version release of a PYPI Package (SemVer).
+  open              Open a given module in your default code editor (xdg-open).
+  forceInstallPip   Force install PIP on a given location directory (get-pip.py).
+  doc               Markdown/ReSTructuredText to HTML  (MD/RST can be mixed).
+  doc2latex         Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
+  doc2json          Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
+  upload            Similar to "twine upload" (Interactive,asks user,wont need Twine).
+  completion        A helper command used for command completion.
+  parserequirements Parse a requirements file, print it to stdout (Linter,Debug,etc).
 
 Options:
   --help           Show Help and quit.
   --version        Show Version and quit.
   --license        Show License and quit.
-  --dump           Show system info JSON and quit (for Developers and Bug Reporting).
+  --dump           Show information useful for debugging. Show system info JSON.
   --enUsUtf8       Force Encoding to UTF-8 and Language to English (en_US.UTF-8)
   --putenv:key=val Set an environment variable "KEY=Value", can be repeated.
   --cleanpyc       Recursively remove all __pycache__ and *.pyc
@@ -74,7 +74,6 @@ Options:
   --cleanpipcache  Remove all files and folders from the PIP Cache folder.
   --cleanvenvs     Remove Virtualenvs (interactive, asks Y/N 1-by-1).
   --log=file.log   Full path to a verbose local log file.
-  --backuplogs     Compress old PLZ Logs at exit to save disk resources.
   --nice20         Runs with "nice = 20" (CPU Priority, smooth priority).
   --publicip       Show your Public IP Address (Internet connectivity check).
   --suicide        Deletes itself permanently and exit (single file binary).
@@ -155,6 +154,41 @@ exclude-source-files = true
 # include = *.py, *.pyw
 # exclude = *.c, *.so, *.js, *.tests, *.tests.*, tests.*, tests
 """
+
+
+const pkgInfoTemplate = """Metadata-Version: 2.1
+Name: example
+Version: 0.0.1
+Summary: example package
+Description: example package
+Home-page: https://github.com/example/example
+url: https://github.com/example/example
+download_url: https://github.com/example/example
+Author: anonymous
+Author-email: user@mail.com
+Maintainer: anonymous
+Maintainer-email: user@mail.com
+License: MIT
+Keywords: python3, python4, cpython
+Platform: Linux
+Platform: Darwin
+Platform: Windows
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Environment :: Other Environment
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Other Audience
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Topic :: Software Development
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown """
 
 
 const testTemplate = """# -*- coding: utf-8 -*-
@@ -240,19 +274,6 @@ ExecStart=echo      # Execute your application command.
 WantedBy=multi-user.target
 """
 
-
-const licenseHint = """Licenses:
-💡 See https://tldrlegal.com/licenses/browse or https://choosealicense.com
-💡 No License = Proprietary,WTFPL/Unlicense = Proprietary, Dont invent your own
-MIT   ➡️Simple and permissive,short,KISS,maybe can be an Ok default
-PPL   ➡️Simple and permisive,wont allow corporations to steal/sell your code
-GPL   ➡️Ensures that code based on this is shared with the same terms,strict
-LGPL  ➡️Ensures that code based on this is shared with the same terms,no strict
-Apache➡️Simple and explicitly grants Patents
-BSD   ➡️Simple and permissive,but your code can be closed/sold by 3rd party
-"""
-
-
 const nimpyTemplate = """import os, strutils, nimpy
 
 proc function(a, b: int): auto {.exportpy.} =
@@ -260,27 +281,42 @@ proc function(a, b: int): auto {.exportpy.} =
   a + b  # Comment, ignored by compiler.       https://github.com/yglukhov/nimpy
 """
 
+const completionsTemplate = """
+# pip bash completion start
+_pip_completion()
+{
+    COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
+                   COMP_CWORD=$COMP_CWORD \
+                   PIP_AUTO_COMPLETE=1 $1 2>/dev/null ) )
+}
+complete -o default -F _pip_completion pip
+# pip bash completion end
 
-##############################################################################
 
 
-addHandler(newConsoleLogger(fmtStr = ""))
-setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
+# pip fish completion start
+function __fish_complete_pip
+    set -lx COMP_WORDS (commandline -o) ""
+    set -lx COMP_CWORD ( \
+        math (contains -i -- (commandline -t) $COMP_WORDS)-1 \
+    )
+    set -lx PIP_AUTO_COMPLETE 1
+    string split \  -- (eval $COMP_WORDS[1])
+end
+complete -fa "(__fish_complete_pip)" -c pip
+# pip fish completion end
 
-var script: string
-var logfile = defaultFilename()
 
-let
-  py3 = findExe"python3"
-  headerJson = newHttpHeaders(hdrJson)
-  headerXml = newHttpHeaders(hdrXml)
-  user = getEnv"USER"
 
-using
-  generateScript: bool
-  query: Table[string, seq[string]]
-  args, classifiers, keywords: seq[string]
-  projectName, projectVersion, packageName, user, releaseVersion: string
-  destDir, name, version, license, summary, description, author: string
-  downloadurl, authoremail, maintainer, maintaineremail, filename: string
-  homepage, md5_digest, username, password, destination: string
+# pip zsh completion start
+function _pip_completion {
+  local words cword
+  read -Ac words
+  read -cn cword
+  reply=( $( COMP_WORDS="$words[*]" \
+             COMP_CWORD=$(( cword-1 )) \
+             PIP_AUTO_COMPLETE=1 $words[1] 2>/dev/null ))
+}
+compctl -K _pip_completion pip
+# pip zsh completion end
+"""
