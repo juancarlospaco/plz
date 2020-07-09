@@ -78,13 +78,9 @@ $ plz --help               # Show Help
 - Self-Documentation Generator outputs HTML, PDF, JSON.
 - Works fully independently self-contained standalone application.
 
-**TODO, WIP:**
+**WIP:**
 
 ![](https://raw.githubusercontent.com/juancarlospaco/plz/master/pepehack.gif "Work in progress!")
-
-The only thing missing to fully replace PIP is to parse versions of each package,
-currently it only installs the latest version of each package,
-the feature works but is not connected with the CLI arguments, the rest should be working.
 
 
 # Install
