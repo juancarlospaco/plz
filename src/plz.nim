@@ -69,7 +69,7 @@ proc main() =
     of "lastjobs": quit($client.lastJobs(), 0)
     of "userpackages": quit($client.userPackages(readLineFromStdin("PyPI Username?: ").normalize), 0)
     of "uninstall": client.uninstall(args[1..^1])
-    of "install": client.install(args[1..^1])
+    of "install": client.multiInstall(args[1..^1])
     of "download": client.download(args[1..^1])
     of "doc":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
@@ -81,9 +81,8 @@ proc main() =
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       quit(doc2json(args[1]), 0)
     of "reinstall":
-      let packages = args[1..^1]
-      client.uninstall(packages)
-      client.install(packages)
+      client.uninstall(args[1..^1])
+      client.multiInstall(args[1..^1])
     of "latestversion":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       quit($client.packageLatestRelease(args[1]), 0)
