@@ -7,7 +7,6 @@
 ![](https://img.shields.io/github/languages/count/juancarlospaco/plz?logoColor=green&style=for-the-badge)
 ![](https://img.shields.io/github/languages/top/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/github/stars/juancarlospaco/plz?style=for-the-badge)
-![](https://img.shields.io/maintenance/yes/2020?style=for-the-badge)
 ![](https://img.shields.io/github/languages/code-size/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/github/issues-raw/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/github/issues-pr-raw/juancarlospaco/plz?style=for-the-badge)
@@ -48,7 +47,6 @@ $ plz --cleanpipcache      # Clean all PIP Cache folder.
 $ plz --cleanvenvs         # Clean Virtualenvs (interactive, asks Y/N 1-by-1).
 $ plz --publicip           # Show your Public IP Address (Internet connectivity check).
 $ plz --log=file.log       # Full path to a verbose local log file.
-$ plz --backuplogs         # Compress old PLZ Logs at exit, to save disk resources.
 $ plz --putenv:key=val     # Set an environment variable "KEY=Value", can be repeated.
 $ plz --nice20             # Runs with "nice = 20" (CPU Priority, smooth priority).
 $ plz --suicide            # Deletes itself permanently and exit (single file binary).
@@ -61,9 +59,9 @@ $ plz --help               # Show Help
 # Features
 
 - Designed for Docker or Alpine usage.
-- 1 Megabyte, 1 file, 0 Dependencies, ~500 Lines of code.
+- 1 Megabyte, 1 file, 0 Dependencies.
 - Install, uninstall, reinstall, download, upload to PyPI, etc.
-- Real Inferred Strong Static Typing with [Z3 Theorem Prover](https://en.wikipedia.org/wiki/Z3_Theorem_Prover).
+- Real Inferred Strong Static Typing.
 - No Garbage Collector (Rust-like memory management).
 - Immutable programming, No Global Mutable State.
 - The only PIP alternative in the world that just works even with PIP/Python/Virtualenv completely broken.
