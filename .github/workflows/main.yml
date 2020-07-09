@@ -53,3 +53,7 @@ jobs:
         ./plz --version
         ./plz --license
         ./plz --dump
+        ./plz completion
+        ./plz latestversion pip
+        ./plz userpackages juancarlospaco
+        ./plz install pip setuptools
