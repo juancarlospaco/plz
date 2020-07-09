@@ -131,9 +131,8 @@ proc installPackage(this: PyPI, packageName: string, releaseVersion: string, gen
   dealloc packageFile
   dealloc oldDir
 
-proc install(this: PyPI, args: seq[string]) =
-  ## Install a Python package, download & decompress files, runs python setup.py
-  assert args.len > 0
+proc install(this: PyPI, args: seq[array[2, string]]) =
+  assert args.len > 0, "Error parsing the list of packages"
   let scrpt = create(bool, sizeOf bool)
   let suces = create(byte, sizeOf byte)
   let failed = create(byte, sizeOf byte)
@@ -143,9 +142,9 @@ proc install(this: PyPI, args: seq[string]) =
   echo($now() & ", PID is " & $getCurrentProcessId() & ", " & $args.len & " packages to download and install " & $args)
   scrpt[] = readLineFromStdin"Generate Install Script? (y/N): " == "y"
   for argument in args:
-    semver[] = $this.packageLatestRelease(argument)
-    echo "\t" & argument & "\t" & semver[]
-    let resultados = this.installPackage(argument, semver[], scrpt[])
+    semver[] = if argument[1].len == 0: $this.packageLatestRelease(argument[0]) else: argument[1]
+    echo "\t" & argument[0] & "\t" & semver[]
+    let resultados = this.installPackage(argument[0], semver[], scrpt[])
     echo "\t" & resultados.output
     if resultados.exitCode == 0: inc suces[] else: inc failed[]
   echo($now() & " " & $failed[] & " Failed, " & $suces[] &
@@ -205,6 +204,14 @@ proc uninstall(this: PyPI, args: seq[string]) =
     echo("\n\nDeleted?\tFile")
     for pythonfile in files2delete[]: echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
   dealloc files2delete
+
+template multiInstall(this: PyPI; pkgs: seq[string]) =
+  assert pkgs.len > 0, "Error parsing the list of packages from the command line arguments"
+  let pkgseq = create(seq[array[2, string]], sizeOf seq[array[2, string]])
+  for item in requirements(pkgs.join("\n"), [("*", "0")]): pkgseq[].add [item.name, item.version]
+  assert pkgseq[].len > 0, "Error parsing the requirements of packages from the command line arguments"
+  this.install(pkgseq[])
+  dealloc pkgseq
 
 proc upload(this: PyPI, name, version, license, summary, description, author, downloadurl, authoremail, maintainer, maintaineremail, homepage, filename,
   md5_digest, username, password: string, keywords: seq[string], requirespython = ">=3", filetype = "sdist", pyversion = "source",
