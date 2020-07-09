@@ -25,7 +25,6 @@ $ plz reinstall pre-commit # Reinstall 1 or more packages
 $ plz download pre-commit  # Download 1 or more packages
 $ plz hash file.py         # Show SHA CheckSum of file/package
 $ plz open file.py         # Open a module in your default code editor
-$ plz backup /folder/      # Compressed signed backup of file/package (GPG+SHA512)
 $ plz init                 # New Python project template (Interactive)
 $ plz stats                # PyPI official service status report
 $ plz newpackages          # List all the new Packages uploaded to PyPI recently
@@ -38,6 +37,8 @@ $ plz doc file.md          # Markdown/ReSTructuredText to HTML  (MD/RST can be m
 $ plz doc2latex file.md    # Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
 $ plz doc2json file.md     # Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
 $ plz upload packg-1.0.zip # Similar to "twine upload" (Interactive,asks user,wont need Twine).
+$ plz completion           # A helper command used for command completion.
+$ plz parserequirements    # Parse a requirements file, print it to stdout (Linter,Debug,etc).
 $
 $ plz --enUsUtf8           # Force Encoding to UTF-8 and Language to English
 $ plz --cleanpyc           # Clean all __pycache__ and *.pyc
