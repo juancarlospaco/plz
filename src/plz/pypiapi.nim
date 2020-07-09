@@ -102,7 +102,7 @@ proc downloadPackage(this: PyPI, packageName: string, releaseVersion: string, de
       echo "\t" & execCmdEx(cmdVerify & filename[] & ".asc").output.strip
   except:
     echo "\tHTTP-404? " & choosenUrl[] & ".asc (Package without PGP Signature)"
-  if generateScript:
+  if likely(generateScript):
     echo("curl -LO " & choosenUrl[] & "\ncurl -LO " & choosenUrl[] & ".asc\n" & cmdVerify &
       filename[].replace(destDir, "") & ".asc\n" & pipInstallCmd & filename[].replace(destDir, ""))
   result = filename[]
@@ -133,23 +133,20 @@ proc installPackage(this: PyPI, packageName: string, releaseVersion: string, gen
 
 proc install(this: PyPI, args: seq[array[2, string]]) =
   assert args.len > 0, "Error parsing the list of packages"
-  let scrpt = create(bool, sizeOf bool)
   let suces = create(byte, sizeOf byte)
   let failed = create(byte, sizeOf byte)
   let semver = create(string, sizeOf string)
   let time0 = create(DateTime, sizeOf DateTime)
   time0[] = now()
   echo($now() & ", PID is " & $getCurrentProcessId() & ", " & $args.len & " packages to download and install " & $args)
-  scrpt[] = readLineFromStdin"Generate Install Script? (y/N): " == "y"
   for argument in args:
     semver[] = if argument[1].len == 0: $this.packageLatestRelease(argument[0]) else: argument[1]
     echo "\t" & argument[0] & "\t" & semver[]
-    let resultados = this.installPackage(argument[0], semver[], scrpt[])
+    let resultados = this.installPackage(argument[0], semver[], true)
     echo "\t" & resultados.output
     if resultados.exitCode == 0: inc suces[] else: inc failed[]
   echo($now() & " " & $failed[] & " Failed, " & $suces[] &
     " Success on " & $(now() - time0[]) & " to download+install " & $args.len & " packages")
-  dealloc scrpt
   dealloc semver
   dealloc time0
   dealloc suces
