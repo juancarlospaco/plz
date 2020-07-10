@@ -14,7 +14,6 @@ proc main() =
       of "version": quit(static(NimblePkgVersion & "\n" & staticExec"git rev-parse --short HEAD"), 0)
       of "license", "licencia": quit("PPL", 0)
       of "dump": quit(getSystemInfo().pretty, 0)
-      of "completions": quit(completionsTemplate, 0)
       of "nice20": echo nice(20.cint)
       of "log": logfile = valor
       of "enusutf8": enUsUtf8()
@@ -63,6 +62,7 @@ proc main() =
   if args.len > 0:
     case args[0].normalize
     of "init": pySkeleton()
+    of "completion", "completions": quit(completionsTemplate, 0)
     of "stats": quit($client.stats(), 0)
     of "newpackages": quit($client.newPackages(), 0)
     of "lastupdates": quit($client.lastUpdates(), 0)
