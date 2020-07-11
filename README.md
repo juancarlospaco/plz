@@ -61,6 +61,11 @@ $ plz --help               # Show Help
 ![](https://raw.githubusercontent.com/juancarlospaco/plz/master/project_creator.png)
 
 
+# Requirements Parser for debug
+
+![](https://raw.githubusercontent.com/juancarlospaco/plz/master/requirements_parser.png)
+
+
 # Features
 
 - Designed for Docker or Alpine usage.
