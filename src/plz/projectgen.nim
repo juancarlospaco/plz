@@ -60,7 +60,7 @@ template pySkeleton() =
     writeFile(namex[] / "debian" / "control", debianControl)
     writeFile(namex[] / "debian" / "compat", "9\n")
     writeFile(namex[] / "debian" / "changelog", debianChangelog)
-    writeFile(namex[] / "debian" / "source" / "options", "extend-diff-ignore=\"\.egg-info/\"\n")
+    writeFile(namex[] / "debian" / "source" / "options", """extend-diff-ignore="\.egg-info/\" """)
     writeFile(namex[] / "debian" / "source" / "format", "3.0 (quilt)\n")
   if readLineFromStdin("Generate README,LICENSE,CHANGELOG,etc ? (y/N): ") == "y":
     let ext = create(string, sizeOf string)
