@@ -4,8 +4,7 @@ randomize()
 template pySkeleton() =
   ## Creates the skeleton (folders and files) for a New Python project.
   var namex = create(string, sizeOf string)
-  namex[] = readLineFromStdin"New Python project name?: ".strip.normalize
-  assert namex[].len > 1, "Name must not be empty string"
+  while not(namex[].len > 0 and namex[].len < 99): namex[] = readLineFromStdin"New Python project name?: ".strip.toLowerAscii.replace(" ", "_")
   discard existsOrCreateDir(namex[])
   discard existsOrCreateDir(namex[] / namex[])
   writeFile(namex[] / namex[] / "__init__.py", "print('Hello World')\n")
