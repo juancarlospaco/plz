@@ -136,7 +136,7 @@ No.
 - Whats "Generate Fake Git Commits" ?.
 
 Sometimes you may need to create commits to restart CI, trigger GitHub Actions, Git Hooks, etc
-but you dont have anything new to commit, that feature can create empty commits to force a trigger.
+but you dont have anything new to commit, that feature can create empty commits to force-trigger the Git service.
 
 Some Git services do not trigger for new repos with 1 or 2 commits,
 that feature can create empty commits to force-start the Git service.
