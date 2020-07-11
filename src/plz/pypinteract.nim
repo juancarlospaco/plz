@@ -1,6 +1,7 @@
 import strutils, rdstdin
 
-template ask2User(): auto =
+template uploadToPypi(file: string) =
+  doAssert fileExists(file), "File not found: " & file
   let username = create(string, sizeOf string)
   let password = create(string, sizeOf string)
   let name = create(string, sizeOf string)
@@ -43,8 +44,16 @@ template ask2User(): auto =
   while not(password[].len > 4 and password[].len < 999 and password[] == iPwd2[]):
     password[] = readLineFromStdin("Type Password: ").strip # Type it Twice.
     iPwd2[] = readLineFromStdin("Confirm Password (Repeat it again): ").strip
-  result = (username: username[], password: password[], name: name[], author: author[], version: version[], license: license[], summary: summary[], homepage: homepage[],
+  echo (username: username[], password: password[], name: name[], author: author[], version: version[], license: license[], summary: summary[], homepage: homepage[],
     description: description[], downloadurl: downloadurl[], maintainer: maintainer[], authoremail: authoremail[], maintaineremail: maintaineremail[], keywords: keywords[])
+  echo client.upload(
+    username = username[], password = password[], name = name[],
+    version = version[], license = license[], summary = summary[],
+    description = description[], author = author[], downloadurl = downloadurl[],
+    authoremail = authoremail[], maintainer = maintainer[], keywords = keywords[],
+    maintaineremail = maintaineremail[], homepage = homepage[], filename = file,
+    md5_digest = getMD5(readFile(file))
+  )
   zeroMem(password, sizeOf password)
   zeroMem(iPwd2, sizeOf iPwd2)
   dealloc password
@@ -62,18 +71,3 @@ template ask2User(): auto =
   dealloc maintainer
   dealloc maintaineremail
   dealloc keywords
-
-template uploadToPypi(file: string) =
-  doAssert fileExists(file), "File not found: " & file
-  let (username, password, name, author, version, license, summary, homepage,
-    description, downloadurl, maintainer, authoremail, maintaineremail, keywords
-  ) = ask2User()
-  echo (username, name, author, version, license, summary, homepage,
-    description, downloadurl, maintainer, authoremail, maintaineremail, keywords)
-  echo client.upload(
-    username = username, password = password, name = name,
-    version = version, license = license, summary = summary,
-    description = description, author = author, downloadurl = downloadurl,
-    authoremail = authoremail, maintainer = maintainer, keywords = keywords,
-    maintaineremail = maintaineremail, homepage = homepage, filename = file,
-    md5_digest = getMD5(readFile(file)))
