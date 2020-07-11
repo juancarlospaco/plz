@@ -33,3 +33,15 @@ template cleanvenvs() =
     for pyc in files2delete[]: echo $tryRemoveFile(pyc) & "\t" & pyc
   else: styledEcho(fgGreen, bgBlack, "Virtualenvs not found, nothing to clean.")
   dealloc files2delete
+
+template cleanpipcache() =
+  let temp = create(string, sizeOf string)
+  temp[] = getTempDir()
+  echo "\n\nDeleted?\tFile" # Dir Found in the wild
+  echo $tryRemoveFile(temp[] / "pip-build-root") & "\t" & temp[] / "pip-build-root"
+  echo $tryRemoveFile(temp[] / "pip_build_root") & "\t" & temp[] / "pip_build_root"
+  echo $tryRemoveFile(temp[] / "pip-build-" & getEnv"USER") & "\t" & temp[] / "pip-build-" & getEnv"USER"
+  echo $tryRemoveFile(temp[] / "pip_build_" & getEnv"USER") & "\t" & temp[] / "pip_build_" & getEnv"USER"
+  echo $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
+  echo $tryRemoveFile(getEnv"PIP_DOWNLOAD_CACHE") & "\t" & getEnv"PIP_DOWNLOAD_CACHE"
+  dealloc temp

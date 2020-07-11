@@ -39,12 +39,7 @@ proc main() =
       of "cleanvenvs", "cleanvirtualenvs", "cleanvirtualenv", "clearvirtualenvs", "clearvirtualenv":
         cleanvenvs()
       of "cleanpipcache", "clearpipcache":
-        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile") # Dir Found in the wild
-        info $tryRemoveFile("/tmp/pip-build-root") & "\t/tmp/pip-build-root"
-        info $tryRemoveFile("/tmp/pip_build_root") & "\t/tmp/pip_build_root"
-        info $tryRemoveFile("/tmp/pip-build-" & getEnv"USER") & "\t/tmp/pip-build-" & getEnv"USER"
-        info $tryRemoveFile("/tmp/pip_build_" & getEnv"USER") & "\t/tmp/pip_build_" & getEnv"USER"
-        info $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
+        cleanpipcache()
       of "suicide": echo tryRemoveFile(currentSourcePath()[0..^5])
     of cmdArgument: args.add clave
     of cmdEnd: quit("Wrong Parameters, please see Help with: --help", 1)
