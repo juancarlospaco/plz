@@ -39,6 +39,7 @@ proc ask2User(): auto =
   Apache ➡️ Simple and explicitly grants Patents
   BSD    ➡️ Simple and permissive,but your code can be closed/sold by 3rd party """
   while not(license[].len > 2 and license[].len < 99): license[] = readLineFromStdin("Type Package License: ").normalize
+  echo "Password is never written to disk.\nPassword is erased from memory after use."
   while not(password[].len > 4 and password[].len < 999 and password[] == iPwd2[]):
     password[] = readLineFromStdin("Type Password: ").strip # Type it Twice.
     iPwd2[] = readLineFromStdin("Confirm Password (Repeat it again): ").strip
