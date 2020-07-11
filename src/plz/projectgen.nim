@@ -53,6 +53,15 @@ template pySkeleton() =
     writeFile(namex[] / "Makefile", makefileTemplate)
   if readLineFromStdin("Generate Arch Linux PKGBUILD ? (y/N): ") == "y":
     writeFile(namex[] / "PKGBUILD", pkgbuildTemplate)
+  if readLineFromStdin("Generate Ubuntu Linux and Debian Linux files on ./debian/ ? (y/N): ") == "y":
+    discard existsOrCreateDir(namex[] / "debian")
+    discard existsOrCreateDir(namex[] / "debian" / "source")
+    writeFile(namex[] / "debian" / "rules", debianRules)
+    writeFile(namex[] / "debian" / "control", debianControl)
+    writeFile(namex[] / "debian" / "compat", "9\n")
+    writeFile(namex[] / "debian" / "changelog", debianChangelog)
+    writeFile(namex[] / "debian" / "source" / "options", "extend-diff-ignore=\"\.egg-info/\"\n")
+    writeFile(namex[] / "debian" / "source" / "format", "3.0 (quilt)\n")
   if readLineFromStdin("Generate README,LICENSE,CHANGELOG,etc ? (y/N): ") == "y":
     let ext = create(string, sizeOf string)
     ext[] = if readLineFromStdin("Use Markdown (MD) instead of ReSTructuredText (RST)? (y/N): ") == "y": ".md" else: ".rst"
