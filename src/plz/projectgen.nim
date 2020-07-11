@@ -51,6 +51,8 @@ template pySkeleton() =
     writeFile(namex[] / "MANIFEST.in", manifestTemplate)
   if readLineFromStdin("Generate Makefile ? (y/N): ") == "y":
     writeFile(namex[] / "Makefile", makefileTemplate)
+  if readLineFromStdin("Generate Arch Linux PKGBUILD ? (y/N): ") == "y":
+    writeFile(namex[] / "PKGBUILD", pkgbuildTemplate)
   if readLineFromStdin("Generate README,LICENSE,CHANGELOG,etc ? (y/N): ") == "y":
     let ext = create(string, sizeOf string)
     ext[] = if readLineFromStdin("Use Markdown (MD) instead of ReSTructuredText (RST)? (y/N): ") == "y": ".md" else: ".rst"
