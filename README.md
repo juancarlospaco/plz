@@ -178,6 +178,10 @@ Quote from PIPEnv Project:
 > (pip broke, setuptools broke, then pip and setuptools both released breaking fixes,
 > and we have about 15 dependencies which I personally maintain).
 
+Quote from PIP Project:
+
+> Due to lack of interest and maintenance, 'pip bundle' and support for installing files is now deprecated.
+
 </details>
 
 
