@@ -59,3 +59,6 @@ template cleantemp() =
 template cleanpypackages() =
   styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
   for pyc in walkFiles(getCurrentDir() / "__pypackages__"): info $tryRemoveFile(pyc) & "\t" & pyc
+
+template fakeCommits(amount: Positive) =
+  for i in 0..amount: discard execShellCmd("git commit --allow-empty --date='" & $(now() - minutes(i + rand(0..9))) & "' --message=" & fakeCommitMessages.sample)
