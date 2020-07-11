@@ -196,6 +196,7 @@ proc uninstall(this: PyPI, args: seq[string]) =
       echo "\nrm --verbose --force " & files2delete[].join" " & "\n\nDeleted?\tFile"
       for pythonfile in files2delete[]: echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
     dealloc files2delete
+  # TODO: If fails, delete from list here  python -c "print(__import__('pip').__path__)"
   dealloc recordFiles
 
 template multiInstall(this: PyPI; pkgs: seq[string]) =
