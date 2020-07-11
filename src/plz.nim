@@ -73,6 +73,9 @@ proc main() =
     of "strip":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       quit(execCmdEx(cmdStrip & args[1]).output, 0)
+    of "fakecommits":
+      fakeCommits(readLineFromStdin("How many 'Fake' commits to generate? (Positive integer): ").parseInt.Positive)
+      quit(errorcode = 0)
     of "hash":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
       if findExe"sha256sum".len > 0:
