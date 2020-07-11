@@ -320,3 +320,14 @@ function _pip_completion {
 compctl -K _pip_completion pip
 # pip zsh completion end
 """
+
+const fakeCommitMessages = [
+  "'Update documentation'", "'Fix a Typo'", "'Update README.md'", "'Optimization, minor'", "'Typo, minor'", "'Minor'", "'Fix README'",
+  "'Update config'", "'Fix configuration'", "'Update configuration'", "'Fix trailing whitespaces'", "'Add Documentation'", "'Styles'",
+  "'Optimization of a structure'", "'Add a new line at the end of the file'", "'Remove extra spaces'", "'Code Style'", "'Updates'",
+  "'Improve code style'", "'Fix wrong name on a variable'", "'Trim spaces'", "'Strip spaces'", "'Rename a variable'", "'Fixes'",
+  "'-'", "'.'", "'Format code'", "'Reorder an import'", "'Minor, style'", "'Fix typo on documentation'", "'Optimizations'", "'OwO'",
+  "'Bump'", "'Fix Docs'", "'Add Docs'", "'Improve user documentation'", "'Minor optimizations'", "'Tiny refactor'", "'Working now'",
+  "'init'", "'Add a test'", "'Fix a test'", "'improve a test'", "'tests'", "'Deprecate old stuff'", "'New code'", "'Small change'",
+  "'Fix helper function'", "'Remove debug code'", "'Clean out comments'", "'Add comments to code'", "'improvements'", "'Optimize'"
+]
