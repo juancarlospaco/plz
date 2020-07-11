@@ -66,7 +66,7 @@ template pySkeleton() =
     writeFile(namex[] / "CONTRIBUTING" & ext[], "")
     writeFile(namex[] / "AUTHORS" & ext[], "# Authors\n\n- " & getEnv"USER" & "\n")
     writeFile(namex[] / "README" & ext[], "# " & namex[] & "\n")
-    writeFile(namex[] / "CHANGELOG" & ext[], "# 0.0.1\n\n- First initial version of " & namex[] & "created at " & $now())
+    writeFile(namex[] / "CHANGELOG" & ext[], "# 0.0.1\n\n- First initial version of " & namex[] & " created at " & $now())
     dealloc ext
   setCurrentDir namex[]
   dealloc namex
