@@ -370,6 +370,11 @@ prepare() {
   cd "${srcdir}/${_pyname}-${pkgver}"
   cp -r "${srcdir}/${_pyname}-${pkgver}" "${srcdir}/${_pyname}-${pkgver}-py"
 }
+
+pkgver() {
+  cd "${srcdir}/${_gitname}"
+  git describe --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g;s/^v//'
+}
 """
 
 const pkgInfoTemplate = """Metadata-Version: 2.1
