@@ -21,3 +21,15 @@ template forceInstallPip(destination: string): tuple[output: TaintedString, exit
   newHttpClient(timeout = 9999).downloadFile("https://bootstrap.pypa.io/get-pip.py", destination) # Download
   assert fileExists(destination), "File not found: 'get-pip.py'"
   execCmdEx(findExe"python3" & " " & destination & " -I") # Installs PIP via get-pip.py
+
+template cleanvenvs() =
+  # No official documented way to get virtualenv location on windows
+  let files2delete = create(seq[string], sizeOf seq[string])
+  for pythonfile in walkPattern(virtualenvDir / "*.*"):
+    styledEcho(fgRed, bgBlack, pythonfile)
+    if readLineFromStdin("Delete Python Virtualenv? (y/N): ") == "y": files2delete[].add pythonfile
+  if files2delete[].len > 0:
+    styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
+    for pyc in files2delete[]: echo $tryRemoveFile(pyc) & "\t" & pyc
+  else: styledEcho(fgGreen, bgBlack, "Virtualenvs not found, nothing to clean.")
+  dealloc files2delete

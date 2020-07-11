@@ -37,16 +37,7 @@ proc main() =
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
         for pyc in walkFiles(getCurrentDir() / "__pypackages__"): info $tryRemoveFile(pyc) & "\t" & pyc
       of "cleanvenvs", "cleanvirtualenvs", "cleanvirtualenv", "clearvirtualenvs", "clearvirtualenv":
-        let files2delete = block:
-          var x: seq[string]
-          for pythonfile in walkPattern(virtualenvDir / "*.*"):
-            styledEcho(fgRed, bgBlack, pythonfile)
-            if readLineFromStdin("Delete Python Virtualenv? (y/N): ").normalize == "y": x.add pythonfile
-          x # No official documented way to get virtualenv location on windows
-        if files2delete.len > 0:
-          styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-          for pyc in files2delete: info $tryRemoveFile(pyc) & "\t" & pyc
-        else: styledEcho(fgGreen, bgBlack, "Virtualenvs not found, nothing to clean.")
+        cleanvenvs()
       of "cleanpipcache", "clearpipcache":
         styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile") # Dir Found in the wild
         info $tryRemoveFile("/tmp/pip-build-root") & "\t/tmp/pip-build-root"
