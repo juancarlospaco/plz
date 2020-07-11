@@ -99,11 +99,6 @@ $ plz --help               # Show Help
 ![](https://raw.githubusercontent.com/juancarlospaco/plz/master/pepehack.gif "Work in progress!")
 
 
-# Install
-
-- [**Download it!.**](https://github.com/juancarlospaco/plz/releases)
-
-
 # Uninstall
 
 - Delete it.
@@ -134,11 +129,7 @@ I dunno. (Not supported)
 
 I dunno. (Not supported)
 
-- This works with SSL ?.
-
-Yes.
-
-- This is a drop-in replacement of PIPEnv ?.
+- This is a drop-in replacement of X ?.
 
 No.
 
