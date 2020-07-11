@@ -30,15 +30,7 @@ template uploadToPypi(file: string) =
   while not(homepage[].len > 5 and homepage[].len < 999 and homepage[].startsWith"http"): homepage[] = readLineFromStdin("Type Package Web Homepage URL (HTTP/HTTPS): ").strip.toLowerAscii
   while not(downloadurl[].len > 5 and downloadurl[].len < 999 and downloadurl[].startsWith"http"): downloadurl[] = readLineFromStdin("Type Package Web Download URL (HTTP/HTTPS): ").strip.toLowerAscii
   while not(keywords[].len > 1 and keywords[].len < 99): keywords[] = readLineFromStdin("Type Package Keywords,separated by commas,without spaces,at least 2 (CSV): ").normalize.split(",")
-  echo """Licenses:
-  💡 See https://tldrlegal.com/licenses/browse or https://choosealicense.com
-  💡 No License == Proprietary
-  MIT    ➡️ Simple and permissive,short,KISS,maybe can be an Ok default
-  PPL    ➡️ Simple and permisive,wont allow corporations to steal/sell your code
-  GPL    ➡️ Ensures that code based on this is shared with the same terms,strict
-  LGPL   ➡️ Ensures that code based on this is shared with the same terms,no strict
-  Apache ➡️ Simple and explicitly grants Patents
-  BSD    ➡️ Simple and permissive,but your code can be closed/sold by 3rd party """
+  echo licenseMsg
   while not(license[].len > 2 and license[].len < 99): license[] = readLineFromStdin("Type Package License: ").normalize
   echo "Password is never written to disk.\nPassword is erased from memory after use."
   while not(password[].len > 4 and password[].len < 999 and password[] == iPwd2[]):

@@ -155,6 +155,17 @@ exclude-source-files = true
 # exclude = *.c, *.so, *.js, *.tests, *.tests.*, tests.*, tests
 """
 
+const licenseMsg = """
+Licenses:
+  💡 See https://tldrlegal.com/licenses/browse or https://choosealicense.com
+  💡 No License == Proprietary
+  MIT    ➡️ Simple and permissive,short,KISS,maybe can be an Ok default
+  PPL    ➡️ Simple and permisive,wont allow corporations to steal/sell your code
+  GPL    ➡️ Ensures that code based on this is shared with the same terms,strict
+  LGPL   ➡️ Ensures that code based on this is shared with the same terms,no strict
+  Apache ➡️ Simple and explicitly grants Patents
+  BSD    ➡️ Simple and permissive,but your code can be closed/sold by 3rd party
+"""
 
 const pkgInfoTemplate = """Metadata-Version: 2.1
 Name: example
