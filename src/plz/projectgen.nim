@@ -49,7 +49,7 @@ template pySkeleton() =
     writeFile(namex[] / ".github/FUNDING.yml", "")
     writeFile(namex[] / ".github" / "workflows" / "build.yml", "")
   if readLineFromStdin("Generate .gitignore file? (y/N): ") == "y":
-    writeFile(namex[] / ".gitignore", "*.pyc\n*.pyd\n*.pyo\n*.egg-info\n*.egg\n*.log\n__pycache__\n*.c\n*.h\n*.o\n")
+    writeFile(namex[] / ".gitignore", gitignoreTemplate)
     discard existsOrCreateDir(namex[] / ".hooks")
   if readLineFromStdin("Generate .gitattributes file? (y/N): ") == "y":
     writeFile(namex[] / ".gitattributes", "*.py linguist-language=Python\n*.nim linguist-language=Nim\n")
@@ -59,7 +59,10 @@ template pySkeleton() =
   if readLineFromStdin("Generate optional files? (y/N): ") == "y":
     writeFile(namex[] / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
     writeFile(namex[] / "requirements.txt", "")
-    writeFile(namex[] / "Makefile", "")
+    writeFile(namex[] / "Makefile", makefileTemplate)
+    writeFile(namex[] / "tox.ini", "")
+    writeFile(namex[] / "MANIFEST.in", manifestTemplate)
+    writeFile(namex[] / ".editorconfig", editorconfigTemplate)
     let ext = create(string, sizeOf string)
     ext[] = if readLineFromStdin("Use Markdown (MD) instead of ReSTructuredText (RST)? (y/N): ") == "y": ".md" else: ".rst"
     writeFile(namex[] / "LICENSE" & ext[], "See https://tldrlegal.com/licenses/browse\n")
