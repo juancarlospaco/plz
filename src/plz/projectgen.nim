@@ -54,15 +54,17 @@ template pySkeleton() =
   if readLineFromStdin("Generate .gitattributes file? (y/N): ") == "y":
     writeFile(namex[] / ".gitattributes", "*.py linguist-language=Python\n*.nim linguist-language=Nim\n")
   if readLineFromStdin("Generate setup.py files? (y/N): ") == "y":
-    writeFile(namex[] / "setup.cfg", setupCfg)
-    writeFile(namex[] / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
-  if readLineFromStdin("Generate optional files? (y/N): ") == "y":
-    writeFile(namex[] / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
-    writeFile(namex[] / "requirements.txt", "")
-    writeFile(namex[] / "Makefile", makefileTemplate)
     writeFile(namex[] / "tox.ini", "")
-    writeFile(namex[] / "MANIFEST.in", manifestTemplate)
+    writeFile(namex[] / "setup.cfg", setupCfg)
+    writeFile(namex[] / "requirements.txt", "")
+    writeFile(namex[] / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
+  if readLineFromStdin("Generate .editorconfig file? (y/N): ") == "y":
     writeFile(namex[] / ".editorconfig", editorconfigTemplate)
+  if readLineFromStdin("Generate MANIFEST.in file? (y/N): ") == "y":
+    writeFile(namex[] / "MANIFEST.in", manifestTemplate)
+  if readLineFromStdin("Generate Makefile file? (y/N): ") == "y":
+    writeFile(namex[] / "Makefile", makefileTemplate)
+  if readLineFromStdin("Generate README,LICENSE,CHANGELOG,etc file? (y/N): ") == "y":
     let ext = create(string, sizeOf string)
     ext[] = if readLineFromStdin("Use Markdown (MD) instead of ReSTructuredText (RST)? (y/N): ") == "y": ".md" else: ".rst"
     writeFile(namex[] / "LICENSE" & ext[], "See https://tldrlegal.com/licenses/browse\n")
