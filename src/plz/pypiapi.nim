@@ -197,6 +197,7 @@ proc uninstall(this: PyPI, args: seq[string]) =
       for pythonfile in files2delete[]: echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
     dealloc files2delete
   # TODO: If fails, delete from list here  python -c "print(__import__('pip').__path__)" ?.
+  # other alternative?  python -c "print(__import__('imp').find_module('pip'))"
   # Not even pip show knows which files belongs to which package, sometimes package wont have "installed-files.txt" ?.
   dealloc recordFiles
 
