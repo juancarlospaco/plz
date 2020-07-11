@@ -182,7 +182,7 @@ proc uninstall(this: PyPI, args: seq[string]) =
   echo("Uninstall " & $args.len & " Packages:\t" & $args)
   let recordFiles = create(seq[string], sizeOf seq[string])
   for a in args: # RECORD Metadata file (CSV without file extension).
-    for r in walkFiles(sitePackages / a & "-*.dist-info" / "RECORD"): recordFiles[].add r
+    for r in walkFiles(sitePackages / a & "*.dist-info" / "RECORD"): recordFiles[].add r
   if recordFiles[].len > 0:
     let size = create(int, sizeOf int)
     let files2delete = create(seq[string], sizeOf seq[string])
