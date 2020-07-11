@@ -58,4 +58,5 @@ jobs:
         ./plz --dump
         ./plz completion
         ./plz latestversion pip
+        ./plz download pip
         ./plz install pip setuptools
