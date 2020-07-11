@@ -1,4 +1,5 @@
-import os, times, rdstdin, strutils
+import os, times, rdstdin, strutils, random
+randomize()
 
 template pySkeleton() =
   ## Creates the skeleton (folders and files) for a New Python project.
@@ -51,12 +52,13 @@ template pySkeleton() =
     discard existsOrCreateDir(namex[] / ".hooks")
   if readLineFromStdin("Generate .gitattributes file? (y/N): ") == "y":
     writeFile(namex[] / ".gitattributes", "*.py linguist-language=Python\n*.nim linguist-language=Nim\n")
+  if readLineFromStdin("Generate setup.py files? (y/N): ") == "y":
+    writeFile(namex[] / "setup.cfg", setupCfg)
+    writeFile(namex[] / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
   if readLineFromStdin("Generate optional files? (y/N): ") == "y":
     writeFile(namex[] / "MANIFEST.in", "include main.py\nrecursive-include *.py\n")
     writeFile(namex[] / "requirements.txt", "")
-    writeFile(namex[] / "setup.cfg", setupCfg)
     writeFile(namex[] / "Makefile", "")
-    writeFile(namex[] / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
     let ext = create(string, sizeOf string)
     ext[] = if readLineFromStdin("Use Markdown (MD) instead of ReSTructuredText (RST)? (y/N): ") == "y": ".md" else: ".rst"
     writeFile(namex[] / "LICENSE" & ext[], "See https://tldrlegal.com/licenses/browse\n")
@@ -74,6 +76,9 @@ template pySkeleton() =
         if execShellCmd("git add .") == 0:
           if readLineFromStdin("Run 'git commit -a' on the project folder? (y/N): ") == "y":
             if execShellCmd("git commit -am 'init'") == 0:
+              if readLineFromStdin("Generate 'Fake' empty commits (using git commit --allow-empty) on the project folder? (y/N): ") == "y":
+                for i in 0..readLineFromStdin("How many 'Fake' commits to generate? (Positive integer): ").parseInt.Positive:
+                  discard execShellCmd("git commit --allow-empty --date='" & $(now() - minutes(i + rand(0..9))) & "' --message=" & fakeCommitMessages.sample)
               if readLineFromStdin("Run 'git remote add origin ...' to add 1 Remote URL? (y/N): ") == "y":
                 if execShellCmd("git remote add origin " & readLineFromStdin("Git Remote URL?: ").strip) == 0:
                   if readLineFromStdin("Run 'git fetch --all' on the project folder? (y/N): ") == "y":
