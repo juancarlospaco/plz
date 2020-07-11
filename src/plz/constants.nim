@@ -167,6 +167,192 @@ Licenses:
   BSD    ➡️ Simple and permissive,but your code can be closed/sold by 3rd party
 """
 
+const manifestTemplate = """
+include README.*
+include LICENSE
+global-exclude *.pyc
+recursive-include *.py
+include setup.py
+include tox.ini
+"""
+
+const editorconfigTemplate = """
+# -*- mode: conf-unix; -*-
+root = true
+
+[*]
+insert_final_newline = true
+
+[*.{ini,py,pyw,rst,md,sh,bat,json}]
+indent_style = space
+indent_size = 4
+
+[*.{nim,nims,nimf,cfg,yml,yaml}]
+indent_style = space
+indent_size = 2
+"""
+
+const makefileTemplate = """
+BASEDIR=$(CURDIR)
+DISTDIR=$(BASEDIR)/dist
+BUILDDIR=$(BASEDIR)/build
+
+build:
+	@echo 'Running build'
+	@python setup.py build
+
+deploy:
+	@echo 'Upload to PyPi'
+	@python setup.py sdist upload
+	@echo 'Done'
+
+dist:
+	@echo 'Generating a distributable python package'
+	@python setup.py sdist
+	@echo 'Done'
+
+install:
+	@echo 'Running install'
+	@python setup.py install
+
+clean:
+	@rm -fr $(DISTDIR)
+	@rm -fr $(BUILDDIR)
+
+.PHONY: help doc build dist install clean
+"""
+
+const gitignoreTemplate = """
+# Editors
+.vscode/
+.idea/
+
+# Vagrant
+.vagrant/
+
+# Mac/OSX
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*$py.class
+*.pyc
+*.pyd
+*.pyo
+*.log
+__pycache__
+*.c
+*.h
+*.o
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+"""
+
 const pkgInfoTemplate = """Metadata-Version: 2.1
 Name: example
 Version: 0.0.1
