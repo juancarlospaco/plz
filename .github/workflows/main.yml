@@ -28,7 +28,7 @@ jobs:
         nim-version: devel  # optional, default is stable
 
     - name: APT Refresh
-      run: apt-get -y update; apt-get -y install bsdtar
+      run: sudo apt-get -y update && sudo apt-get -y install bsdtar
 
     - name: Nimble Refresh
       run: |
