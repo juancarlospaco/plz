@@ -353,6 +353,25 @@ venv.bak/
 dmypy.json
 """
 
+const pkgbuildTemplate = """
+pkgbase=python-name
+pkgname=('python-name')
+_pyname={{ cookiecutter.repo_name }}
+pkgver=0.0.1
+pkgrel=1
+pkgdesc=''
+arch=('any')
+license=('MIT')
+makedepends=('python' 'python-pip')
+options=(!emptydirs)
+source=('')
+
+prepare() {
+  cd "${srcdir}/${_pyname}-${pkgver}"
+  cp -r "${srcdir}/${_pyname}-${pkgver}" "${srcdir}/${_pyname}-${pkgver}-py"
+}
+"""
+
 const pkgInfoTemplate = """Metadata-Version: 2.1
 Name: example
 Version: 0.0.1
