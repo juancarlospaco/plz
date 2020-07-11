@@ -60,6 +60,7 @@ Commands:
   upload            Similar to "twine upload" (Interactive,asks user,wont need Twine).
   completion        A helper command used for command completion.
   parserequirements Parse a requirements file, print it to stdout (Linter,Debug,etc).
+  fakecommits       Generate "Fake" Git commits (Restart CI,trigger GitHub Actions,etc).
 
 Options:
   --help           Show Help and quit.
