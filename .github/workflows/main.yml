@@ -40,15 +40,10 @@ jobs:
         export PATH=$HOME/.nimble/bin:$PATH
         nimble -y install requirementstxt libarchibi
 
-    - name: Compile RELEASE Mode
+    - name: Compile
       run: |
         export PATH=$HOME/.nimble/bin:$PATH
         nim c --out:plz src/plz.nim
-
-    - name: Strip Binary
-      run:
-        strip --strip-all ./plz
-        du -h ./plz
 
     - name: Run
       run: |
@@ -58,4 +53,5 @@ jobs:
         ./plz --dump
         ./plz completion
         ./plz latestversion pip
-        ./plz install pip setuptools
+        ./plz install setuptools twine>=3.2.0 pip==20.1.1
+        ./plz uninstall setuptools twine pip
