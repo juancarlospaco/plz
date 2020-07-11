@@ -58,7 +58,7 @@ $ plz --help               # Show Help
 
 # Interactive Python Project Creator
 
-![](project_creator.png)
+![](https://raw.githubusercontent.com/juancarlospaco/plz/master/project_creator.png)
 
 
 # Features
