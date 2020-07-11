@@ -31,6 +31,7 @@ template pySkeleton() =
   if readLineFromStdin("Generate Documentation files on ./docs/ ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / "docs")
     writeFile(namex[] / "docs" / "documentation.md", "# " & namex[] & "\n\n")
+    writeFile(namex[] / "docs" / "generate_documentation.sh", "plz doc2html documentation.md ; plz doc2latex documentation.md\n")
   if readLineFromStdin("Generate Example files on ./examples ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / "examples")
     writeFile(namex[] / "examples" / "example.py", "# -*- coding: utf-8 -*-\n\nprint('Example')\n")
