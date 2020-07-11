@@ -58,13 +58,19 @@ $ plz --help               # Show Help
 
 # Interactive Python Project Creator
 
+<details>
+
 ![](https://raw.githubusercontent.com/juancarlospaco/plz/master/project_creator.png)
 
+</details>
 
 # Requirements Parser for debug
 
+<details>
+
 ![](https://raw.githubusercontent.com/juancarlospaco/plz/master/requirements_parser.png)
 
+</details>
 
 # Features
 
