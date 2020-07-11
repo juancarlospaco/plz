@@ -20,7 +20,7 @@ template pySkeleton() =
     discard existsOrCreateDir(namex[] / "docs")
     writeFile(namex[] / "docs" / "documentation.md", "# " & namex[] & "\n\n")
     writeFile(namex[] / "docs" / "generate_documentation.sh", "plz doc2html documentation.md ; plz doc2latex documentation.md\n")
-  if readLineFromStdin("Generate Example files on ./examples ? (y/N): ") == "y":
+  if readLineFromStdin("Generate Example files on ./examples/ ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / "examples")
     writeFile(namex[] / "examples" / "example.py", "# -*- coding: utf-8 -*-\n\nprint('Example')\n")
   if readLineFromStdin("Generate DevOps files on ./devops/ ? (y/N): ") == "y":
@@ -41,18 +41,18 @@ template pySkeleton() =
     discard existsOrCreateDir(namex[] / ".hooks")
   if readLineFromStdin("Generate .gitattributes file? (y/N): ") == "y":
     writeFile(namex[] / ".gitattributes", "*.py linguist-language=Python\n*.nim linguist-language=Nim\n")
-  if readLineFromStdin("Generate setup.py files? (y/N): ") == "y":
+  if readLineFromStdin("Generate setup.py ? (y/N): ") == "y":
     writeFile(namex[] / "tox.ini", "")
     writeFile(namex[] / "setup.cfg", setupCfg)
     writeFile(namex[] / "requirements.txt", "")
     writeFile(namex[] / "setup.py", "# -*- coding: utf-8 -*-\nfrom setuptools import setup\nsetup() # Edit setup.cfg,not here!.\n")
-  if readLineFromStdin("Generate .editorconfig file? (y/N): ") == "y":
+  if readLineFromStdin("Generate .editorconfig ? (y/N): ") == "y":
     writeFile(namex[] / ".editorconfig", editorconfigTemplate)
-  if readLineFromStdin("Generate MANIFEST.in file? (y/N): ") == "y":
+  if readLineFromStdin("Generate MANIFEST.in ? (y/N): ") == "y":
     writeFile(namex[] / "MANIFEST.in", manifestTemplate)
-  if readLineFromStdin("Generate Makefile file? (y/N): ") == "y":
+  if readLineFromStdin("Generate Makefile ? (y/N): ") == "y":
     writeFile(namex[] / "Makefile", makefileTemplate)
-  if readLineFromStdin("Generate README,LICENSE,CHANGELOG,etc file? (y/N): ") == "y":
+  if readLineFromStdin("Generate README,LICENSE,CHANGELOG,etc ? (y/N): ") == "y":
     let ext = create(string, sizeOf string)
     ext[] = if readLineFromStdin("Use Markdown (MD) instead of ReSTructuredText (RST)? (y/N): ") == "y": ".md" else: ".rst"
     writeFile(namex[] / "LICENSE" & ext[], "See https://tldrlegal.com/licenses/browse\n")
