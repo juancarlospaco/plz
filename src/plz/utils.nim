@@ -45,3 +45,17 @@ template cleanpipcache() =
   echo $tryRemoveFile(pipCacheDir) & "\t" & pipCacheDir
   echo $tryRemoveFile(getEnv"PIP_DOWNLOAD_CACHE") & "\t" & getEnv"PIP_DOWNLOAD_CACHE"
   dealloc temp
+
+template cleanpyc() =
+  styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
+  for pyc in walkFiles(getCurrentDir() / "*.pyc"): info $tryRemoveFile(pyc) & "\t" & pyc
+  for pyc in walkDirs(getCurrentDir() / "__pycache__"): info $tryRemoveFile(pyc) & "\t" & pyc
+
+template cleantemp() =
+  styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
+  for tmp in walkPattern(getTempDir() / "**" / "*.*"): info $tryRemoveFile(tmp) & "\t" & tmp
+  for tmp in walkPattern(getTempDir() / "**" / "*"): info $tryRemoveFile(tmp) & "\t" & tmp
+
+template cleanpypackages() =
+  styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
+  for pyc in walkFiles(getCurrentDir() / "__pypackages__"): info $tryRemoveFile(pyc) & "\t" & pyc

@@ -26,16 +26,11 @@ proc main() =
         styledEcho(fgMagenta, bgBlack, $envy)
         putEnv(envy[0], envy[1])
       of "cleanpyc":
-        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pyc in walkFiles(getCurrentDir() / "*.pyc"): info $tryRemoveFile(pyc) & "\t" & pyc
-        for pyc in walkDirs(getCurrentDir() / "__pycache__"): info $tryRemoveFile(pyc) & "\t" & pyc
+        cleanpyc()
       of "cleantemp", "cleartemp":
-        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for tmp in walkPattern(getTempDir() / "**" / "*.*"): info $tryRemoveFile(tmp) & "\t" & tmp
-        for tmp in walkPattern(getTempDir() / "**" / "*"): info $tryRemoveFile(tmp) & "\t" & tmp
+        cleantemp()
       of "cleanpypackages":
-        styledEcho(fgRed, bgBlack, "\n\nDeleted?\tFile")
-        for pyc in walkFiles(getCurrentDir() / "__pypackages__"): info $tryRemoveFile(pyc) & "\t" & pyc
+        cleanpypackages()
       of "cleanvenvs", "cleanvirtualenvs", "cleanvirtualenv", "clearvirtualenvs", "clearvirtualenv":
         cleanvenvs()
       of "cleanpipcache", "clearpipcache":
