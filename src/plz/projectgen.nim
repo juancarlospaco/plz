@@ -88,6 +88,8 @@ template pySkeleton() =
     discard existsOrCreateDir(namex[] / "tools")
   if readLineFromStdin("Generate a ./icons/ folder ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / "icons")
+  if readLineFromStdin("List all created files ? (y/N): ") == "y":
+    for file in walkDirRec(namex[]): echo file
   setCurrentDir namex[]
   dealloc namex
   if findExe"git".len > 0 and readLineFromStdin("Run 'git init .' on the project folder? (y/N): ") == "y":
