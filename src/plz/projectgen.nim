@@ -23,6 +23,7 @@ template pySkeleton() =
     writeFile(namex[] / "upload2pypi.sh", "twine upload --verbose --repository-url 'https://test.pypi.org/legacy/' dist/*.zip\n")
     writeFile(namex[] / "package4pypi.sh", "cd " & namex[] / "dist && zip -9 -T -v -r " & namex[] & ".zip *\n")
     writeFile(namex[] / "install2local4testing.sh", "pip --verbose install dist/*.zip\n")
+    writeFile(namex[] / "pyc_clean.sh", "rm --verbose --force --recursive *.pyc\n")
   if readLineFromStdin("Generate Unitests files on ./tests/ ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / "tests")
     writeFile(namex[] / "tests" / "__init__.py", testTemplate)
@@ -36,9 +37,6 @@ template pySkeleton() =
     discard existsOrCreateDir(namex[] / "devops")
     writeFile(namex[] / "devops" / "Dockerfile", "")
     writeFile(namex[] / "devops" / namex[] & ".service", serviceTemplate)
-    writeFile(namex[] / "devops" / "build_package.sh", "python3 setup.py sdist --formats=zip\n")
-    writeFile(namex[] / "devops" / "upload_package.sh", "twine upload .\n")
-    writeFile(namex[] / "devops" / "pyc_clean.sh", "rm --verbose --force --recursive *.pyc\n")
   if readLineFromStdin("Generate GitHub files including GitHub Actions on ./github/ ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / ".github")
     discard existsOrCreateDir(namex[] / ".github" / "workflows")
