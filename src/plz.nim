@@ -84,19 +84,7 @@ proc main() =
       for item in requirements(readFile(args[1]), [("*", "0")]): echo item
     of "upload":
       if not is1argOnly: quit"Too many arguments,command only supports 1 argument"
-      doAssert fileExists(args[1]), "File not found: " & args[1]
-      let (username, password, name, author, version, license, summary, homepage,
-        description, downloadurl, maintainer, authoremail, maintaineremail, keywords
-      ) = ask2User()
-      echo (username, name, author, version, license, summary, homepage,
-        description, downloadurl, maintainer, authoremail, maintaineremail, keywords)
-      info client.upload(
-        username = username, password = password, name = name,
-        version = version, license = license, summary = summary,
-        description = description, author = author, downloadurl = downloadurl,
-        authoremail = authoremail, maintainer = maintainer, keywords = keywords,
-        maintaineremail = maintaineremail, homepage = homepage, filename = args[1],
-        md5_digest = getMD5(readFile(args[1])))
+      uploadToPypi(args[1])
   else: quit("Wrong Parameters, please see Help with: --help", 1)
 
 

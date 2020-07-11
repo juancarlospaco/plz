@@ -1,6 +1,6 @@
 import strutils, rdstdin
 
-proc ask2User(): auto =
+template ask2User(): auto =
   let username = create(string, sizeOf string)
   let password = create(string, sizeOf string)
   let name = create(string, sizeOf string)
@@ -62,3 +62,18 @@ proc ask2User(): auto =
   dealloc maintainer
   dealloc maintaineremail
   dealloc keywords
+
+template uploadToPypi(file: string) =
+  doAssert fileExists(file), "File not found: " & file
+  let (username, password, name, author, version, license, summary, homepage,
+    description, downloadurl, maintainer, authoremail, maintaineremail, keywords
+  ) = ask2User()
+  echo (username, name, author, version, license, summary, homepage,
+    description, downloadurl, maintainer, authoremail, maintaineremail, keywords)
+  echo client.upload(
+    username = username, password = password, name = name,
+    version = version, license = license, summary = summary,
+    description = description, author = author, downloadurl = downloadurl,
+    authoremail = authoremail, maintainer = maintainer, keywords = keywords,
+    maintaineremail = maintaineremail, homepage = homepage, filename = file,
+    md5_digest = getMD5(readFile(file)))
