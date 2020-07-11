@@ -192,11 +192,9 @@ proc uninstall(this: PyPI, args: seq[string]) =
   echo("Total disk space freed:\t" & formatSize(size[].int64, prefix = bpColloquial, includeSpace = true))
   dealloc recordFiles
   dealloc size
-  assert files2delete[].len > 0, "Files of a Python Package not found."
-  echo "\nrm --verbose --force " & files2delete[].join" " & "\n"
-  for pyfile in files2delete[]: echo(pyfile)
-  echo("\n\nDeleted?\tFile")
-  for pythonfile in files2delete[]: echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
+  if files2delete[].len > 0:
+    echo "\nrm --verbose --force " & files2delete[].join" " & "\n\nDeleted?\tFile"
+    for pythonfile in files2delete[]: echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
   dealloc files2delete
 
 template multiInstall(this: PyPI; pkgs: seq[string]) =
