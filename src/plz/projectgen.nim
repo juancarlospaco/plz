@@ -53,7 +53,7 @@ template pySkeleton() =
     writeFile(namex[] / "Makefile", makefileTemplate)
   if readLineFromStdin("Generate Arch Linux PKGBUILD ? (y/N): ") == "y":
     writeFile(namex[] / "PKGBUILD", pkgbuildTemplate)
-  if readLineFromStdin("Generate Ubuntu Linux and Debian Linux files on ./debian/ ? (y/N): ") == "y":
+  if readLineFromStdin("Generate Ubuntu Linux and Debian Linux packaging files on ./debian/ ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / "debian")
     discard existsOrCreateDir(namex[] / "debian" / "source")
     writeFile(namex[] / "debian" / "rules", debianRules)
