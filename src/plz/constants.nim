@@ -377,6 +377,35 @@ pkgver() {
 }
 """
 
+const debianRules = """#!/usr/bin/make -f
+# -*- makefile -*-
+
+export PYBUILD_NAME=pyscaffold
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+"""
+
+const debianControl = """Source: plz
+Maintainer: user <user@gmail.com>
+Section: python
+Priority: optional
+Build-Depends: debhelper (>= 9), dh-python, python3-all, python3-setuptools
+Standards-Version: 3.9.6
+Homepage: https://github.com/user
+
+Package: python3-name
+Architecture: all
+Description: A new Python project
+"""
+
+const debianChangelog = """
+name (0.0.1-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- User <user@gmail.com>  Sat, 31 Feb 2020 20:0:00 +0000
+"""
+
 const pkgInfoTemplate = """Metadata-Version: 2.1
 Name: example
 Version: 0.0.1
