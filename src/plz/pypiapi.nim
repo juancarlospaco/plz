@@ -183,19 +183,20 @@ proc uninstall(this: PyPI, args: seq[string]) =
   let recordFiles = create(seq[string], sizeOf seq[string])
   for a in args: # RECORD Metadata file (CSV without file extension).
     for r in walkFiles(sitePackages / a & "-*.dist-info" / "RECORD"): recordFiles[].add r
-  let size = create(int, sizeOf int)
-  let files2delete = create(seq[string], sizeOf seq[string])
-  for record in recordFiles[]:
-    for recordfile in parseRecord(record):
-      files2delete[].add sitePackages / recordfile[0]
-      if recordfile.len == 3 and recordfile[2].len > 0: size[] += parseInt(recordfile[2])
-  echo("Total disk space freed:\t" & formatSize(size[].int64, prefix = bpColloquial, includeSpace = true))
+  if recordFiles[].len > 0:
+    let size = create(int, sizeOf int)
+    let files2delete = create(seq[string], sizeOf seq[string])
+    for record in recordFiles[]:
+      for recordfile in parseRecord(record):
+        files2delete[].add sitePackages / recordfile[0]
+        if recordfile.len == 3 and recordfile[2].len > 0: size[] += parseInt(recordfile[2])
+    echo("Total disk space freed:\t" & formatSize(size[].int64, prefix = bpColloquial, includeSpace = true))
+    dealloc size
+    if files2delete[].len > 0:
+      echo "\nrm --verbose --force " & files2delete[].join" " & "\n\nDeleted?\tFile"
+      for pythonfile in files2delete[]: echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
+    dealloc files2delete
   dealloc recordFiles
-  dealloc size
-  if files2delete[].len > 0:
-    echo "\nrm --verbose --force " & files2delete[].join" " & "\n\nDeleted?\tFile"
-    for pythonfile in files2delete[]: echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
-  dealloc files2delete
 
 template multiInstall(this: PyPI; pkgs: seq[string]) =
   assert pkgs.len > 0, "Error parsing the list of packages from the command line arguments"
