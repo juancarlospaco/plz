@@ -84,6 +84,10 @@ template pySkeleton() =
     writeFile(namex[] / "package4pypi.sh", "cd " & namex[] / "dist && zip -9 -T -v -r " & namex[] & ".zip *\n")
     writeFile(namex[] / "install2local4testing.sh", "pip --verbose install dist/*.zip\n")
     writeFile(namex[] / "pyc_clean.sh", "rm --verbose --force --recursive *.pyc\n")
+  if readLineFromStdin("Generate a ./tools/ folder ? (y/N): ") == "y":
+    discard existsOrCreateDir(namex[] / "tools")
+  if readLineFromStdin("Generate a ./icons/ folder ? (y/N): ") == "y":
+    discard existsOrCreateDir(namex[] / "icons")
   setCurrentDir namex[]
   dealloc namex
   if findExe"git".len > 0 and readLineFromStdin("Run 'git init .' on the project folder? (y/N): ") == "y":
