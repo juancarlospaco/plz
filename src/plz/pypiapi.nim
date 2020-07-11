@@ -194,12 +194,10 @@ proc uninstall(this: PyPI, args: seq[string]) =
   dealloc recordFiles
   dealloc size
   assert files2delete[].len > 0, "Files of a Python Package not found."
-  if readLineFromStdin("\nGenerate Uninstall Script? (y/N): ") == "y":
-    echo((if readLineFromStdin("\nGenerate Uninstall Script for Admin/Root? (y/N): ") == "y": "\nsudo " else: "\n") & "rm --verbose --force " & files2delete[].join" " & "\n")
+  echo "\nrm --verbose --force " & files2delete[].join" " & "\n"
   for pyfile in files2delete[]: echo(pyfile)
-  if readLineFromStdin("\nDelete " & $files2delete[].len & " files? (y/N): ") == "y":
-    echo("\n\nDeleted?\tFile")
-    for pythonfile in files2delete[]: echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
+  echo("\n\nDeleted?\tFile")
+  for pythonfile in files2delete[]: echo $tryRemoveFile(pythonfile) & "\t" & pythonfile
   dealloc files2delete
 
 template multiInstall(this: PyPI; pkgs: seq[string]) =
