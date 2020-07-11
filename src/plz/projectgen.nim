@@ -13,18 +13,6 @@ template pySkeleton() =
   writeFile(namex[] / namex[] / "__version__.py", "__version__ = '0.0.1'\n")
   writeFile(namex[] / namex[] / namex[] & ".py", "\nprint('Hello World')\n")
   writeFile(namex[] / namex[] / "main.nim", nimpyTemplate)
-  if readLineFromStdin("Generate helper scripts and dist? (y/N): ") == "y":
-    discard existsOrCreateDir(namex[] / "dist")
-    discard existsOrCreateDir(namex[] / "dist" / namex[] & ".egg-info")
-    writeFile(namex[] / "dist" / namex[] & ".egg-info" / "top_level.txt", "")
-    writeFile(namex[] / "dist" / namex[] & ".egg-info" / "dependency_links.txt", "")
-    writeFile(namex[] / "dist" / namex[] & ".egg-info" / "requires.txt", "")
-    writeFile(namex[] / "dist" / namex[] & ".egg-info" / "zip-safe", "")
-    writeFile(namex[] / "dist" / namex[] & ".egg-info" / "PKG-INFO", pkgInfoTemplate)
-    writeFile(namex[] / "upload2pypi.sh", "twine upload --verbose --repository-url 'https://test.pypi.org/legacy/' dist/*.zip\n")
-    writeFile(namex[] / "package4pypi.sh", "cd " & namex[] / "dist && zip -9 -T -v -r " & namex[] & ".zip *\n")
-    writeFile(namex[] / "install2local4testing.sh", "pip --verbose install dist/*.zip\n")
-    writeFile(namex[] / "pyc_clean.sh", "rm --verbose --force --recursive *.pyc\n")
   if readLineFromStdin("Generate Unitests files on ./tests/ ? (y/N): ") == "y":
     discard existsOrCreateDir(namex[] / "tests")
     writeFile(namex[] / "tests" / "__init__.py", testTemplate)
@@ -74,6 +62,18 @@ template pySkeleton() =
     writeFile(namex[] / "README" & ext[], "# " & namex[] & "\n")
     writeFile(namex[] / "CHANGELOG" & ext[], "# 0.0.1\n\n- First initial version of " & namex[] & " created at " & $now())
     dealloc ext
+  if readLineFromStdin("Generate extra helper scripts and dist? (y/N): ") == "y":
+    discard existsOrCreateDir(namex[] / "dist")
+    discard existsOrCreateDir(namex[] / "dist" / namex[] & ".egg-info")
+    writeFile(namex[] / "dist" / namex[] & ".egg-info" / "top_level.txt", "")
+    writeFile(namex[] / "dist" / namex[] & ".egg-info" / "dependency_links.txt", "")
+    writeFile(namex[] / "dist" / namex[] & ".egg-info" / "requires.txt", "")
+    writeFile(namex[] / "dist" / namex[] & ".egg-info" / "zip-safe", "")
+    writeFile(namex[] / "dist" / namex[] & ".egg-info" / "PKG-INFO", pkgInfoTemplate)
+    writeFile(namex[] / "upload2pypi.sh", "twine upload --verbose --repository-url 'https://test.pypi.org/legacy/' dist/*.zip\n")
+    writeFile(namex[] / "package4pypi.sh", "cd " & namex[] / "dist && zip -9 -T -v -r " & namex[] & ".zip *\n")
+    writeFile(namex[] / "install2local4testing.sh", "pip --verbose install dist/*.zip\n")
+    writeFile(namex[] / "pyc_clean.sh", "rm --verbose --force --recursive *.pyc\n")
   setCurrentDir namex[]
   dealloc namex
   if findExe"git".len > 0 and readLineFromStdin("Run 'git init .' on the project folder? (y/N): ") == "y":
