@@ -39,6 +39,7 @@ $ plz upload packg-1.0.zip # Similar to "twine upload" (Interactive,asks user,wo
 $ plz completion           # A helper command used for command completion.
 $ plz parserequirements    # Parse a requirements file, print it to stdout (Linter,Debug,etc).
 $ plz fakecommits          # Generate "Fake" Git commits (Restart CI,trigger GitHub Actions,etc).
+$ plz bug                  # Python Bug Report Assistant (Interactive).
 $
 $ plz --enUsUtf8           # Force Encoding to UTF-8 and Language to English
 $ plz --cleanpyc           # Clean all __pycache__ and *.pyc
