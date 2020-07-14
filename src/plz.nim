@@ -1,5 +1,5 @@
-import strutils, os, parseopt, terminal, logging, osproc, rdstdin, requirementstxt
-include plz/constants, plz/utils, plz/docgen, plz/pypiapi, plz/pypinteract, plz/projectgen, plz/sysinfo
+import strutils, os, parseopt, terminal, logging, osproc, rdstdin, uri, browsers, requirementstxt
+include plz/constants, plz/sysinfo, plz/utils, plz/docgen, plz/pypiapi, plz/pypinteract, plz/projectgen
 
 addHandler(newConsoleLogger(fmtStr = ""))
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
@@ -43,6 +43,7 @@ proc main() =
   if args.len > 0:
     case args[0].normalize
     of "init": pySkeleton()
+    of "bug": reportBug()
     of "completion", "completions": quit(completionsTemplate, 0)
     of "stats": quit($client.stats(), 0)
     of "newpackages": quit($client.newPackages(), 0)
