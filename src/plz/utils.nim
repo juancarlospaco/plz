@@ -1,4 +1,18 @@
-import httpclient, os, osproc
+import httpclient, os, osproc, macros
+
+template `:=`(name: untyped; value: any) =
+  var name {.inject.} = createU(type(value), sizeOf type(value))
+  name[] = value
+
+macro deallocs(variables: varargs[typed]) =
+  result = newStmtList()
+  for it in variables: result.add newCall(bindSym"dealloc", it)
+
+macro creates(value: any; variables: varargs[untyped]) =
+  result = newStmtList()
+  for it in variables: result.add quote do:
+    var `it` = createU(type(`value`), sizeOf type(`value`))
+    `it`[] = `value`
 
 template enUsUtf8() =
   putEnv("LC_CTYPE", "en_US.UTF-8")
