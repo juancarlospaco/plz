@@ -14,7 +14,7 @@ proc doc2latex(filename: string): string {.inline.} =
 
 proc doc2json(filename: string): string {.inline.} =
   assert filename.len > 0, "filename must not be empty string"
-  var option = create(bool, sizeOf bool)
+  option := false
   result = renderRstToJson(rstParse(readFile(filename), "", 1, 1, option[], {roSupportSmilies, roSupportRawDirective, roSupportMarkdown}))
   dealloc option
   assert result.len > 0, "doc2latex docgen error result must not be empty string"
