@@ -3,7 +3,7 @@ randomize()
 
 template pySkeleton() =
   ## Creates the skeleton (folders and files) for a New Python project.
-  var namex = create(string, sizeOf string)
+  namex := ""
   while not(namex[].len > 0 and namex[].len < 99): namex[] = readLineFromStdin"New Python project name?: ".strip.toLowerAscii.replace(" ", "_")
   discard existsOrCreateDir(namex[])
   discard existsOrCreateDir(namex[] / namex[])
@@ -63,7 +63,7 @@ template pySkeleton() =
     writeFile(namex[] / "debian" / "source" / "options", """extend-diff-ignore="\.egg-info/\" """)
     writeFile(namex[] / "debian" / "source" / "format", "3.0 (quilt)\n")
   if readLineFromStdin("Generate README,LICENSE,CHANGELOG,etc ? (y/N): ") == "y":
-    let ext = create(string, sizeOf string)
+    ext := ""
     ext[] = if readLineFromStdin("Use Markdown (MD) instead of ReSTructuredText (RST)? (y/N): ") == "y": ".md" else: ".rst"
     writeFile(namex[] / "LICENSE" & ext[], "See https://tldrlegal.com/licenses/browse\n")
     writeFile(namex[] / "CODE_OF_CONDUCT" & ext[], "")
