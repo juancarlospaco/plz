@@ -25,5 +25,7 @@ proc getSystemInfo(): JsonNode =
     "node":                    if findExe"node".len > 0:   execCmdEx("node --version").output.strip else: "",
     "python":                  if findExe"python".len > 0: execCmdEx("python --version").output.replace("Python", "").strip else: "",
     "pip":                     if findExe"pip".len > 0:    execCmdEx("pip --version").output.strip else: "",
+    "tox":                     if findExe"tox".len > 0:    execCmdEx("tox --version").output.strip else: "",
+    "pre-commit":              if findExe"pre-commit".len > 0: execCmdEx("pre-commit --version").output.strip else: "",
     "ssd":                     isSsd()
   }
