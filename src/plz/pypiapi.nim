@@ -85,8 +85,8 @@ proc downloadPackage(this: PyPI, packageName: string, releaseVersion: string, de
   assert packageName.len > 0, "packageName must not be empty string"
   assert releaseVersion.len > 0, "releaseVersion must not be empty string"
   assert destDir.len > 0, "destDir must not be empty string"
-  let choosenUrl = create(string, sizeOf string)
-  let filename = create(string, sizeOf string)
+  choosenUrl := ""
+  filename := ""
   choosenUrl[] = this.releaseUrls(packageName, releaseVersion)[0]
   assert choosenUrl[].startsWith"https://", "PyPI Download URL is not HTTPS SSL"
   filename[] = destDir / choosenUrl[].split("/")[^1]
@@ -106,14 +106,12 @@ proc downloadPackage(this: PyPI, packageName: string, releaseVersion: string, de
     echo("curl -LO " & choosenUrl[] & "\ncurl -LO " & choosenUrl[] & ".asc\n" & cmdVerify &
       filename[].replace(destDir, "") & ".asc\n" & pipInstallCmd & filename[].replace(destDir, ""))
   result = filename[]
-  dealloc choosenUrl
-  dealloc filename
+  deallocs choosenUrl, filename
 
 proc installPackage(this: PyPI, packageName: string, releaseVersion: string, generateScript: bool): tuple[output: TaintedString, exitCode: int] =
   assert packageName.len > 0 and releaseVersion.len > 0, "packageName and releaseVersion must not be empty string"
-  let packageFile = create(string, sizeOf string)
+  creates "", packageFile, oldDir, path
   packageFile[] = this.downloadPackage(packageName, releaseVersion, generateScript = generateScript)
-  let oldDir = create(string, sizeOf string)
   oldDir[] = getCurrentDir()
   if unlikely(packageFile[].endsWith".whl"):
     setCurrentDir(sitePackages)
@@ -121,21 +119,18 @@ proc installPackage(this: PyPI, packageName: string, releaseVersion: string, gen
   else:
     setCurrentDir(getTempDir())
     echo extract(packageFile[], getTempDir()).output
-    let path = create(string, sizeOf string)
     path[] = packageFile[][0..^5]
     if fileExists(path[] / "setup.py"):
       setCurrentDir(path[])
       result = execCmdEx(findExe"python3" & " " & path[] / "setup.py install --user")
-    dealloc path
   setCurrentDir(oldDir[])
-  dealloc packageFile
-  dealloc oldDir
+  deallocs packageFile, oldDir, path
 
 proc install(this: PyPI, args: seq[array[2, string]]) =
   assert args.len > 0, "Error parsing the list of packages"
-  let suces = create(byte, sizeOf byte)
-  let failed = create(byte, sizeOf byte)
-  let semver = create(string, sizeOf string)
+  suces := 0.byte
+  failed := 0.byte
+  semver := ""
   let time0 = create(DateTime, sizeOf DateTime)
   time0[] = now()
   echo($now() & ", PID is " & $getCurrentProcessId() & ", " & $args.len & " packages to download and install " & $args)
@@ -147,15 +142,12 @@ proc install(this: PyPI, args: seq[array[2, string]]) =
     if resultados.exitCode == 0: inc suces[] else: inc failed[]
   echo($now() & " " & $failed[] & " Failed, " & $suces[] &
     " Success on " & $(now() - time0[]) & " to download+install " & $args.len & " packages")
-  dealloc semver
-  dealloc time0
-  dealloc suces
-  dealloc failed
+  deallocs semver, time0, suces, failed
 
 proc download(this: PyPI, args: seq[string]) =
   ## Download a package to a local folder, dont decompress nor install.
   assert args.len > 0
-  var dir = create(string, sizeOf string)
+  dir := ""
   while not dirExists(dir[]): dir[] = readLineFromStdin"Download to where? (Full path to existing folder): "
   for pkg in args: echo this.downloadPackage(pkg, $this.packageLatestRelease(pkg), dir[], false)
   dealloc dir
@@ -171,7 +163,7 @@ proc browse(this: PyPI, classifiers: seq[string]): XmlNode =
   ## Classifiers must be a list of standard Trove classifier strings. Returns 100 results max.
   assert classifiers.len > 0, "classifiers must not be empty seq"
   this.headers = newHttpHeaders(hdrXml)
-  var s = create(string, sizeOf string)
+  s := ""
   for item in classifiers: s[].add xmlRpcParam.format(item)
   result = parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("browse", s[])))
   dealloc s
