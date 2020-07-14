@@ -4,3 +4,5 @@
 *.log
 .vscode/
 src/*.txt
+requirements.txt
+*.out
