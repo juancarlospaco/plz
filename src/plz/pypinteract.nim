@@ -2,20 +2,8 @@ import strutils, rdstdin
 
 template uploadToPypi(file: string) =
   doAssert fileExists(file), "File not found: " & file
-  let username = create(string, sizeOf string)
-  let password = create(string, sizeOf string)
+  creates "", username, password, version, license, summary, description, homepage, author, downloadurl, authoremail, maintainer, iPwd2, maintaineremail
   let name = create(string, sizeOf string)
-  let version = create(string, sizeOf string)
-  let license = create(string, sizeOf string)
-  let summary = create(string, sizeOf string)
-  let description = create(string, sizeOf string)
-  let homepage = create(string, sizeOf string)
-  let author = create(string, sizeOf string)
-  let downloadurl = create(string, sizeOf string)
-  let authoremail = create(string, sizeOf string)
-  let maintainer = create(string, sizeOf string)
-  let maintaineremail = create(string, sizeOf string)
-  let iPwd2 = create(string, sizeOf string)
   let keywords = create(seq[string], sizeOf seq[string])
   echo "The following questions are required by Python PYPI API, answers must not be empty string!."
   while not(author[].len > 2 and author[].len < 99): author[] = readLineFromStdin("\nType Author (Real Name): ").strip
@@ -48,18 +36,4 @@ template uploadToPypi(file: string) =
   )
   zeroMem(password, sizeOf password)
   zeroMem(iPwd2, sizeOf iPwd2)
-  dealloc password
-  dealloc iPwd2
-  dealloc username
-  dealloc name
-  dealloc version
-  dealloc license
-  dealloc summary
-  dealloc description
-  dealloc homepage
-  dealloc author
-  dealloc downloadurl
-  dealloc authoremail
-  dealloc maintainer
-  dealloc maintaineremail
-  dealloc keywords
+  deallocs password, iPwd2, username, name, version, license, summary, description, homepage, author, downloadurl, authoremail, maintainer, maintaineremail, keywords
