@@ -61,6 +61,7 @@ Commands:
   completion        A helper command used for command completion.
   parserequirements Parse a requirements file, print it to stdout (Linter,Debug,etc).
   fakecommits       Generate "Fake" Git commits (Restart CI,trigger GitHub Actions,etc).
+  bug               Python Bug Report Assistant (Interactive).
 
 Options:
   --help           Show Help and quit.
@@ -582,3 +583,37 @@ const fakeCommitMessages = [
   "'init'", "'Add a test'", "'Fix a test'", "'improve a test'", "'tests'", "'Deprecate old stuff'", "'New code'", "'Small change'",
   "'Fix helper function'", "'Remove debug code'", "'Clean out comments'", "'Add comments to code'", "'improvements'", "'Optimize'"
 ]
+
+const baseBugTemplate = """
+# Description
+
+
+# Examples
+
+```python
+
+```
+
+
+# Current Output
+
+```python
+
+```
+
+
+# Expected Output
+
+```python
+
+```
+
+# Possible Solution
+
+
+# Additional Information
+
+
+# System Information
+
+"""
