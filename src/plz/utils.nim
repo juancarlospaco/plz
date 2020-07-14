@@ -76,3 +76,31 @@ template cleanpypackages() =
 
 template fakeCommits(amount: Positive) =
   for i in 0..amount: discard execShellCmd("git commit --allow-empty --date='" & $(now() - minutes(i + rand(0..9))) & "' --message=" & fakeCommitMessages.sample)
+
+template reportBug() =
+  bodi := baseBugTemplate
+  creates "", title, labels, assignee, urlz, linky
+  bodi[].add("<details>\n\n```json\n\n" & getSystemInfo().pretty & "\n```\n[_Powered by PLZ_](https://github.com/juancarlospaco/plz)\n</details>\n\n")
+  echo "Python Bug Report Assistant: Answer a few questions, generate a Bug report on GitHub!."
+  while title[].len == 0:
+    title[] = readLineFromStdin("Issue report short and descriptive Title? (Must not be empty): ").strip
+  labels[] = readLineFromStdin("Issue report proposed Labels? (Comma separated, can be empty): ").strip
+  if labels[].len > 0:
+    bodi[].add "# Proposed Labels\n\n```csv\n" & labels[] & "\n```\n\n"
+  assignee[] = readLineFromStdin("Issue report 1 proposed Assignee? (GitHub User, can be empty): ").strip
+  if assignee[].len > 0:
+    bodi[].add "# Proposed Assignee\n\n* <kbd>" & assignee[] & "</kbd>\n\n"
+  var links = newSeqOfCap[string](9)
+  for _ in 1..9:
+    linky[] = readLineFromStdin("Links with useful info/pastebin?  (9 Links max, can be empty): ").toLowerAscii.strip
+    if linky[].len == 0: break else: links.add linky[]
+  if links.len > 0:
+    bodi[].add "# Links\n\n"
+    for i, url in links: bodi[].add $i & ". " & url & "\n"
+    bodi[].add "\n\n"
+  urlz[] = ("https://github.com/" & readLineFromStdin("GitHub User or Team?: ").strip & "/" &
+    readLineFromStdin("GitHub Repository?:   ").strip & "/issues/new?" &
+    encodeQuery({"title": title[], "labels": labels[], "assignee": assignee[], "body": bodi[]}))
+  echo urlz[]
+  openDefaultBrowser urlz[]
+  deallocs title, labels, assignee, bodi, urlz, linky
