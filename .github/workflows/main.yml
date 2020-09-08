@@ -110,7 +110,7 @@ jobs:
       run: |
         nim compileToC --compileOnly:on --noLinking:on --nimcache:dist/lin/             \
         -d:danger -d:release -d:nimBinaryStdFiles -d:noSignalHandler -d:lto             \
-        --opt:speed --cpu:amd64 --forceBuild --compileOnly --tlsEmulation:off \
+        --opt:speed --cpu:amd64 --forceBuild --compileOnly --tlsEmulation:off           \
         --stackTrace:off --exceptions:goto --gc:markAndSweep  --excessiveStackTrace:off \
         ${{ env.MAIN_MODULE }}
 
@@ -120,7 +120,7 @@ jobs:
       run: |
         nim compileToC --compileOnly:on --noLinking:on --nimcache:dist/mac/             \
         -d:danger -d:release -d:nimBinaryStdFiles -d:noSignalHandler -d:lto             \
-        --opt:speed --cpu:amd64 --forceBuild --compileOnly --tlsEmulation:off \
+        --opt:speed --cpu:amd64 --forceBuild --compileOnly --tlsEmulation:off           \
         --stackTrace:off --exceptions:goto --gc:markAndSweep  --excessiveStackTrace:off \
         ${{ env.MAIN_MODULE }}
 

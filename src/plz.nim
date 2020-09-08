@@ -14,7 +14,7 @@ proc main() =
       of "version": quit(static(NimblePkgVersion & "\n" & staticExec"git rev-parse --short HEAD"), 0)
       of "license", "licencia": quit("PPL", 0)
       of "dump": quit(getSystemInfo().pretty, 0)
-      of "nice20": echo nice(20.cint)
+      # of "nice20": echo nice(20.cint)
       of "log": logfile = valor
       of "enusutf8": enUsUtf8()
       of "publicip": quit(newHttpClient(timeout = 9999).getContent("https://api.ipify.org"), 0)
