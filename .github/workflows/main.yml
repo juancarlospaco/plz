@@ -101,8 +101,17 @@ jobs:
       run: nim check --styleCheck:hint $MAIN_MODULE
 
 
-    - name: Compile Debug & import  # Compile and import to check if its working
-      run: nim c ${{ env.MAIN_MODULE }}
+    - name: Compile Debug & run  # Compile and run to check if its working
+      run: |
+        nim c ${{ env.MAIN_MODULE }}
+        ./plz --help
+        ./plz --version
+        ./plz --license
+        ./plz --dump
+        ./plz completion
+        ./plz latestversion pip
+        ./plz install setuptools twine>=3.2.0 pip==20.1.1
+        ./plz uninstall pip
 
 
     - name: Compile (Linux) # Compile to C for Linux
