@@ -108,8 +108,8 @@ jobs:
         ./plz --version
         ./plz --license
         # ./plz --dump
-        ./plz completion
-        ./plz latestversion pip
+        #./plz completion
+        #./plz latestversion pip
         # ./plz install setuptools twine>=3.2.0 pip==20.1.1
         # ./plz uninstall pip
 
