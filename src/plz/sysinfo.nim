@@ -3,6 +3,7 @@ import os, posix, osproc, strutils, json, times
 template isSsd(): bool =
   when defined(linux): # Returns `true` if main disk is SSD (Solid). Linux only
     try: readFile("/sys/block/sda/queue/rotational") == "0\n" except: false
+  else: false
 
 proc getSystemInfo(): JsonNode =
   result = %*{
