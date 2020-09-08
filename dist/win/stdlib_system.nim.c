@@ -250,8 +250,8 @@ NI len;
 TNimNode** sons;
 };
 typedef tyProc__T4eqaYlFJYZUv9aG9b1TV0bQ tyArray__9aTRall1siQT9bXabu2aKXUg[3500];
-typedef N_NIMCALL_PTR(void, Finalizer) (void* self);
 typedef NIM_CHAR tyArray__4y4exD1dAnu89atYV5jeSuw[250];
+typedef N_NIMCALL_PTR(void, Finalizer) (void* self);
 struct tyObject_CatchableError__qrLSDoe2oBoAqNtJ9badtnA {
   Exception Sup;
 };
@@ -429,6 +429,9 @@ static N_NIMCALL(void, Marker_tyRef__vU9aO9cTqOMn6CBzhV8rX7Sw)(void* p, NI op);
 static N_NIMCALL(void, TM__Q5wkpxktOdTGvlSRo9bzt9aw_4)(void);
 N_LIB_PRIVATE N_NIMCALL(void, nimRegisterThreadLocalMarker)(tyProc__T4eqaYlFJYZUv9aG9b1TV0bQ markerProc);
 N_LIB_PRIVATE N_NIMCALL(NI, getRefcount)(void* p);
+static N_INLINE(NCSTRING, nimToCStringConv)(NimStringDesc* s);
+static N_INLINE(NI, percentpercent___dgYAo7RfdUVVpvkfKDym8w_4system)(NI x, NI y);
+N_LIB_PRIVATE N_NIMCALL(void, procAddrError)(NCSTRING name);
 N_LIB_PRIVATE N_NIMCALL(void*, newObj)(TNimType* typ, NI size);
 N_LIB_PRIVATE N_NIMCALL(void*, rawNewObj__ehkAaLROrd0Hc9aLROWt1nQ)(TNimType* typ, NI size, tyObject_GcHeap__1TRH1TZMaVZTnLNcIHuNFQ* gch);
 N_LIB_PRIVATE N_NIMCALL(void, collectCT__UyJsrKu7wmHDvZRV57hjsg)(tyObject_GcHeap__1TRH1TZMaVZTnLNcIHuNFQ* gch, NI size);
@@ -446,7 +449,6 @@ N_LIB_PRIVATE N_NIMCALL(tyObject_GcStack__7fytPA5bBsob6See21YMRA*, getActiveStac
 N_LIB_PRIVATE N_NIMCALL(NIM_BOOL, isActiveStack__c6NLIYJQ5DIKtQqRJH8S7w)(tyObject_GcStack__7fytPA5bBsob6See21YMRA* stack);
 static N_INLINE(void, gcMark__x5SbLN3uVBCsEa67N20nPwsystem)(tyObject_GcHeap__1TRH1TZMaVZTnLNcIHuNFQ* gch, void* p);
 N_LIB_PRIVATE N_NIMCALL(void*, interiorAllocatedPtr__NuzKjA4SX9afyji9cHHIuKpQ)(tyObject_MemRegion__x81NhDv59b8ercDZ9bi85jyg* a, void* p);
-static N_INLINE(NI, percentpercent___dgYAo7RfdUVVpvkfKDym8w_4system)(NI x, NI y);
 static N_INLINE(NIM_BOOL, lteqpercent___hPljn3JCDQ00ua1R07X9bxQ_2system)(NI x, NI y);
 N_LIB_PRIVATE N_NIMCALL(tyObject_AvlNode__IaqjtwKhxLEpvDS9bct9blEw*, inRange__BIq3l3oBvrBeYSWFT5iXiw)(tyObject_AvlNode__IaqjtwKhxLEpvDS9bct9blEw* root, NI key);
 N_LIB_PRIVATE N_NIMCALL(void, markGlobals__XHio9cMpnLoH7GyCj1Z9besg_2)(tyObject_GcHeap__1TRH1TZMaVZTnLNcIHuNFQ* gch);
@@ -458,8 +460,6 @@ N_LIB_PRIVATE N_NIMCALL(NI, getOccupiedMem__hrQB9bN29c1nR1E9cHqYcNcDA)(void);
 N_LIB_PRIVATE N_NIMCALL(NimStringDesc*, rawNewStringNoInit)(NI space);
 N_LIB_PRIVATE N_NIMCALL(void*, newObjNoInit)(TNimType* typ, NI size);
 static N_INLINE(NI, resize__cOCDWr16YD4j3dBrbbH3yQsystem)(NI old);
-static N_INLINE(NCSTRING, nimToCStringConv)(NimStringDesc* s);
-N_LIB_PRIVATE N_NIMCALL(void, procAddrError)(NCSTRING name);
 N_NIMCALL(NimStringDesc*, rawNewString)(NI cap);
 N_LIB_PRIVATE N_NIMCALL(void, addInt__mftMOxbyu0h4yByfs3sqjA)(NimStringDesc** result, NI64 x);
 N_LIB_PRIVATE N_NIMCALL(NimStringDesc*, setLengthStr)(NimStringDesc* s, NI newLen);
@@ -2584,6 +2584,148 @@ N_LIB_PRIVATE N_NIMCALL(NI, getRefcount)(void* p) {
 	result = ((NI) 0);
 	return result;
 }
+static N_INLINE(NCSTRING, nimToCStringConv)(NimStringDesc* s) {
+	NCSTRING result;
+	result = (NCSTRING)0;
+	{
+		NIM_BOOL T3_;
+		T3_ = (NIM_BOOL)0;
+		T3_ = (s == NIM_NIL);
+		if (T3_) goto LA4_;
+		T3_ = ((*s).Sup.len == ((NI) 0));
+		LA4_: ;
+		if (!T3_) goto LA5_;
+		result = "";
+	}
+	goto LA1_;
+	LA5_: ;
+	{
+		result = ((NCSTRING) ((*s).data));
+	}
+	LA1_: ;
+	return result;
+}
+N_LIB_PRIVATE N_NIMCALL(void*, nimLoadLibrary)(NimStringDesc* path) {
+	void* result;
+	HINSTANCE T1_;
+	result = (void*)0;
+	T1_ = (HINSTANCE)0;
+	T1_ = LoadLibraryA(nimToCStringConv(path));
+	result = ((void*) (T1_));
+	return result;
+}
+N_LIB_PRIVATE N_NIMCALL(void, nimLoadLibraryError)(NimStringDesc* path) {
+	NI32 loadError;
+	rawWrite(stderr, "could not load: ");
+	rawWrite(stderr, nimToCStringConv(path));
+	loadError = GetLastError();
+	{
+		if (!(loadError == ((NI32) 193))) goto LA3_;
+		rawWrite(stderr, "\012(bad format; library may be wrong architecture)");
+	}
+	LA3_: ;
+	rawWrite(stderr, "\012");
+	exit(((NI) 1));
+}
+static N_INLINE(NI, percentpercent___dgYAo7RfdUVVpvkfKDym8w_4system)(NI x, NI y) {
+	NI result;
+	result = (NI)0;
+	result = ((NI) ((NU)((NU64)(((NU) (x))) % (NU64)(((NU) (y))))));
+	return result;
+}
+N_LIB_PRIVATE N_NIMCALL(void, procAddrError)(NCSTRING name) {
+	rawWrite(stderr, "could not import: ");
+	rawWrite(stderr, name);
+	rawWrite(stderr, "\012");
+	exit(((NI) 1));
+}
+N_LIB_PRIVATE N_NIMCALL(void*, nimGetProcAddr)(void* lib, NCSTRING name) {
+	void* result;
+	tyArray__4y4exD1dAnu89atYV5jeSuw decorated;
+	NI m;
+{	result = (void*)0;
+	result = GetProcAddress(((HINSTANCE) (lib)), name);
+	{
+		if (!!((result == NIM_NIL))) goto LA3_;
+		goto BeforeRet_;
+	}
+	LA3_: ;
+	nimZeroMem((void*)decorated, sizeof(tyArray__4y4exD1dAnu89atYV5jeSuw));
+	decorated[(((NI) 0))- 0] = 95;
+	m = ((NI) 1);
+	{
+		while (1) {
+			if (!(m < ((NI) 245))) goto LA6;
+			{
+				if (!((NU8)(name[(NI)(m - ((NI) 1))]) == (NU8)(0))) goto LA9_;
+				goto LA5;
+			}
+			LA9_: ;
+			decorated[(m)- 0] = name[(NI)(m - ((NI) 1))];
+			m += ((NI) 1);
+		} LA6: ;
+	} LA5: ;
+	decorated[(m)- 0] = 64;
+	{
+		NI i;
+		NI res;
+		i = (NI)0;
+		res = ((NI) 0);
+		{
+			while (1) {
+				NI k;
+				if (!(res <= ((NI) 50))) goto LA13;
+				i = res;
+				k = (NI)(i * ((NI) 4));
+				{
+					if (!((NI)(k / ((NI) 100)) == ((NI) 0))) goto LA16_;
+					{
+						if (!((NI)(k / ((NI) 10)) == ((NI) 0))) goto LA20_;
+						m = (NI)(m + ((NI) 1));
+					}
+					goto LA18_;
+					LA20_: ;
+					{
+						m = (NI)(m + ((NI) 2));
+					}
+					LA18_: ;
+				}
+				goto LA14_;
+				LA16_: ;
+				{
+					m = (NI)(m + ((NI) 3));
+				}
+				LA14_: ;
+				decorated[((NI)(m + ((NI) 1)))- 0] = 0;
+				{
+					while (1) {
+						NI T26_;
+						T26_ = (NI)0;
+						T26_ = percentpercent___dgYAo7RfdUVVpvkfKDym8w_4system(k, ((NI) 10));
+						decorated[(m)- 0] = ((NIM_CHAR) (((NI) ((NI)(((NI) 48) + T26_)))));
+						m -= ((NI) 1);
+						k = (NI)(k / ((NI) 10));
+						{
+							if (!(k == ((NI) 0))) goto LA29_;
+							goto LA24;
+						}
+						LA29_: ;
+					}
+				} LA24: ;
+				result = GetProcAddress(((HINSTANCE) (lib)), ((NCSTRING) (decorated)));
+				{
+					if (!!((result == NIM_NIL))) goto LA33_;
+					goto BeforeRet_;
+				}
+				LA33_: ;
+				res += ((NI) 1);
+			} LA13: ;
+		}
+	}
+	procAddrError(name);
+	}BeforeRet_: ;
+	return result;
+}
 static N_INLINE(NI, getFreeMem__o7kGt4Ciqh9aCBinZc9bV9cugsystem)(tyObject_MemRegion__x81NhDv59b8ercDZ9bi85jyg* a) {
 	NI result;
 	result = (NI)0;
@@ -2673,12 +2815,6 @@ N_LIB_PRIVATE N_NIMCALL(NIM_BOOL, isActiveStack__c6NLIYJQ5DIKtQqRJH8S7w)(tyObjec
 	NIM_BOOL result;
 	result = (NIM_BOOL)0;
 	result = NIM_TRUE;
-	return result;
-}
-static N_INLINE(NI, percentpercent___dgYAo7RfdUVVpvkfKDym8w_4system)(NI x, NI y) {
-	NI result;
-	result = (NI)0;
-	result = ((NI) ((NU)((NU64)(((NU) (x))) % (NU64)(((NU) (y))))));
 	return result;
 }
 static N_INLINE(NIM_BOOL, lteqpercent___hPljn3JCDQ00ua1R07X9bxQ_2system)(NI x, NI y) {
@@ -3384,142 +3520,6 @@ N_LIB_PRIVATE N_NIMCALL(NimStringDesc*, addChar)(NimStringDesc* s, NIM_CHAR c) {
 	(*result).data[(*result).Sup.len] = c;
 	(*result).data[(NI)((*result).Sup.len + ((NI) 1))] = 0;
 	(*result).Sup.len += ((NI) 1);
-	return result;
-}
-static N_INLINE(NCSTRING, nimToCStringConv)(NimStringDesc* s) {
-	NCSTRING result;
-	result = (NCSTRING)0;
-	{
-		NIM_BOOL T3_;
-		T3_ = (NIM_BOOL)0;
-		T3_ = (s == NIM_NIL);
-		if (T3_) goto LA4_;
-		T3_ = ((*s).Sup.len == ((NI) 0));
-		LA4_: ;
-		if (!T3_) goto LA5_;
-		result = "";
-	}
-	goto LA1_;
-	LA5_: ;
-	{
-		result = ((NCSTRING) ((*s).data));
-	}
-	LA1_: ;
-	return result;
-}
-N_LIB_PRIVATE N_NIMCALL(void*, nimLoadLibrary)(NimStringDesc* path) {
-	void* result;
-	HINSTANCE T1_;
-	result = (void*)0;
-	T1_ = (HINSTANCE)0;
-	T1_ = LoadLibraryA(nimToCStringConv(path));
-	result = ((void*) (T1_));
-	return result;
-}
-N_LIB_PRIVATE N_NIMCALL(void, nimLoadLibraryError)(NimStringDesc* path) {
-	NI32 loadError;
-	rawWrite(stderr, "could not load: ");
-	rawWrite(stderr, nimToCStringConv(path));
-	loadError = GetLastError();
-	{
-		if (!(loadError == ((NI32) 193))) goto LA3_;
-		rawWrite(stderr, "\012(bad format; library may be wrong architecture)");
-	}
-	LA3_: ;
-	rawWrite(stderr, "\012");
-	exit(((NI) 1));
-}
-N_LIB_PRIVATE N_NIMCALL(void, procAddrError)(NCSTRING name) {
-	rawWrite(stderr, "could not import: ");
-	rawWrite(stderr, name);
-	rawWrite(stderr, "\012");
-	exit(((NI) 1));
-}
-N_LIB_PRIVATE N_NIMCALL(void*, nimGetProcAddr)(void* lib, NCSTRING name) {
-	void* result;
-	tyArray__4y4exD1dAnu89atYV5jeSuw decorated;
-	NI m;
-{	result = (void*)0;
-	result = GetProcAddress(((HINSTANCE) (lib)), name);
-	{
-		if (!!((result == NIM_NIL))) goto LA3_;
-		goto BeforeRet_;
-	}
-	LA3_: ;
-	nimZeroMem((void*)decorated, sizeof(tyArray__4y4exD1dAnu89atYV5jeSuw));
-	decorated[(((NI) 0))- 0] = 95;
-	m = ((NI) 1);
-	{
-		while (1) {
-			if (!(m < ((NI) 245))) goto LA6;
-			{
-				if (!((NU8)(name[(NI)(m - ((NI) 1))]) == (NU8)(0))) goto LA9_;
-				goto LA5;
-			}
-			LA9_: ;
-			decorated[(m)- 0] = name[(NI)(m - ((NI) 1))];
-			m += ((NI) 1);
-		} LA6: ;
-	} LA5: ;
-	decorated[(m)- 0] = 64;
-	{
-		NI i;
-		NI res;
-		i = (NI)0;
-		res = ((NI) 0);
-		{
-			while (1) {
-				NI k;
-				if (!(res <= ((NI) 50))) goto LA13;
-				i = res;
-				k = (NI)(i * ((NI) 4));
-				{
-					if (!((NI)(k / ((NI) 100)) == ((NI) 0))) goto LA16_;
-					{
-						if (!((NI)(k / ((NI) 10)) == ((NI) 0))) goto LA20_;
-						m = (NI)(m + ((NI) 1));
-					}
-					goto LA18_;
-					LA20_: ;
-					{
-						m = (NI)(m + ((NI) 2));
-					}
-					LA18_: ;
-				}
-				goto LA14_;
-				LA16_: ;
-				{
-					m = (NI)(m + ((NI) 3));
-				}
-				LA14_: ;
-				decorated[((NI)(m + ((NI) 1)))- 0] = 0;
-				{
-					while (1) {
-						NI T26_;
-						T26_ = (NI)0;
-						T26_ = percentpercent___dgYAo7RfdUVVpvkfKDym8w_4system(k, ((NI) 10));
-						decorated[(m)- 0] = ((NIM_CHAR) (((NI) ((NI)(((NI) 48) + T26_)))));
-						m -= ((NI) 1);
-						k = (NI)(k / ((NI) 10));
-						{
-							if (!(k == ((NI) 0))) goto LA29_;
-							goto LA24;
-						}
-						LA29_: ;
-					}
-				} LA24: ;
-				result = GetProcAddress(((HINSTANCE) (lib)), ((NCSTRING) (decorated)));
-				{
-					if (!!((result == NIM_NIL))) goto LA33_;
-					goto BeforeRet_;
-				}
-				LA33_: ;
-				res += ((NI) 1);
-			} LA13: ;
-		}
-	}
-	procAddrError(name);
-	}BeforeRet_: ;
 	return result;
 }
 N_LIB_PRIVATE N_NIMCALL(NimStringDesc*, mnewString)(NI len) {
