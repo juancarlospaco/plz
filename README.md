@@ -173,6 +173,7 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 - https://github.com/pypa/pipenv/commit/1c956d37e6ad20babdb5021610b2ed2c9c4203f2
 - https://github.com/pypa/pipenv/commit/e3c72e167d21b921bd3bd89d4217b04628919bb2
 - https://github.com/mitsuhiko/pipsi#pipsi (Dead Project)
+- https://github.com/zachtylr21/pyp#pyp
 
 Quote from PIPEnv Project:
 
