@@ -158,9 +158,8 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 [![Stars over time](https://starchart.cc/juancarlospaco/plz.svg)](https://starchart.cc/ThomasTJdev/nim_websitecreator "Star PLZ on GitHub!")
 
 
-#### Notes
-
 <details>
+  <summary>Notes</summary>
 
 - http://tonsky.me/blog/disenchantment
 - https://medium.com/telnyx-engineering/rip-pipenv-tried-too-hard-do-what-you-need-with-pip-tools-d500edc161d4
@@ -174,6 +173,7 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 - https://github.com/pypa/pipenv/commit/e3c72e167d21b921bd3bd89d4217b04628919bb2
 - https://github.com/mitsuhiko/pipsi#pipsi (Dead Project)
 - https://github.com/zachtylr21/pyp#pyp
+- https://www.python.org/dev/peps/pep-0650
 
 Quote from PIPEnv Project:
 
