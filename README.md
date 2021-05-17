@@ -36,7 +36,6 @@ $ plz doc file.md          # Markdown/ReSTructuredText to HTML  (MD/RST can be m
 $ plz doc2latex file.md    # Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
 $ plz doc2json file.md     # Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
 $ plz upload packg-1.0.zip # Similar to "twine upload" (Interactive,asks user,wont need Twine).
-$ plz completion           # A helper command used for command completion.
 $ plz parserequirements    # Parse a requirements file, print it to stdout (Linter,Debug,etc).
 $ plz fakecommits          # Generate "Fake" Git commits (Restart CI,trigger GitHub Actions,etc).
 $ plz bug                  # Python Bug Report Assistant (Interactive).
