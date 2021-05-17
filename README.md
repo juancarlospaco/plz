@@ -49,7 +49,6 @@ $ plz --cleanvenvs         # Clean Virtualenvs (interactive, asks Y/N 1-by-1).
 $ plz --publicip           # Show your Public IP Address (Internet connectivity check).
 $ plz --log=file.log       # Full path to a verbose local log file.
 $ plz --putenv:key=val     # Set an environment variable "KEY=Value", can be repeated.
-$ plz --nice20             # Runs with "nice = 20" (CPU Priority, smooth priority).
 $ plz --suicide            # Deletes itself permanently and exit (single file binary).
 $ plz --dump               # Show system info JSON and quit (for Developers and Bug Reporting).
 $ plz --version            # Show Version
@@ -112,8 +111,7 @@ $ plz --help               # Show Help
 
 # Requisites
 
-- Python 3.
-- 64 Bit.
+- Python 3.6+ 64Bit.
 
 
 # FAQ
@@ -121,14 +119,6 @@ $ plz --help               # Show Help
 - This requires Cython ?.
 
 No.
-
-- This runs on Python2 ?.
-
-I dunno. (Not supported)
-
-- This runs on 32Bit ?.
-
-I dunno. (Not supported)
 
 - This is a drop-in replacement of X ?.
 
