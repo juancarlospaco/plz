@@ -107,7 +107,9 @@ proc releaseUrls*(this: PyPI, packageName: string, releaseVersion: string): seq[
   ## Retrieve a list of download URLs for the given releaseVersion. Returns a list of dicts.
   doAssert packageName.len > 0 and releaseVersion.len > 0, "packageName and releaseVersion must not be empty string"
   this.headers = newHttpHeaders(hdrXml)
-  for tagy in parseXml(this.postContent(pypiXmlUrl, body = xmlRpcBody.format("release_urls", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion)))).findAll"string":
+  sleep 999  # HTTPTooManyRequests: The action could not be performed because there were too many requests by the client. Limit may reset in 1 seconds.
+  let data = this.postContent(pypiXmlUrl, body = xmlRpcBody.format("release_urls", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion)))
+  for tagy in parseXml(data).findAll"string":
     if tagy.innerText.normalize.startsWith"https://":
       result.add tagy.innerText
 
@@ -120,7 +122,8 @@ proc downloadPackage*(this: PyPI, packageName: string, releaseVersion: string, d
   let choosenUrl = this.releaseUrls(packageName, releaseVersion)[0]
   doAssert choosenUrl.startsWith"https://", "PyPI Download URL is not HTTPS SSL"
   let filename = destDir / choosenUrl.split("/")[^1]
-  echo choosenUrl
+  echo choosenUrl, '\t', filename
+  this.headers = newHttpHeaders(hdrJson)
   this.downloadFile(choosenUrl, filename)
   assert fileExists(filename), "Failed to download a file: " & filename
   echo '\t', $getFileSize(filename), " Bytes total (compressed)"
@@ -149,10 +152,12 @@ proc installPackage*(this: PyPI, packageName: string, releaseVersion: string, ge
     setCurrentDir(sitePackages)
     echo extract(packageFile, sitePackages).output
   else:
-    setCurrentDir(getTempDir())
-    echo extract(packageFile, getTempDir()).output
-    let path = packageFile[0..^5]
+    let temp = getTempDir()
+    setCurrentDir(temp)
+    echo extract(packageFile, temp).output
+    let path = packageFile.multiReplace([(".tar.gz", ""), (".zip", ""), (".egg", "")])
     if fileExists(path / "setup.py"):
+      echo "python ", path / "setup.py"
       setCurrentDir(path)
       result = execCmdEx(findExe"python3" & ' ' & path / "setup.py install --user")
   setCurrentDir(oldDir)
@@ -164,7 +169,11 @@ proc install*(this: PyPI, args: seq[array[2, string]]) =
   let time0 = now()
   echo now(), ", PID is ", getCurrentProcessId(), ", ", args.len, " packages to download and install ", args
   for argument in args:
-    let semver = if argument[1].len == 0: $this.packageLatestRelease(argument[0]) else: argument[1]
+    let semver =
+      if argument[1].len == 0:
+        $this.packageLatestRelease(argument[0])
+      else:
+        argument[1]
     echo '\t', argument[0], '\t', semver
     let resultados = this.installPackage(argument[0], semver, true)
     echo '\t', resultados.output
