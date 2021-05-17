@@ -1,8 +1,9 @@
 # For compile time code executions, we dont care the optimization or how clunky
 # it looks because is done compile time only,worse case scenario it wont compile
 
+
 const
-  NimblePkgVersion {.strdefine.} = CompileDate.replace("-", ".")
+  NimblePkgVersion {.strdefine.} = "0.0.1"
   timeouts {.intdefine.}: Positive = 9999
   maxRedirects {.intdefine.}: Positive = 9
   pypiApiUrl = "https://pypi.org/"                          ## PyPI Base API URL.
@@ -20,7 +21,6 @@ const
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
   sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])" """ ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
-  virtualenvDir = r"~/.virtualenvs"
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
   pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user " & pipCommons
   pipMaintenance = "pip3 install --upgrade --no-warn-script-location --user " & pipCommons & " pip virtualenv setuptools wheel twine"
@@ -28,12 +28,8 @@ const
   cmdVerify = "gpg --verify "
   cmdStrip = "strip --strip-all --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag " ## PIP Wont optimize Production binaries, they are left with all Debugging on!.
   osOpen = when defined(macos): "open " elif defined(windows): "start " else: "xdg-open "
-  pipCacheDir =
-    when defined(linux): r"~/.cache/pip"                    # PIP "standards"
-    elif defined(macos): r"~/Library/Caches/pip"
-    elif defined(windows): r"%LocalAppData%\pip\Cache"
-    else: getEnv"PIP_DOWNLOAD_CACHE"
   # pyExtPattern = when defined(windows): ".cpython-*.dll" elif defined(macos): ".cpython-*.dynlib" else: ".cpython-*.so"
+
 
 # TODO: search    Search PyPI for packages (PyPI API is Buggy???).
 const helpy = """ 👑 PIP Fast Single-File Compiled Alternative 👑
@@ -58,7 +54,6 @@ Commands:
   doc2latex         Markdown/ReSTructuredText to Latex (MD/RST can be mixed).
   doc2json          Markdown/ReSTructuredText to JSON  (MD/RST can be mixed).
   upload            Similar to "twine upload" (Interactive,asks user,wont need Twine).
-  completion        A helper command used for command completion.
   parserequirements Parse a requirements file, print it to stdout (Linter,Debug,etc).
   fakecommits       Generate "Fake" Git commits (Restart CI,trigger GitHub Actions,etc).
   bug               Python Bug Report Assistant (Interactive).
@@ -66,7 +61,6 @@ Commands:
 Options:
   --help           Show Help and quit.
   --version        Show Version and quit.
-  --license        Show License and quit.
   --dump           Show information useful for debugging. Show system info JSON.
   --enUsUtf8       Force Encoding to UTF-8 and Language to English (en_US.UTF-8)
   --putenv:key=val Set an environment variable "KEY=Value", can be repeated.
@@ -76,7 +70,6 @@ Options:
   --cleanpipcache  Remove all files and folders from the PIP Cache folder.
   --cleanvenvs     Remove Virtualenvs (interactive, asks Y/N 1-by-1).
   --log=file.log   Full path to a verbose local log file.
-  --nice20         Runs with "nice = 20" (CPU Priority, smooth priority).
   --publicip       Show your Public IP Address (Internet connectivity check).
   --suicide        Deletes itself permanently and exit (single file binary).
 """
@@ -126,8 +119,8 @@ classifiers =  # https://pypi.python.org/pypi?%3Aaction=list_classifiers
 [options]
 zip_safe = True
 include_package_data = True
-python_requires  = >=3.8
-tests_require    = prospector ; pre-commit ; twine
+python_requires  = >=3.9
+tests_require    = prospector ; pre-commit
 install_requires = pip
 setup_requires   = pip
 packages         = find:
@@ -136,7 +129,7 @@ packages         = find:
 universal = 1
 
 [bdist_egg]
-exclude-source-files = true
+exclude-source-files = True
 
 # [options.package_data]
 # * = *.pxd, *.pyx, *.json, *.txt
@@ -157,6 +150,7 @@ exclude-source-files = true
 # exclude = *.c, *.so, *.js, *.tests, *.tests.*, tests.*, tests
 """
 
+
 const licenseMsg = """
 Licenses:
   💡 See https://tldrlegal.com/licenses/browse or https://choosealicense.com
@@ -169,14 +163,17 @@ Licenses:
   BSD    ➡️ Simple and permissive,but your code can be closed/sold by 3rd party
 """
 
+
 const manifestTemplate = """
 include README.*
+include LICENSE.*
 include LICENSE
 global-exclude *.pyc
 recursive-include *.py
 include setup.py
 include tox.ini
 """
+
 
 const editorconfigTemplate = """
 # -*- mode: conf-unix; -*-
@@ -189,10 +186,11 @@ insert_final_newline = true
 indent_style = space
 indent_size = 4
 
-[*.{nim,nims,nimf,cfg,yml,yaml}]
+[*.{nim,nims,nimf,nimble,cfg,yml,yaml}]
 indent_style = space
 indent_size = 2
 """
+
 
 const makefileTemplate = """
 BASEDIR=$(CURDIR)
@@ -224,6 +222,7 @@ clean:
 .PHONY: help doc build dist install clean
 """
 
+
 const gitignoreTemplate = """
 # Editors
 .vscode/
@@ -239,13 +238,12 @@ const gitignoreTemplate = """
 Thumbs.db
 
 # Byte-compiled / optimized / DLL files
-__pycache__/
+__pycache__
 *$py.class
 *.pyc
 *.pyd
 *.pyo
 *.log
-__pycache__
 *.c
 *.h
 *.o
@@ -355,18 +353,18 @@ venv.bak/
 dmypy.json
 """
 
+
 const pkgbuildTemplate = """
-pkgbase=python-name
-pkgname=('python-name')
-_pyname={{ cookiecutter.repo_name }}
-pkgver=0.0.1
-pkgrel=1
-pkgdesc=''
-arch=('any')
-license=('MIT')
-makedepends=('python' 'python-pip')
-options=(!emptydirs)
-source=('')
+pkgbase     = python-name
+pkgname     = ('python-name')
+pkgver      = 0.0.1
+pkgrel      = 1
+pkgdesc     = ''
+arch        = ('any')
+license     = ('MIT')
+makedepends = ('python' 'python-pip')
+options     = (!emptydirs)
+source      = ('')
 
 prepare() {
   cd "${srcdir}/${_pyname}-${pkgver}"
@@ -379,6 +377,7 @@ pkgver() {
 }
 """
 
+
 const debianRules = """#!/usr/bin/make -f
 # -*- makefile -*-
 
@@ -386,6 +385,7 @@ export PYBUILD_NAME=pyscaffold
 %:
 	dh $@ --with python3 --buildsystem=pybuild
 """
+
 
 const debianControl = """Source: plz
 Maintainer: user <user@gmail.com>
@@ -400,6 +400,7 @@ Architecture: all
 Description: A new Python project
 """
 
+
 const debianChangelog = """
 name (0.0.1-1) unstable; urgency=low
 
@@ -408,23 +409,25 @@ name (0.0.1-1) unstable; urgency=low
  -- User <user@gmail.com>  Sat, 31 Feb 2020 20:0:00 +0000
 """
 
-const pkgInfoTemplate = """Metadata-Version: 2.1
-Name: example
-Version: 0.0.1
-Summary: example package
-Description: example package
-Home-page: https://github.com/example/example
-url: https://github.com/example/example
-download_url: https://github.com/example/example
-Author: anonymous
-Author-email: user@mail.com
-Maintainer: anonymous
+
+const pkgInfoTemplate = """
+Metadata-Version: 2.1
+Name:             example
+Version:          0.0.1
+Summary:          example package
+Description:      example package
+Home-page:        https://github.com/example/example
+url:              https://github.com/example/example
+download_url:     https://github.com/example/example
+Author:           anonymous
+Author-email:     user@mail.com
+Maintainer:       anonymous
 Maintainer-email: user@mail.com
-License: MIT
-Keywords: python3, python4, cpython
-Platform: Linux
-Platform: Darwin
-Platform: Windows
+License:          MIT
+Keywords:         python3, python4, cpython
+Platform:         Linux
+Platform:         Darwin
+Platform:         Windows
 Classifier: Development Status :: 5 - Production/Stable
 Classifier: Environment :: Console
 Classifier: Environment :: Other Environment
@@ -436,11 +439,12 @@ Classifier: Operating System :: POSIX :: Linux
 Classifier: Programming Language :: Python
 Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3 :: Only
-Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
 Classifier: Programming Language :: Python :: Implementation :: CPython
 Classifier: Topic :: Software Development
-Requires-Python: >=3.8
-Description-Content-Type: text/markdown """
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+"""
 
 
 const testTemplate = """# -*- coding: utf-8 -*-
@@ -526,94 +530,10 @@ ExecStart=echo      # Execute your application command.
 WantedBy=multi-user.target
 """
 
+
 const nimpyTemplate = """import os, strutils, nimpy
 
 proc function(a, b: int): auto {.exportpy.} =
   ## Documentation comment, Markdown/ReSTructuredText/PlainText, generates HTML.
   a + b  # Comment, ignored by compiler.       https://github.com/yglukhov/nimpy
-"""
-
-const completionsTemplate = """
-# pip bash completion start
-_pip_completion()
-{
-    COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
-                   COMP_CWORD=$COMP_CWORD \
-                   PIP_AUTO_COMPLETE=1 $1 2>/dev/null ) )
-}
-complete -o default -F _pip_completion pip
-# pip bash completion end
-
-
-
-# pip fish completion start
-function __fish_complete_pip
-    set -lx COMP_WORDS (commandline -o) ""
-    set -lx COMP_CWORD ( \
-        math (contains -i -- (commandline -t) $COMP_WORDS)-1 \
-    )
-    set -lx PIP_AUTO_COMPLETE 1
-    string split \  -- (eval $COMP_WORDS[1])
-end
-complete -fa "(__fish_complete_pip)" -c pip
-# pip fish completion end
-
-
-
-# pip zsh completion start
-function _pip_completion {
-  local words cword
-  read -Ac words
-  read -cn cword
-  reply=( $( COMP_WORDS="$words[*]" \
-             COMP_CWORD=$(( cword-1 )) \
-             PIP_AUTO_COMPLETE=1 $words[1] 2>/dev/null ))
-}
-compctl -K _pip_completion pip
-# pip zsh completion end
-"""
-
-const fakeCommitMessages = [
-  "'Update documentation'", "'Fix a Typo'", "'Update README.md'", "'Optimization, minor'", "'Typo, minor'", "'Minor'", "'Fix README'",
-  "'Update config'", "'Fix configuration'", "'Update configuration'", "'Fix trailing whitespaces'", "'Add Documentation'", "'Styles'",
-  "'Optimization of a structure'", "'Add a new line at the end of the file'", "'Remove extra spaces'", "'Code Style'", "'Updates'",
-  "'Improve code style'", "'Fix wrong name on a variable'", "'Trim spaces'", "'Strip spaces'", "'Rename a variable'", "'Fixes'",
-  "'-'", "'.'", "'Format code'", "'Reorder an import'", "'Minor, style'", "'Fix typo on documentation'", "'Optimizations'", "'OwO'",
-  "'Bump'", "'Fix Docs'", "'Add Docs'", "'Improve user documentation'", "'Minor optimizations'", "'Tiny refactor'", "'Working now'",
-  "'init'", "'Add a test'", "'Fix a test'", "'improve a test'", "'tests'", "'Deprecate old stuff'", "'New code'", "'Small change'",
-  "'Fix helper function'", "'Remove debug code'", "'Clean out comments'", "'Add comments to code'", "'improvements'", "'Optimize'"
-]
-
-const baseBugTemplate = """
-# Description
-
-
-# Examples
-
-```python
-
-```
-
-
-# Current Output
-
-```python
-
-```
-
-
-# Expected Output
-
-```python
-
-```
-
-# Possible Solution
-
-
-# Additional Information
-
-
-# System Information
-
 """
