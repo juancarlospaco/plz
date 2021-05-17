@@ -107,7 +107,7 @@ proc releaseUrls*(this: PyPI, packageName: string, releaseVersion: string): seq[
   ## Retrieve a list of download URLs for the given releaseVersion. Returns a list of dicts.
   doAssert packageName.len > 0 and releaseVersion.len > 0, "packageName and releaseVersion must not be empty string"
   this.headers = newHttpHeaders(hdrXml)
-  sleep 999  # HTTPTooManyRequests: The action could not be performed because there were too many requests by the client. Limit may reset in 1 seconds.
+  sleep 1_000  # HTTPTooManyRequests: The action could not be performed because there were too many requests by the client. Limit may reset in 1 seconds.
   let response = this.post(pypiXmlUrl, body = xmlRpcBody.format("release_urls", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion)))
   if response.code == Http200:
     for tagy in parseXml(response.body).findAll"string":
@@ -115,7 +115,7 @@ proc releaseUrls*(this: PyPI, packageName: string, releaseVersion: string): seq[
         result.add tagy.innerText
   else:
     echo "PYPI Server Error: Slow response timed out or unknown connectivity error: ", response.code
-  doAssert result.len > 0, "PYPI Server Error: Slow response timed out or unknown connectivity error: " & $response.code
+  doAssert result.len > 0, "PYPI Server Error: Slow response timed out or unknown connectivity error: " & response.body
 
 
 proc downloadPackage*(this: PyPI, packageName: string, releaseVersion: string, destDir = getTempDir(), generateScript: bool): string =
