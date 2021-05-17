@@ -34,7 +34,7 @@ jobs:
         TWINE_NON_INTERACTIVE: 1
         ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
-   - name: Nimble Install dependencies
+    - name: Nimble Install dependencies
       run: |
         nimble -y refresh
         nimble -y install requirementstxt
