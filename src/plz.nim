@@ -94,10 +94,6 @@ proc main() =
       if not is1argOnly:
         quit"Too many arguments,command only supports 1 argument"
       quit($client.packageLatestRelease(args[1]), 0)
-    of "open":
-      if not is1argOnly:
-        quit"Too many arguments,command only supports 1 argument"
-      quit(execCmdEx(osOpen & args[1]).output, 0)
     of "strip":
       if not is1argOnly:
         quit"Too many arguments,command only supports 1 argument"
