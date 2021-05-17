@@ -115,6 +115,7 @@ proc releaseUrls*(this: PyPI, packageName: string, releaseVersion: string): seq[
         result.add tagy.innerText
   else:
     echo "PYPI Server Error: Slow response timed out or unknown connectivity error: ", response.code
+  doAssert result.len > 0, "PYPI Server Error: Slow response timed out or unknown connectivity error: " & $response.code
 
 
 proc downloadPackage*(this: PyPI, packageName: string, releaseVersion: string, destDir = getTempDir(), generateScript: bool): string =
