@@ -174,6 +174,13 @@ Quote from PIP Project:
 
 > Due to lack of interest and maintenance, 'pip bundle' and support for installing files is now deprecated.
 
+Important, near year 2021, the PyPI server started responding empty responses and error messages,
+but with HTTP status 200 OK, to PIP alternatives that are not the official PIP, the error message said
+`HTTPTooManyRequests: The action could not be performed because there were too many requests by the client. Limit may reset in 1 seconds.`
+and your client has to wait >1 second per request, even for empty responses, and sometimes retries fail anyway,
+this looks kinda intentional, maybe to make it look like PIP is the fastest or something like that ?.
+
+
 </details>
 
 
