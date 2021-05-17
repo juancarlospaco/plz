@@ -108,10 +108,13 @@ proc releaseUrls*(this: PyPI, packageName: string, releaseVersion: string): seq[
   doAssert packageName.len > 0 and releaseVersion.len > 0, "packageName and releaseVersion must not be empty string"
   this.headers = newHttpHeaders(hdrXml)
   sleep 999  # HTTPTooManyRequests: The action could not be performed because there were too many requests by the client. Limit may reset in 1 seconds.
-  let data = this.postContent(pypiXmlUrl, body = xmlRpcBody.format("release_urls", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion)))
-  for tagy in parseXml(data).findAll"string":
-    if tagy.innerText.normalize.startsWith"https://":
-      result.add tagy.innerText
+  let response = this.post(pypiXmlUrl, body = xmlRpcBody.format("release_urls", xmlRpcParam.format(packageName) & xmlRpcParam.format(releaseVersion)))
+  if response.code == Http200:
+    for tagy in parseXml(response.body).findAll"string":
+      if tagy.innerText.normalize.startsWith"https://":
+        result.add tagy.innerText
+  else:
+    echo "PYPI Server Error: Slow response timed out or unknown connectivity error: ", response.code
 
 
 proc downloadPackage*(this: PyPI, packageName: string, releaseVersion: string, destDir = getTempDir(), generateScript: bool): string =
