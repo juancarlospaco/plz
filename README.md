@@ -163,6 +163,7 @@ From XML-RPC API Server-side this endpoints wont work anymore (Not my Bug):
 - https://github.com/zachtylr21/pyp#pyp
 - https://www.python.org/dev/peps/pep-0650
 - https://pip.pypa.io/en/stable/news/#id1
+- https://discuss.python.org/t/what-to-do-about-gpus-and-the-built-distributions-that-support-them/7125
 
 Quote from PIPEnv Project:
 
