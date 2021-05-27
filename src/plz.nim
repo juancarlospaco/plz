@@ -27,11 +27,11 @@ proc main() =
       of "publicip":
         quit(newHttpClient(timeout = 9999).getContent("https://api.ipify.org"), 0)
       of "help", "ayuda", "fullhelp", "h":
-        styledEcho(fgGreen, bgBlack, helpy)
+        styledEcho(fgGreen, helpy)
         quit(errorcode = 0)
       of "putenv":
         let envy = valor.split"="
-        styledEcho(fgMagenta, bgBlack, $envy)
+        styledEcho(fgMagenta, $envy)
         putEnv(envy[0], envy[1])
       of "cleanpyc":
         cleanpyc()
