@@ -1,5 +1,9 @@
 import strutils, json, os, httpclient, parseopt, terminal, logging, osproc, rdstdin, uri, browsers, requirementstxt
 
+var
+  logfile = defaultFilename()
+  pythonexe = findExe"python3"
+
 include plz/constants, plz/pypiapi, plz/pypinteract
 
 import plz/sysinfo, plz/docgen, plz/projectgen
@@ -7,8 +11,6 @@ import plz/sysinfo, plz/docgen, plz/projectgen
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
 
 addHandler(newConsoleLogger(fmtStr = ""))
-var logfile = defaultFilename()
-
 
 proc main() =
   var args: seq[string]
@@ -22,6 +24,9 @@ proc main() =
         quit(getSystemInfo().pretty, 0)
       of "log":
         logfile = valor
+      of "python":
+        doAssert fileExists(valor), "File not found: " & valor
+        pythonexe = valor
       of "enusutf8":
         enUsUtf8()
       of "publicip":
