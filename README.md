@@ -79,8 +79,8 @@ $ plz --help               # Show Help
 - No configurations needed.
 - No `PATH` pollution.
 - Self-Bootstrapping, no dependency on system PIP, no dependency on system Python.
-- Designed for Docker or Alpine usage.
 - 1 Megabyte, 1 file, 0 Dependencies.
+- Designed for Docker or Alpine usage.
 - Install, uninstall, reinstall, download, upload to PyPI, etc.
 - Real Inferred Strong Static Typing.
 - No Garbage Collector (Rust-like memory management).
@@ -98,6 +98,7 @@ $ plz --help               # Show Help
 - Tiny single file source code (not counting string static constants).
 - Self-Documentation Generator outputs HTML, PDF, JSON.
 - Works fully independently self-contained standalone application.
+- Fast startup time.
 
 **WIP:**
 
