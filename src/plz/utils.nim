@@ -155,7 +155,7 @@ proc forceInstallPip*(destination: string): tuple[output: string, exitCode: int]
   client.downloadFile("https://bootstrap.pypa.io/get-pip.py", destination) # Download
   client.close()
   assert fileExists(destination), "File not found: 'get-pip.py'"
-  execCmdEx(findExe"python3" & " " & destination & " -I") # Installs PIP via get-pip.py
+  execCmdEx(pythonexe & ' ' & destination & " -I") # Installs PIP via get-pip.py
 
 
 template compressImpl(filename, includes, excludes: string, verbose: bool): string =
