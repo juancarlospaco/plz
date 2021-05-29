@@ -74,6 +74,7 @@ $ plz --help               # Show Help
 
 # Features
 
+- Private PYPI custom URL.
 - Designed for Docker or Alpine usage.
 - 1 Megabyte, 1 file, 0 Dependencies.
 - Install, uninstall, reinstall, download, upload to PyPI, etc.
@@ -115,6 +116,10 @@ $ plz --help               # Show Help
 
 
 # FAQ
+
+- How to use a Private PYPI custom URL ?.
+
+Compile adding the argument ` -d:pypiApiUrl="http://url-here.io" `.
 
 - This requires Cython ?.
 
