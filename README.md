@@ -74,6 +74,7 @@ $ plz --help               # Show Help
 
 # Features
 
+- Python `1.x`, `2.x`, `3.x` support.
 - Private PYPI custom URL.
 - Designed for Docker or Alpine usage.
 - 1 Megabyte, 1 file, 0 Dependencies.
@@ -112,7 +113,7 @@ $ plz --help               # Show Help
 
 # Requisites
 
-- Python 3.6+ 64Bit.
+- Python 64Bit.
 
 
 # FAQ
@@ -187,6 +188,7 @@ but with HTTP status 200 OK, to PIP alternatives that are not the official PIP, 
 and your client has to wait >1 second per request, even for empty responses, and sometimes retries fail anyway,
 this looks kinda intentional, maybe to make it look like PIP is the fastest or something like that ?.
 
+All Python tools dropped support for Python `2.7` and `3.5`, some only support `3.8` as of ~2021.
 
 </details>
 
