@@ -39,6 +39,7 @@ $ plz parserequirements    # Parse a requirements file, print it to stdout (Lint
 $ plz fakecommits          # Generate "Fake" Git commits (Restart CI,trigger GitHub Actions,etc).
 $ plz bug                  # Python Bug Report Assistant (Interactive).
 $
+$ plz --python=/path/to/python # Full path to a Python executable to use, defaults to autodetect.
 $ plz --enUsUtf8           # Force Encoding to UTF-8 and Language to English
 $ plz --cleanpyc           # Clean all __pycache__ and *.pyc
 $ plz --cleanpypackages    # Clean all __pypackages__
