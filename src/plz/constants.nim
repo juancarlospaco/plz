@@ -6,7 +6,7 @@ const
   NimblePkgVersion {.strdefine.} = "0.0.1"
   timeouts {.intdefine.}: Positive = 9999
   maxRedirects {.intdefine.}: Positive = 9
-  pypiApiUrl = "https://pypi.org/"                          ## PyPI Base API URL.
+  pypiApiUrl {.strdefine.} = "https://pypi.org/"            ## PyPI Base API URL.
   pypiXmlUrl = pypiApiUrl & "pypi"                          ## PyPI XML RPC API URL.
   pypiPackagesXml = "https://pypi.org/rss/packages.xml"     ## PyPI XML API URL.
   pypiUpdatesXml = "https://pypi.org/rss/updates.xml"       ## PyPI XML API URL.
