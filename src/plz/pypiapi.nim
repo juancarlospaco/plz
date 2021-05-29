@@ -161,9 +161,9 @@ proc installPackage*(this: PyPI, packageName: string, releaseVersion: string, ge
     echo extract(packageFile, temp).output
     let path = packageFile.multiReplace([(".tar.gz", ""), (".zip", ""), (".egg", "")])
     if fileExists(path / "setup.py"):
-      echo "python ", path / "setup.py"
+      echo pythonexe, path / "setup.py"
       setCurrentDir(path)
-      result = execCmdEx(findExe"python3" & ' ' & path / "setup.py install --user")
+      result = execCmdEx(pythonexe & ' ' & path / "setup.py install --user")
   setCurrentDir(oldDir)
 
 
