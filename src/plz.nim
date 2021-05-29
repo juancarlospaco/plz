@@ -2,7 +2,7 @@ import strutils, json, os, httpclient, parseopt, terminal, logging, osproc, rdst
 
 var
   logfile = defaultFilename()
-  pythonexe = findExe"python3"
+  pythonexe = findExe"python"
 
 include plz/constants, plz/pypiapi, plz/pypinteract
 
