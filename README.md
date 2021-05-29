@@ -77,6 +77,8 @@ $ plz --help               # Show Help
 - Python `1.x`, `2.x`, `3.x` support.
 - Private PYPI custom URL.
 - No configurations needed.
+- No `PATH` pollution.
+- Self-Bootstrapping, no dependency on system PIP, no dependency on system Python.
 - Designed for Docker or Alpine usage.
 - 1 Megabyte, 1 file, 0 Dependencies.
 - Install, uninstall, reinstall, download, upload to PyPI, etc.
