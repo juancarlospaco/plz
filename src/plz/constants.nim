@@ -58,6 +58,7 @@ Commands:
   bug               Python Bug Report Assistant (Interactive).
 
 Options:
+  --python="/path/to/python" Full path to a Python executable to use, defaults to autodetect.
   --help           Show Help and quit.
   --version        Show Version and quit.
   --dump           Show information useful for debugging. Show system info JSON.
