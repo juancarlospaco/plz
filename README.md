@@ -77,7 +77,7 @@ $ plz --help               # Show Help
 
 Type-safe `.env` file is just a `.env` but Typed.
 
-Types are enforced via a comment, so it is still a "vanilla" `.env`.
+Types are enforced via a comment, so it is still a "vanilla" `.env`, example:
 
 ```ini
 # This is a comment
