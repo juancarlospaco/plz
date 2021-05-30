@@ -6,7 +6,7 @@ var
 
 include plz/constants, plz/pypiapi, plz/pypinteract
 
-import plz/sysinfo, plz/docgen, plz/projectgen
+import plz/sysinfo, plz/docgen, plz/projectgen, plz/dotenv
 
 setControlCHook((proc {.noconv.} = quit" CTRL+C Pressed, shutting down, bye! "))
 
@@ -34,10 +34,12 @@ proc main() =
       of "help", "ayuda", "fullhelp", "h":
         styledEcho(fgGreen, helpy)
         quit(errorcode = 0)
-      of "putenv":
-        let envy = valor.split"="
-        styledEcho(fgMagenta, $envy)
-        putEnv(envy[0], envy[1])
+      of "dotenv":
+        doAssert fileExists(valor), "File not found: " & valor
+        let dotenvpairs = parseDotEnv(readFile(valor).strip)
+        echo dotenvpairs.pretty
+        for k_v in dotenvpairs.pairs:
+          putEnv($k_v[0], $k_v[1])
       of "cleanpyc":
         cleanpyc()
       of "cleantemp", "cleartemp":
