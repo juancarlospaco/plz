@@ -31,7 +31,7 @@ func strip(s: var string) =
     else:
       when not declared(moveMem): impl()
       else:
-        when defined(nimSeqsV2): prepareMutation(s)
+        when defined(nimSeqsV2) and declared(prepareMutation): prepareMutation(s)
         moveMem(addr s[0], addr s[first], last - first + 1)
   s.setLen last - first + 1
 
