@@ -77,7 +77,11 @@ $ plz --help               # Show Help
 
 Type-safe `.env` file is just a `.env` but Typed.
 
-Types are enforced via a comment, so it is still a "vanilla" `.env`, example:
+Types are enforced via a comment, so it is still a "vanilla" `.env.
+
+Type-safe `.env` file can be used with unsafe `.env` parsers, legacy parsers will ignore the comment.
+
+Example:
 
 ```ini
 # This is a comment
