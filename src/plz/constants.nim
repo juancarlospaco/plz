@@ -59,11 +59,11 @@ Commands:
 
 Options:
   --python="/path/to/python" Full path to a Python executable to use, defaults to autodetect.
+  --dotenv="/path/to/.env"   Full path to a Type-safe DotEnv file.
   --help           Show Help and quit.
   --version        Show Version and quit.
   --dump           Show information useful for debugging. Show system info JSON.
   --enUsUtf8       Force Encoding to UTF-8 and Language to English (en_US.UTF-8)
-  --putenv:key=val Set an environment variable "KEY=Value", can be repeated.
   --cleanpyc       Recursively remove all __pycache__ and *.pyc
   --cleanpypackages Recursively remove all __pypackages__
   --cleantemp      Remove all files and folders from the OS Temporary folder.
