@@ -39,8 +39,8 @@ $ plz parserequirements    # Parse a requirements file, print it to stdout (Lint
 $ plz fakecommits          # Generate "Fake" Git commits (Restart CI,trigger GitHub Actions,etc).
 $ plz bug                  # Python Bug Report Assistant (Interactive).
 $
-$ plz --python=/path/to/python # Full path to a Python executable to use, defaults to autodetect.
-$ plz --enUsUtf8           # Force Encoding to UTF-8 and Language to English
+$ plz --python=/path/to/python  # Full path to a Python executable to use, defaults to autodetect.
+$ plz --dotenv="/path/to/.env"  # Full path to a Type-safe DotEnv file.
 $ plz --cleanpyc           # Clean all __pycache__ and *.pyc
 $ plz --cleanpypackages    # Clean all __pypackages__
 $ plz --cleantemp          # Clean all temporary folder.
@@ -71,6 +71,24 @@ $ plz --help               # Show Help
 ![](https://raw.githubusercontent.com/juancarlospaco/plz/master/requirements_parser.png)
 
 </details>
+
+
+# Type-safe DotEnv
+
+Type-safe `.env` file is just a `.env` but Typed.
+
+Types are enforced via a comment, so it is still a "vanilla" `.env`.
+
+```ini
+# This is a comment
+DB_HOST=localhost  # string
+DB_USER=root       # string
+DB_PASS="123"      # string
+DB_TIMEOUT=42      # int
+DELAY=3.14         # float
+ACTIVE=true        # bool
+```
+
 
 # Features
 
