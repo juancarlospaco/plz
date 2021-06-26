@@ -216,6 +216,10 @@ this looks kinda intentional, maybe to make it look like PIP is the fastest or s
 
 All Python tools dropped support for Python `2.7` and `3.5`, some only support `3.8` as of ~2021.
 
+As of 2021 PYPI says that the Search API of XML RPC is now "permanently disabled"
+https://status.python.org/incidents/grk0k7sz6zkp
+
+
 </details>
 
 
