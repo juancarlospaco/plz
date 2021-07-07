@@ -81,6 +81,12 @@ Types are enforced via a comment, so it is still a "vanilla" `.env`.
 
 Type-safe `.env` file can be used with unsafe `.env` parsers, legacy parsers will ignore the comment.
 
+Keys must be a non-empty ASCII string `[a-zA-Z0-9_]`, keys are validated. Key-Value separator must be `=`.
+
+Parses the same `.env` file from the vanilla implementation tests.
+
+Several orders of magnitude faster than the vanilla implementation. Implementation is ~ 50 lines of code.
+
 Example:
 
 ```ini
