@@ -107,7 +107,7 @@ ACTIVE=true        # bool
 - No configurations needed.
 - No `PATH` pollution.
 - No dependency on system PIP, no dependency on system Python.
-- 1 Megabyte, 1 file, 0 Dependencies.
+- 1 Megabyte, 0 Dependencies.
 - Designed for Docker or Alpine usage.
 - Install, uninstall, reinstall, download, upload to PyPI, etc.
 - Real Inferred Strong Static Typing.
