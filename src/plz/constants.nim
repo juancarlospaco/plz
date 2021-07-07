@@ -31,9 +31,7 @@ const
   # pyExtPattern = when defined(windows): ".cpython-*.dll" elif defined(macos): ".cpython-*.dynlib" else: ".cpython-*.so"
 
 
-# TODO: search    Search PyPI for packages (PyPI API is Buggy???).
 const helpy = """ 👑 PIP Fast Single-File Compiled Alternative 👑
-https://nim-lang.org
 Commands:
   install           Install packages (Download, Decompress, Install packages).
   uninstall         Uninstall packages (Interactive, asks Y/N to user before).
