@@ -35,6 +35,11 @@ func strip(s: var string) =
         moveMem(addr s[0], addr s[first], last - first + 1)
   s.setLen last - first + 1
 
+func validateKey(s: string): bool {.inline.} =
+  result = true
+  for c in s:
+    if c notin {'a'..'z', 'A'..'Z', '0'..'9', '_'}: return false
+
 proc parseDotEnv*(s: string; nl = '\n'; allowEmpty: static[bool] = true): JsonNode =
   result = newJObject()
   if likely(s.len > 1):
@@ -46,6 +51,7 @@ proc parseDotEnv*(s: string; nl = '\n'; allowEmpty: static[bool] = true): JsonNo
         if k_v.len >= 2:            # k sep v
           var k = k_v[0]            # Key name
           strip(k)
+          doAssert validateKey(k), "DotEnv key must be a non-empty ASCII string ([a-zA-Z0-9_])"
           var v = k_v[1].split('#')[0] # remove inline comments
           strip(v)
           when not allowEmpty: doAssert v.len > 0, "DotEnv value must not be empty"
