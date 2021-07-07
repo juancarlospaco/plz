@@ -106,7 +106,7 @@ ACTIVE=true        # bool
 - Private PYPI custom URL.
 - No configurations needed.
 - No `PATH` pollution.
-- Self-Bootstrapping, no dependency on system PIP, no dependency on system Python.
+- No dependency on system PIP, no dependency on system Python.
 - 1 Megabyte, 1 file, 0 Dependencies.
 - Designed for Docker or Alpine usage.
 - Install, uninstall, reinstall, download, upload to PyPI, etc.
@@ -225,6 +225,7 @@ All Python tools dropped support for Python `2.7` and `3.5`, some only support `
 As of 2021 PYPI says that the Search API of XML RPC is now "permanently disabled"
 https://status.python.org/incidents/grk0k7sz6zkp
 
+PIP breaks after upgrades https://github.com/pypa/pip/issues/5599
 
 </details>
 
