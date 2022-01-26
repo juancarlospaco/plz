@@ -10,7 +10,6 @@
 ![](https://img.shields.io/github/languages/code-size/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/github/issues-raw/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/github/issues-pr-raw/juancarlospaco/plz?style=for-the-badge)
-![](https://img.shields.io/github/last-commit/juancarlospaco/plz?style=for-the-badge)
 ![](https://img.shields.io/liberapay/patrons/juancarlospaco?style=for-the-badge)
 ![CI](https://github.com/juancarlospaco/plz/workflows/CI/badge.svg)
 
