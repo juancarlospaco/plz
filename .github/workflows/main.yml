@@ -15,7 +15,7 @@ jobs:
     name: ${{ matrix.platform }}
     runs-on: ${{ matrix.platform }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.5
     - uses: actions/setup-python@v4
 
     - uses: jiro4989/setup-nim-action@v1
