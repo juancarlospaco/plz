@@ -1,4 +1,4 @@
-import httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, times, osproc, rdstdin, md5, std/sha1
+import std/[httpclient, strutils, xmlparser, xmltree, json, mimetypes, os, base64, times, osproc, rdstdin, md5, sha1, assertions]
 
 import requirementstxt
 
