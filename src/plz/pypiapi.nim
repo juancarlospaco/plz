@@ -221,12 +221,16 @@ proc uninstall*(this: PyPI, args: seq[string]) =
   doAssert args.len > 0, "args must not be empty string"
   echo "Uninstall ", args.len, " Packages:\t", args
   var recordFiles: seq[string]
+  var files2delete: seq[string]
   for a in args: # RECORD Metadata file (CSV without file extension).
-    for item in walkFiles(sitePackages / a & "*.dist-info" / "RECORD"):
-      recordFiles.add item
+    let packageNames = @[a, capitalizeAscii(a)]
+    for pkg in packageNames:
+      for item in walkFiles(sitePackages / pkg & "*.dist-info" / "RECORD"):
+        recordFiles.add item
+      for item in walkFiles(sitePackages / pkg & "*.dist-info" / "INSTALLER"):
+        files2delete.add item
   if recordFiles.len > 0:
     var size: int
-    var files2delete: seq[string]
     for record in recordFiles:
       for recordfile in parseRecord(record):
         files2delete.add sitePackages / recordfile[0]
@@ -236,7 +240,7 @@ proc uninstall*(this: PyPI, args: seq[string]) =
     if files2delete.len > 0:
       echo "\nrm --verbose --force ", files2delete.join" ", "\n\nDeleted?\tFile"
       for pythonfile in files2delete:
-        echo $tryRemoveFile(pythonfile) & '\t' & pythonfile
+        echo $removeFileAndEmptyDirsUntilSitePackages(pythonfile) & '\t' & pythonfile
   # TODO: If fails, delete from list here  python -c "print(__import__('pip').__path__)" ?.
   # other alternative?  python -c "print(__import__('imp').find_module('pip'))"
   # Not even pip show knows which files belongs to which package, sometimes package wont have "installed-files.txt" ?.

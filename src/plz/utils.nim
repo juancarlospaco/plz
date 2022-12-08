@@ -1,4 +1,4 @@
-import httpclient, os, osproc, terminal, rdstdin, times, random, browsers, strutils, uri, json, sysinfo
+import httpclient, os, osproc, terminal, rdstdin, times, random, browsers, sugar, strutils, uri, json, sysinfo
 
 
 var bodi = """
@@ -176,3 +176,33 @@ template extractImpl(filename, destinationDir: string, overwrite, verbose, permi
 proc extract*(filename, destinationDir: string, overwrite = true, verbose = true, permissions = true, time = true): tuple[output: string, exitCode: int] =
   doAssert filename.len > 0 and destinationDir.len > 0, "filename must not be empty string"
   result = execCmdEx(extractImpl(filename, destinationDir, overwrite, verbose, permissions, time))
+
+
+proc tryRemoveSitePackagesDir(path: string): bool =
+  #doAssert contains(path, "site-packages"), "path " & path & " should be located inside site-packages"
+  if not dirExists(path):
+    return true
+  try:
+    removeDir(path / "__pycache__")
+  except OSError:
+    discard
+  let files = collect(for f in walkDir(path): f)
+  if len(files) > 0:
+    return false
+  try:
+    removeDir(path)
+    return true
+  except OSError:
+    return false
+
+proc removeFileAndEmptyDirsUntilSitePackages(path: string): bool =
+  #doAssert contains(path, "site-packages"), "path " & path & " should be located inside site-packages"
+  if not tryRemoveFile(path):
+    return false
+  var currentPath = path
+  while true:
+    var pathPart = splitPath(currentPath)
+    if pathPart[1] in ["", "site-packages"] or not tryRemoveSitePackagesDir(pathPart[0]):
+      break
+    currentPath = pathPart[0]
+  return true

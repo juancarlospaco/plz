@@ -6,3 +6,4 @@
 src/*.txt
 requirements.txt
 *.out
+.DS_Store
