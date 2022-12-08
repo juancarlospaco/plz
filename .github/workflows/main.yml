@@ -20,7 +20,7 @@ jobs:
 
     - uses: jiro4989/setup-nim-action@v1
       with:
-        nim-version: '1.7.0'
+        nim-version: 'devel'
         no-color: true
 
     - name: Nimble Install dependencies
