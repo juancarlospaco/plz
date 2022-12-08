@@ -1,4 +1,5 @@
-import httpclient, os, osproc, terminal, rdstdin, times, random, browsers, sugar, strutils, uri, json, sysinfo
+import std/[httpclient, os, osproc, terminal, rdstdin, times, random, browsers, sugar, strutils, uri, json, assertions]
+import sysinfo
 
 
 var bodi = """
@@ -194,6 +195,7 @@ proc tryRemoveSitePackagesDir(path: string): bool =
     return true
   except OSError:
     return false
+
 
 proc removeFileAndEmptyDirsUntilSitePackages(path: string): bool =
   #doAssert contains(path, "site-packages"), "path " & path & " should be located inside site-packages"
