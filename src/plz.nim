@@ -1,4 +1,5 @@
-import strutils, json, os, httpclient, parseopt, terminal, logging, osproc, rdstdin, uri, browsers, requirementstxt
+import std/[strutils, json, os, httpclient, parseopt, terminal, logging, osproc, rdstdin, uri, browsers, assertions]
+import requirementstxt
 
 var
   logfile = defaultFilename()
