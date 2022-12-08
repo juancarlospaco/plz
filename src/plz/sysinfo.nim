@@ -1,4 +1,4 @@
-import os, posix, osproc, strutils, json, times
+import std/[os, posix, osproc, strutils, json, times]
 
 
 template isSsd(): bool =
