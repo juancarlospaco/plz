@@ -1,4 +1,4 @@
-import std/[strutils, rdstdin, assertions]
+import std/[strutils, rdstdin]
 
 
 template uploadToPypi(file: string) {.used.} =

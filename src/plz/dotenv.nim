@@ -1,7 +1,6 @@
 from std/json import JsonNode, newJInt, newJFloat, newJBool, newJString, newJObject, newJArray, add, parseJson
 from std/parseutils import parseSaturatedNatural, parseFloat
 from std/strutils import split
-import std/assertions
 
 template parseBool(s: string): bool = s == "true"
 
