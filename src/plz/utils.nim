@@ -107,6 +107,10 @@ proc cleanpypackages*() =
     echo $tryRemoveFile(pyc) & '\t' & pyc
 
 
+proc resolveSitePackages*(pythonexe: string): string =
+  execProcess pythonexe & """ -c "print(__import__('site').getsitepackages()[0])" """
+
+
 proc fakeCommits*(amount: Positive) =
   const fakeCommitMessages = [
     "'Update documentation'", "'Fix a Typo'", "'Update README.md'", "'Optimization, minor'", "'Typo, minor'", "'Minor'", "'Fix README'",
