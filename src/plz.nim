@@ -1,4 +1,4 @@
-import std/[strutils, json, os, httpclient, parseopt, terminal, logging, osproc, rdstdin, uri, browsers, assertions]
+import std/[strutils, json, os, httpclient, parseopt, terminal, logging, osproc, rdstdin, uri, browsers]
 import requirementstxt
 
 var

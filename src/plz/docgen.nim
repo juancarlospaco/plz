@@ -1,4 +1,4 @@
-import std/[strtabs, assertions]
+import std/strtabs
 import packages/docutils/rst, packages/docutils/rstgen, packages/docutils/rstast
 
 

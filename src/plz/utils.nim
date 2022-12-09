@@ -1,4 +1,4 @@
-import std/[httpclient, os, osproc, terminal, rdstdin, times, random, browsers, sugar, strutils, uri, json, assertions]
+import std/[httpclient, os, osproc, terminal, rdstdin, times, random, browsers, sugar, strutils, uri, json]
 import sysinfo
 
 
