@@ -220,6 +220,7 @@ proc browse*(this: PyPI, classifiers: seq[string]): XmlNode =
 proc uninstall*(this: PyPI, args: seq[string]) =
   # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD is a CSV
   doAssert args.len > 0, "args must not be empty string"
+
   echo "Uninstall ", args.len, " Packages:\t", args
   var recordFiles: seq[string]
   var files2delete: seq[string]
@@ -237,7 +238,6 @@ proc uninstall*(this: PyPI, args: seq[string]) =
       fixedPackageNames.add packageName
 
   let sitePackages = resolveSitePackages(pythonexe)
-  echo sitePackages
   for packageName in fixedPackageNames: # RECORD Metadata file (CSV without file extension).
     for item in walkFiles(sitePackages / packageName & "*.dist-info" / "RECORD"):
       recordFiles.add item
