@@ -153,6 +153,7 @@ proc installPackage*(this: PyPI, packageName: string, releaseVersion: string, ge
   let packageFile = this.downloadPackage(packageName, releaseVersion, generateScript = generateScript)
   let oldDir = getCurrentDir()
   if packageFile.endsWith".whl":
+    let sitePackages = resolveSitePackages(pythonexe)
     setCurrentDir(sitePackages)
     echo extract(packageFile, sitePackages).output
   else:
@@ -236,6 +237,7 @@ proc uninstall*(this: PyPI, args: seq[string]) =
     if packageName notin fixedPackageNames:
       fixedPackageNames.add packageName
 
+  let sitePackages = resolveSitePackages(pythonexe)
   for packageName in fixedPackageNames: # RECORD Metadata file (CSV without file extension).
     for item in walkFiles(sitePackages / packageName & "*.dist-info" / "RECORD"):
       recordFiles.add item

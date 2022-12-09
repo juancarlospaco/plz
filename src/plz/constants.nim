@@ -20,7 +20,6 @@ const
   xmlRpcBody = "<?xml version='1.0'?><methodCall><methodName>$1</methodName><params>$2</params></methodCall>"
   hdrJson = {"dnt": "1", "accept": "application/json", "content-type": "application/json"}
   hdrXml = {"dnt": "1", "accept": "text/xml", "content-type": "text/xml"}
-  sitePackages = staticExec"""python3 -c "print(__import__('site').getsitepackages()[0])" """ ## https://stackoverflow.com/questions/122327/how-do-i-find-the-location-of-my-python-site-packages-directory#12950101
   pipCommons = "--isolated --disable-pip-version-check --no-color --no-cache-dir --quiet "
   pipInstallCmd = "pip3 install --upgrade --no-index --no-warn-script-location --user " & pipCommons
   pipMaintenance = "pip3 install --upgrade --no-warn-script-location --user " & pipCommons & " pip virtualenv setuptools wheel twine"
