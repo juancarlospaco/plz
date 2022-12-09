@@ -219,16 +219,29 @@ proc browse*(this: PyPI, classifiers: seq[string]): XmlNode =
 proc uninstall*(this: PyPI, args: seq[string]) =
   # /usr/lib/python3.7/site-packages/PACKAGENAME-1.0.0.dist-info/RECORD is a CSV
   doAssert args.len > 0, "args must not be empty string"
+
   echo "Uninstall ", args.len, " Packages:\t", args
   var recordFiles: seq[string]
   var files2delete: seq[string]
-  for a in args: # RECORD Metadata file (CSV without file extension).
-    let packageNames = @[a, capitalizeAscii(a)]
-    for pkg in packageNames:
-      for item in walkFiles(sitePackages / pkg & "*.dist-info" / "RECORD"):
-        recordFiles.add item
-      for item in walkFiles(sitePackages / pkg & "*.dist-info" / "INSTALLER"):
-        files2delete.add item
+
+  var fixedPackageNames: seq[string]
+  for a in args:
+    var packageName = a
+    if packageName notin fixedPackageNames:
+      fixedPackageNames.add packageName
+    packageName = replace(a, "-", "_")
+    if packageName notin fixedPackageNames:
+      fixedPackageNames.add packageName
+    packageName = capitalizeAscii(a)
+    if packageName notin fixedPackageNames:
+      fixedPackageNames.add packageName
+
+  for packageName in fixedPackageNames: # RECORD Metadata file (CSV without file extension).
+    for item in walkFiles(sitePackages / packageName & "*.dist-info" / "RECORD"):
+      recordFiles.add item
+    for item in walkFiles(sitePackages / packageName & "*.dist-info" / "INSTALLER"):
+      files2delete.add item
+
   if recordFiles.len > 0:
     var size: int
     for record in recordFiles:
