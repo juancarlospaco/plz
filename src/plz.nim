@@ -3,7 +3,7 @@ import requirementstxt
 
 var
   logfile = defaultFilename()
-  pythonexe = findExe"python"
+  pythonexe = findExe("python", followSymlinks=false)
 
 include plz/constants, plz/pypiapi, plz/pypinteract
 
