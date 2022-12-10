@@ -108,7 +108,7 @@ proc cleanpypackages*() =
 
 
 proc resolveSitePackages*(pythonexe: string): string =
-  execProcess pythonexe & """ -c "print(__import__('site').getsitepackages()[0])" """
+  execProcess(pythonexe & """ -c "print(__import__('site').getsitepackages()[0])" """).strip()
 
 
 proc fakeCommits*(amount: Positive) =
